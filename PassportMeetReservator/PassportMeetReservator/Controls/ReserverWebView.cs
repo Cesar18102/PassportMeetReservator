@@ -10,6 +10,7 @@ namespace PassportMeetReservator.Controls
     public class ReserverWebView : WebView
     {
         public event EventHandler<ReservedEventArgs> OnReserved;
+        private Random Random = new Random();
 
         private const int WAIT_DELAY = 700;
         private const int UPDATE_DELAY = 500;
@@ -49,6 +50,7 @@ namespace PassportMeetReservator.Controls
                 return;
 
             IsBusy = true;
+            Order.Doing = true;
             
             while (true)
             {
@@ -58,9 +60,10 @@ namespace PassportMeetReservator.Controls
                 await Task.Delay(UPDATE_DELAY);
             }
 
+            Order.Done = true;
+            Order.Doing = false;
             IsBusy = false;
         }
-
 
         private async Task<bool> Iteration()
         {
@@ -71,7 +74,7 @@ namespace PassportMeetReservator.Controls
             //SELECT ORDER TYPE
 
             WaitForView(CALENDAR_CLASS);
-            if(!TryClickViewOfClassWithNumber(DATE_CLASS, Number, INACTIVE_DATE_CLASS))
+            if(!TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, Number), INACTIVE_DATE_CLASS))
                 return false;
             //SELECT DATE
 
@@ -101,16 +104,22 @@ namespace PassportMeetReservator.Controls
             ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //FILL FORM
 
-            this.UrlChanged += (sender, e) => OnReserved?.Invoke(this, new ReservedEventArgs(Url));
+            this.UrlChanged += ReserverWebView_UrlChanged;
 
             WaitForView(ACCEPT_TICK_CLASS);
             ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
             ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
             //ACCEPT
 
-            await Task.Delay(2000);
+            //await Task.Delay(2000);
 
             return true;
+        }
+
+        private void ReserverWebView_UrlChanged(object sender, EventArgs e)
+        {
+            OnReserved?.Invoke(this, new ReservedEventArgs(Url));
+            this.UrlChanged -= ReserverWebView_UrlChanged;
         }
 
         private bool SetTextToViewOfClassWithNumber(string className, int number, string text)

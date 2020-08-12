@@ -85,7 +85,7 @@ namespace PassportMeetReservator
         {
             foreach (ReservationOrder order in orders)
             {
-                if (order.Done)
+                if (order.Done || order.Doing)
                     continue;
 
                 ReserverWebView browser = GetFirstFreeBrowser();
@@ -98,10 +98,8 @@ namespace PassportMeetReservator
                 browser.Order = order;
                 browser.OnReserved += (sender, e) =>
                 {
-                    order.Done = true;
-
                     using (StreamWriter str = new StreamWriter(OUTPUT_FILE_PATH, true))
-                        str.WriteLine($"{order.Email}: {e.Url}");
+                        str.WriteLine($"{order.ToString()}: {e.Url}");
                 };
 
                 browser.Start();

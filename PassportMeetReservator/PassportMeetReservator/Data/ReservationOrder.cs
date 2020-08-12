@@ -9,6 +9,7 @@
         public string Email { get; set; }
 
         public bool Done { get; set; } = false;
+        public bool Doing { get; set; } = false;
 
         public override string ToString()
         {
