@@ -74,14 +74,17 @@ namespace PassportMeetReservator.Controls
             //SELECT ORDER TYPE
 
             WaitForView(CALENDAR_CLASS);
-            if(!TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, Number), INACTIVE_DATE_CLASS))
+            await Task.Delay(WAIT_DELAY);
+
+            int activeDatesCount = GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
+            if(!TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, activeDatesCount), INACTIVE_DATE_CLASS))
                 return false;
             //SELECT DATE
 
+            WaitForView(TIME_SELECTOR_CLASS);
             await Task.Delay(WAIT_DELAY);
 
-            WaitForView(TIME_SELECTOR_CLASS);
-            if(!SelectValue(TIME_SELECTOR_CLASS, Number))
+            if (!SelectValue(TIME_SELECTOR_CLASS, Number))
                 return false;
 
             ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
@@ -208,6 +211,17 @@ namespace PassportMeetReservator.Controls
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"views.length != 0;" +
+                "}", true
+            );
+        }
+
+        private int GetCountOfViewsOfClass(string className, string forbiddenClass)
+        {
+            return (int)EvalScript(
+                "{" +
+                    $"let views = document.getElementsByClassName('{className}');" +
+                    $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
+                    "found.length;" +
                 "}", true
             );
         }
