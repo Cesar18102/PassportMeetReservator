@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 using PassportMeetReservator.Data;
+using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
 
 namespace PassportMeetReservator
@@ -22,18 +23,21 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "reserved.txt"
         );
 
-        private const int FREE_BROWSER_SCAN_DELAY = 1000;
+        private const int FREE_BROWSER_SCAN_DELAY = 500;
 
         private const int BROWSERS_COUNT = 5;
-        private ReserverWebView[] Browsers = new ReserverWebView[BROWSERS_COUNT];
+        private ReserverWebView[] Browsers { get; set; }
+        private ReserverInfoView[] Infos { get; set; }
+
+        private List<ReservationOrder> Orders { get; set; }
 
         public MainForm()
         {
             InitializeComponent();
             InitBrowsers();
 
-            List<ReservationOrder> orders = LoadData();
-            StartReserving(orders);
+            Orders = LoadData();
+            StartReserving(Orders);
         }
 
         private void InitBrowsers()
@@ -44,14 +48,40 @@ namespace PassportMeetReservator
                 Browser4, Browser5
             };
 
+            Infos = new ReserverInfoView[BROWSERS_COUNT]
+            {
+                BrowserInfo1, BrowserInfo2, BrowserInfo3,
+                BrowserInfo4, BrowserInfo5
+            };
+
             for (int i = 0; i < BROWSERS_COUNT; ++i)
+            {
                 Browsers[i].Number = i;
+                Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
+                Browsers[i].OnOrderChanged += Browser_OnOrderChanged;
+            }
 
             Browser1.BodyHandle = BrowserPanel1.Handle;
             Browser2.BodyHandle = BrowserPanel2.Handle;
             Browser3.BodyHandle = BrowserPanel3.Handle;
             Browser4.BodyHandle = BrowserPanel4.Handle;
             Browser5.BodyHandle = BrowserPanel5.Handle;
+        }
+
+        private void Browser_OnOrderChanged(object sender, OrderChangedEventArgs e)
+        {
+            ReserverWebView browser = sender as ReserverWebView;
+            ReserverInfoView info = Infos[browser.Number];
+
+            info.SurnameInput.InputText = e.Order.Surname;
+            info.NameInput.InputText = e.Order.Name;
+            info.EmailInput.InputText = e.Order.Email;
+        }
+
+        private void Browser_OnUrlChanged(object sender, UrlChangedEventArgs e)
+        {
+            ReserverWebView browser = sender as ReserverWebView;
+            Infos[browser.Number].UrlInput.InputText = e.Url;
         }
 
         private List<ReservationOrder> LoadData()
@@ -70,14 +100,21 @@ namespace PassportMeetReservator
             }
         }
 
+        private void SaveData()
+        {
+            using (StreamWriter strw = File.CreateText(DATA_FILE_PATH))
+            {
+                string orders = JsonConvert.SerializeObject(Orders);
+                strw.Write(orders);
+            }
+        }
+
         private async void StartReserving(List<ReservationOrder> orders)
         {
             while(true)
             {
                 await Task.Delay(FREE_BROWSER_SCAN_DELAY);
-
                 ReserveIteration(orders);
-                //GetFirstFreeBrowser().LoadUrl("google.com");
             }
         }
 
@@ -109,6 +146,44 @@ namespace PassportMeetReservator
         private ReserverWebView GetFirstFreeBrowser()
         {
             return Browsers.FirstOrDefault(browser => !browser.IsBusy);
+        }
+
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            ObserveOrdersListButton.Enabled = false;
+            AddOrderButton.Enabled = false;
+
+            foreach (ReserverWebView browser in Browsers)
+                browser.Paused = false;
+        }
+
+        private void PauseButton_Click(object sender, EventArgs e)
+        {
+            ObserveOrdersListButton.Enabled = true;
+            AddOrderButton.Enabled = true;
+
+            foreach (ReserverWebView browser in Browsers)
+                browser.Paused = true;
+        }
+
+        private void ObserveOrdersListButton_Click(object sender, EventArgs e)
+        {
+            OrderListObserverForm observerForm = new OrderListObserverForm(Orders);
+            observerForm.ShowDialog();
+            SaveData();
+        }
+
+        private void AddOrderButton_Click(object sender, EventArgs e)
+        {
+            AddOrderForm addOrderForm = new AddOrderForm(Orders);
+            addOrderForm.ShowDialog();
+            SaveData();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Orders.RemoveAll(order => order.Done);
+            SaveData();
         }
     }
 }

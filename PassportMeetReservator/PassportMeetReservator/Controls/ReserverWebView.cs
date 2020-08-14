@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 using EO.WebBrowser;
@@ -9,8 +10,11 @@ namespace PassportMeetReservator.Controls
 {
     public class ReserverWebView : WebView
     {
-        public event EventHandler<ReservedEventArgs> OnReserved;
         private Random Random = new Random();
+
+        public event EventHandler<ReservedEventArgs> OnReserved;
+        public event EventHandler<UrlChangedEventArgs> OnUrlChanged;
+        public event EventHandler<OrderChangedEventArgs> OnOrderChanged;
 
         private const int WAIT_DELAY = 700;
         private const int UPDATE_DELAY = 500;
@@ -39,10 +43,25 @@ namespace PassportMeetReservator.Controls
             set => Create(value);
         }
 
+        public int Number { get; set; }
+        public bool Paused { get; set; } = true;
         public bool IsBusy { get; private set; }
 
-        public int Number { get; set; }
-        public ReservationOrder Order { get; set; }
+        private ReservationOrder order = null;
+        public ReservationOrder Order
+        {
+            get => order; 
+            set
+            {
+                order = value;
+                OnOrderChanged?.Invoke(this, new OrderChangedEventArgs(Order));
+            }
+        }
+
+        public ReserverWebView()
+        {
+            this.UrlChanged += (sender, e) => OnUrlChanged?.Invoke(this, new UrlChangedEventArgs(Url));
+        }
 
         public async void Start()
         {
@@ -54,10 +73,13 @@ namespace PassportMeetReservator.Controls
             
             while (true)
             {
+                await Task.Delay(UPDATE_DELAY);
+
+                if (Paused)
+                    continue;
+
                 if (await Iteration())
                     break;
-
-                await Task.Delay(UPDATE_DELAY);
             }
 
             Order.Done = true;
@@ -90,7 +112,11 @@ namespace PassportMeetReservator.Controls
             ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT TIME
 
+            using (StreamWriter strw = new StreamWriter($"log{Number}.txt"))
+                strw.Write(this.GetDOMWindow().document.body.innerHTML + "\n\n*********************\n\n");
+
             WaitForView(INPUT_CLASS);
+            await Task.Delay(WAIT_DELAY);
 
             ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
             if (!SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname))
@@ -110,18 +136,18 @@ namespace PassportMeetReservator.Controls
             this.UrlChanged += ReserverWebView_UrlChanged;
 
             WaitForView(ACCEPT_TICK_CLASS);
+            await Task.Delay(WAIT_DELAY);
+
             ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
             ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
             //ACCEPT
-
-            //await Task.Delay(2000);
 
             return true;
         }
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {
-            OnReserved?.Invoke(this, new ReservedEventArgs(Url));
+            OnReserved?.Invoke(this, new ReservedEventArgs(Url, Order));
             this.UrlChanged -= ReserverWebView_UrlChanged;
         }
 

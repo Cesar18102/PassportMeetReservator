@@ -1,4 +1,6 @@
-﻿namespace PassportMeetReservator.Data
+﻿using Newtonsoft.Json;
+
+namespace PassportMeetReservator.Data
 {
     public class ReservationOrder
     {
@@ -8,7 +10,10 @@
         public string Name { get; set; }
         public string Email { get; set; }
 
+        [JsonIgnore]
         public bool Done { get; set; } = false;
+
+        [JsonIgnore]
         public bool Doing { get; set; } = false;
 
         public override string ToString()
