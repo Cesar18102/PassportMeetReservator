@@ -2,11 +2,11 @@
 
 namespace PassportMeetReservator.Data
 {
-    public class OrderNumberEventArgs : EventArgs
+    public class NumberEventArgs : EventArgs
     {
         public int Number { get; private set; }
 
-        public OrderNumberEventArgs(int number)
+        public NumberEventArgs(int number)
         {
             Number = number;
         }

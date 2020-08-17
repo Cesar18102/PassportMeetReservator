@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 using CefSharp;
@@ -15,6 +16,7 @@ namespace PassportMeetReservator.Controls
         public event EventHandler<ReservedEventArgs> OnReserved;
         public event EventHandler<UrlChangedEventArgs> OnUrlChanged;
         public event EventHandler<OrderEventArgs> OnOrderChanged;
+        public event EventHandler<BrowserPausedChangedEventArgs> OnPausedChanged;
 
         private const int WAIT_DELAY = 100;//700
         private const int UPDATE_DELAY = 100;
@@ -44,9 +46,23 @@ namespace PassportMeetReservator.Controls
         private const string FAILED_RESERVE_TIME_CLASS = "alert alert-danger";
         private const string FAILED_RESERVE_TIME_TEXT = "Niestety wybrana data jest już zarezerwowana, prosimy wybrać inną.";
 
-        public int Number { get; set; }
-        public bool Paused { get; set; } = true;
-        public bool IsBusy { get; private set; }
+        private Task Loop { get; set; }
+        private CancellationToken Token { get; set; }
+        private CancellationTokenSource TokenSource { get; set; }
+
+        private bool paused = true;
+        public bool Paused
+        {
+            get => paused;
+            set
+            {
+                if(paused != value)
+                {
+                    paused = value;
+                    Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(Number, paused));
+                }
+            }
+        }
 
         private ReservationOrder order = null;
         public ReservationOrder Order
@@ -59,25 +75,73 @@ namespace PassportMeetReservator.Controls
             }
         }
 
+        public int Number { get; set; }
+        public bool IsBusy { get; private set; }
+
+        public BootSchedule Schedule { get; set; }
+
         [Obsolete]
         public ReserverWebView()
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
         }
 
-        public async void Start()
+        public void Free()
         {
             if (Order == null)
                 return;
 
+            Order.Doing = false;
+            Order = null;
+
+            IsBusy = false;
+        }
+
+        public void Reset()
+        {
+            TokenSource.Cancel();
+        }
+
+        public void Done()
+        {
+            Invoke(OnReserved, this, new ReservedEventArgs(Address, Order));
+
+            Order.Done = true;
+            Order.Doing = false;
+            IsBusy = false;
+
+            TokenSource.Cancel();
+        }
+
+        public async void Start()
+        {
+            using (TokenSource = new CancellationTokenSource())
+            {
+                Token = TokenSource.Token;
+
+                Loop = Init();
+
+                try { await Loop; }
+                catch (OperationCanceledException ex) { Start(); }
+            }
+        }
+
+        private async Task Init()
+        {
+            if (Order == null || Order.Done)
+                return;
+
             IsBusy = true;
             Order.Doing = true;
-            
+
             while (true)
             {
                 await Task.Delay(UPDATE_DELAY);
 
                 if (Paused)
+                    continue;
+
+                if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
                     continue;
 
                 if (await Iteration())
@@ -127,24 +191,39 @@ namespace PassportMeetReservator.Controls
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT TIME
 
+            await Task.Delay(WAIT_DELAY);
+
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
                 return false;
             //CHECK TIME RESERVED ERROR
 
+            if(await TryClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Order.ReservationTypeText))
+                await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
+            //SAME TIME ERROR
+
             await WaitForView(INPUT_CLASS);
-            //await Task.Delay(WAIT_DELAY);
+            await Task.Delay(WAIT_DELAY);
 
             await ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
-            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname)) //DO NOT CRASH
+            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname))
+            {
+                Paused = true;
                 return false;
+            }
 
             await ClickViewOfClassWithNumber(INPUT_CLASS, 1, "");
-            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name)) //DO NOT CRASH
+            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name))
+            {
+                Paused = true;
                 return false;
+            }
 
             await ClickViewOfClassWithNumber(INPUT_CLASS, 2, "");
-            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email)) //DO NOT CRASH
+            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email))
+            {
+                Paused = true;
                 return false;
+            }
 
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //FILL FORM
@@ -152,7 +231,7 @@ namespace PassportMeetReservator.Controls
             this.AddressChanged += ReserverWebView_UrlChanged;
 
             await WaitForView(ACCEPT_TICK_CLASS);
-            //await Task.Delay(WAIT_DELAY);
+            await Task.Delay(WAIT_DELAY);
 
             await ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
             await ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
@@ -212,7 +291,8 @@ namespace PassportMeetReservator.Controls
 
         private async Task ClickViewOfClassWithText(string className, string text)
         {
-            while (!await TryClickViewOfClassWithText(className, text)) ;
+            while (!await TryClickViewOfClassWithText(className, text))
+                Token.ThrowIfCancellationRequested();
         }
 
         private async Task<bool> TryClickViewOfClassWithText(string className, string text)
@@ -232,7 +312,8 @@ namespace PassportMeetReservator.Controls
 
         private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
         {
-            while (!await TryClickViewOfClassWithNumber(className, number, forbiddenClass)) ;
+            while (!await TryClickViewOfClassWithNumber(className, number, forbiddenClass))
+                Token.ThrowIfCancellationRequested();
         }
 
         private async Task <bool> TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
@@ -252,7 +333,8 @@ namespace PassportMeetReservator.Controls
 
         private async Task WaitForView(string className)
         {
-            while (!await TryFindView(className)) ;
+            while (!await TryFindView(className))
+                Token.ThrowIfCancellationRequested();
         }
 
         private async Task<bool> TryFindView(string className)

@@ -35,6 +35,13 @@ namespace PassportMeetReservator.Forms
                     InitList();
                 };
 
+                orderInfoView.OnOrderEdited += (sender, e) =>
+                {
+                    EditOrderForm editForm = new EditOrderForm(Orders[e.Number]);
+                    editForm.ShowDialog();
+                    InitList();
+                };
+
                 orderInfoView.OnOrderUp += (sender, e) =>
                 {
                     if (MoveOrder(e.Number, e.Number - 1))

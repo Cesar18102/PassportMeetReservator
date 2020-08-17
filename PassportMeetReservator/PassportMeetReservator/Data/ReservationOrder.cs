@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+
+using Newtonsoft.Json;
 
 namespace PassportMeetReservator.Data
 {
-    public class ReservationOrder
+    public class ReservationOrder : IEquatable<ReservationOrder>
     {
         public string ReservationTypeText { get; set; }
         
@@ -15,6 +17,12 @@ namespace PassportMeetReservator.Data
 
         [JsonIgnore]
         public bool Doing { get; set; } = false;
+
+        public bool Equals(ReservationOrder other)
+        {
+            return Surname == other.Surname && Name == other.Name && Email == other.Email && 
+                   ReservationTypeText == other.ReservationTypeText;
+        }
 
         public override string ToString()
         {
