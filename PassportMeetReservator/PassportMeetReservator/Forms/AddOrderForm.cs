@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 
 using PassportMeetReservator.Data;
@@ -16,7 +17,29 @@ namespace PassportMeetReservator.Forms
             Orders = orders;
         }
 
-        private void AddOrderButton_Click(object sender, System.EventArgs e)
+        private void AddFirstButton_Click(object sender, EventArgs e)
+        {
+            ReservationOrder order = BuildOrder();
+
+            if (order == null)
+                return;
+
+            Orders.Insert(0, order);
+            this.Close();
+        }
+
+        private void AddLastButton_Click(object sender, EventArgs e)
+        {
+            ReservationOrder order = BuildOrder();
+
+            if (order == null)
+                return;
+
+            Orders.Add(order);
+            this.Close();
+        }
+
+        private ReservationOrder BuildOrder()
         {
             bool surnameInvalid = string.IsNullOrEmpty(SurnameInput.InputText);
             bool nameInvalid = string.IsNullOrEmpty(NameInput.InputText);
@@ -26,7 +49,7 @@ namespace PassportMeetReservator.Forms
             if (surnameInvalid || nameInvalid || emailInvalid || typeInvalid)
             {
                 MessageBox.Show("Invalid data");
-                return;
+                return null;
             }
 
             ReservationOrder order = new ReservationOrder();
@@ -36,8 +59,7 @@ namespace PassportMeetReservator.Forms
             order.Name = NameInput.InputText;
             order.Email = EmailInput.InputText;
 
-            Orders.Add(order);
-            this.Close();
+            return order;
         }
     }
 }

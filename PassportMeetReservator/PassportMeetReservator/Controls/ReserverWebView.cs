@@ -1,27 +1,29 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 
-using EO.WebBrowser;
+using CefSharp;
+using CefSharp.WinForms;
 
 using PassportMeetReservator.Data;
 
 namespace PassportMeetReservator.Controls
 {
-    public class ReserverWebView : WebView
+    public class ReserverWebView : ChromiumWebBrowser
     {
         private Random Random = new Random();
 
         public event EventHandler<ReservedEventArgs> OnReserved;
         public event EventHandler<UrlChangedEventArgs> OnUrlChanged;
-        public event EventHandler<OrderChangedEventArgs> OnOrderChanged;
+        public event EventHandler<OrderEventArgs> OnOrderChanged;
 
-        private const int WAIT_DELAY = 700;
-        private const int UPDATE_DELAY = 500;
+        private const int WAIT_DELAY = 100;//700
+        private const int UPDATE_DELAY = 100;
         private const string INIT_URL = "https://rejestracjapoznan.poznan.uw.gov.pl/";
 
         private const string RESERVATION_TYPE_BUTTON_CLASS = "operation-button";
+
         private const string NEXT_STEP_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
+        private const string NEXT_STEP_BUTTON_TEXT = "Dalej";
 
         private const string CALENDAR_CLASS = "vc-container vc-reset vc-text-gray-900 vc-bg-white vc-border vc-border-gray-400 vc-rounded-lg";
         private const string DATE_CLASS = "vc-day-content vc-focusable vc-font-medium vc-text-sm vc-cursor-pointer focus:vc-font-bold vc-rounded-full";
@@ -31,17 +33,16 @@ namespace PassportMeetReservator.Controls
         private const string INPUT_CLASS = "property-input form-control";
 
         private const string ACCEPT_TICK_CLASS = "custom-control-label";
-        private const string ACCEPT_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
-
-        private const string NEXT_STEP_BUTTON_TEXT = "Dalej";
         private const string ACCEPT_TICK_TEXT = "Akceptuję regulamin";
+
+        private const string ACCEPT_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
         private const string ACCEPT_BUTTON_TEXT = "Rezerwuję";
 
-        public IntPtr BodyHandle
-        {
-            get => Handle;
-            set => Create(value);
-        }
+        private const string NEXT_MONTH_BUTTON_CLASS = "vc-flex vc-justify-center vc-items-center vc-cursor-pointer vc-select-none vc-pointer-events-auto vc-text-gray-600 vc-rounded vc-border-2 vc-border-transparent hover:vc-opacity-50 hover:vc-bg-gray-300 focus:vc-border-gray-300";
+        private const int NEXT_MONTH_BUTTON_NUM = 1;
+
+        private const string FAILED_RESERVE_TIME_CLASS = "alert alert-danger";
+        private const string FAILED_RESERVE_TIME_TEXT = "Niestety wybrana data jest już zarezerwowana, prosimy wybrać inną.";
 
         public int Number { get; set; }
         public bool Paused { get; set; } = true;
@@ -54,13 +55,14 @@ namespace PassportMeetReservator.Controls
             set
             {
                 order = value;
-                OnOrderChanged?.Invoke(this, new OrderChangedEventArgs(Order));
+                OnOrderChanged?.Invoke(this, new OrderEventArgs(Order));
             }
         }
 
+        [Obsolete]
         public ReserverWebView()
         {
-            this.UrlChanged += (sender, e) => OnUrlChanged?.Invoke(this, new UrlChangedEventArgs(Url));
+            this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
         }
 
         public async void Start()
@@ -89,57 +91,71 @@ namespace PassportMeetReservator.Controls
 
         private async Task<bool> Iteration()
         {
-            LoadUrlAndWait(INIT_URL);
+            Load(INIT_URL);
 
-            ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Order.ReservationTypeText);
-            ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
+            await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Order.ReservationTypeText);
+            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT ORDER TYPE
 
-            WaitForView(CALENDAR_CLASS);
+            await WaitForView(CALENDAR_CLASS);
             await Task.Delay(WAIT_DELAY);
 
-            int activeDatesCount = GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
-            if(!TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, activeDatesCount), INACTIVE_DATE_CLASS))
+            int activeDatesCount = await GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
+
+            if (activeDatesCount == 0)
+            {
+                await ClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
+                //await Task.Delay(WAIT_DELAY);
+
+                int activeDatesNextMonthCount = await GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
+
+                if (activeDatesNextMonthCount == 0)
+                    return false;
+                else if (!await TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, activeDatesNextMonthCount), INACTIVE_DATE_CLASS))
+                    return false;
+            }
+            else if (!await TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, activeDatesCount), INACTIVE_DATE_CLASS))
                 return false;
             //SELECT DATE
 
-            WaitForView(TIME_SELECTOR_CLASS);
+            await WaitForView(TIME_SELECTOR_CLASS);
             await Task.Delay(WAIT_DELAY);
 
-            if (!SelectValue(TIME_SELECTOR_CLASS, Number))
+            if (!await SelectValue(TIME_SELECTOR_CLASS, Number))
                 return false;
 
-            ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
+            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT TIME
 
-            using (StreamWriter strw = new StreamWriter($"log{Number}.txt"))
-                strw.Write(this.GetDOMWindow().document.body.innerHTML + "\n\n*********************\n\n");
+            if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
+                return false;
+            //CHECK TIME RESERVED ERROR
 
-            WaitForView(INPUT_CLASS);
-            await Task.Delay(WAIT_DELAY);
+            await WaitForView(INPUT_CLASS);
+            //await Task.Delay(WAIT_DELAY);
 
-            ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
-            if (!SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname))
+            await ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
+            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname)) //DO NOT CRASH
                 return false;
 
-            ClickViewOfClassWithNumber(INPUT_CLASS, 1, "");
-            if (!SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name))
+            await ClickViewOfClassWithNumber(INPUT_CLASS, 1, "");
+            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name)) //DO NOT CRASH
                 return false;
 
-            ClickViewOfClassWithNumber(INPUT_CLASS, 2, "");
-            if (!SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email))
+            await ClickViewOfClassWithNumber(INPUT_CLASS, 2, "");
+            if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email)) //DO NOT CRASH
                 return false;
 
-            ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
+            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //FILL FORM
 
-            this.UrlChanged += ReserverWebView_UrlChanged;
+            this.AddressChanged += ReserverWebView_UrlChanged;
 
-            WaitForView(ACCEPT_TICK_CLASS);
-            await Task.Delay(WAIT_DELAY);
+            await WaitForView(ACCEPT_TICK_CLASS);
+            //await Task.Delay(WAIT_DELAY);
 
-            ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
-            ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
+            await ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
+            await ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
             //ACCEPT
 
             return true;
@@ -147,13 +163,13 @@ namespace PassportMeetReservator.Controls
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {
-            OnReserved?.Invoke(this, new ReservedEventArgs(Url, Order));
-            this.UrlChanged -= ReserverWebView_UrlChanged;
+            Invoke(OnReserved, this, new ReservedEventArgs(Address, Order));
+            this.AddressChanged -= ReserverWebView_UrlChanged;
         }
 
-        private bool SetTextToViewOfClassWithNumber(string className, int number, string text)
+        private async Task<bool> SetTextToViewOfClassWithNumber(string className, int number, string text)
         {
-            return (bool)EvalScript(
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"if(views.length > {number})" +
@@ -164,13 +180,15 @@ namespace PassportMeetReservator.Controls
                         $"views[{number}].dispatchEvent(e);" +
                     "}" +
                     $"views.length > {number};" +
-                "}", true
+                "}"
             );
+
+            return (bool)result.Result;
         }
 
-        private bool SelectValue(string selectorClassName, int number)
+        private async Task<bool> SelectValue(string selectorClassName, int number)
         {
-            return (bool)EvalScript(
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" + 
                     $"let views = document.getElementsByClassName('{selectorClassName}');" +
                     $"if(views.length == 1 && views[0].options.length > {number})" +
@@ -181,75 +199,111 @@ namespace PassportMeetReservator.Controls
                         $"views[0].dispatchEvent(e);" +
                     "}" +
                     $"views.length == 1 && views[0].options.length > {number}" +
-                "}", true
+                "}"
             );
+
+            return (bool)result.Result;
         }
 
-        private void ClickViewOfClass(string className)
+        private async Task ClickViewOfClass(string className)
         {
-            ClickViewOfClassWithNumber(className, 0, "");
+            await ClickViewOfClassWithNumber(className, 0, "");
         }
 
-        private void ClickViewOfClassWithText(string className, string text)
+        private async Task ClickViewOfClassWithText(string className, string text)
         {
-            while (!TryClickViewOfClassWithText(className, text)) ;
+            while (!await TryClickViewOfClassWithText(className, text)) ;
         }
 
-        private bool TryClickViewOfClassWithText(string className, string text)
+        private async Task<bool> TryClickViewOfClassWithText(string className, string text)
         {
-            return (bool)EvalScript(
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"let found = Array.prototype.filter.call(views, view => view.textContent === '{text}');" +
                     "if(found.length != 0)" +
                         "found[0].click();" +
                     "found.length != 0;" +
-                "}", true
+                "}"
             );
+
+            return (bool)result.Result;
         }
 
-        private void ClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
+        private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
         {
-            while (!TryClickViewOfClassWithNumber(className, number, forbiddenClass)) ;
+            while (!await TryClickViewOfClassWithNumber(className, number, forbiddenClass)) ;
         }
 
-        private bool TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
+        private async Task <bool> TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
         {
-            return (bool)EvalScript(
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
                     $"if(found.length > {number})" +
                         $"found[{number}].click();" +
                     $"found.length > {number};" +
-                "}", true
+                "}"
             );
+
+            return (bool)result.Result;
         }
 
-        private void WaitForView(string className)
+        private async Task WaitForView(string className)
         {
-            while (!TryFindView(className)) ;
+            while (!await TryFindView(className)) ;
         }
 
-        private bool TryFindView(string className)
+        private async Task<bool> TryFindView(string className)
         {
-            return (bool)EvalScript(
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"views.length != 0;" +
-                "}", true
+                "}"
             );
+
+            return (bool)result.Result;
         }
 
-        private int GetCountOfViewsOfClass(string className, string forbiddenClass)
+        private async Task<bool> TryFindViewOfClassWithText(string className, string text)
         {
-            return (int)EvalScript(
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
+                "{" +
+                    $"let views = document.getElementsByClassName('{className}');" +
+                    $"let found = Array.prototype.filter.call(views, view => view.textContent === '{text}');" +
+                    "found.length != 0;" +
+                "}"
+            );
+
+            return (bool)result.Result;
+        }
+
+        private async Task<int> GetCountOfViewsOfClass(string className, string forbiddenClass)
+        {
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
                     "found.length;" +
-                "}", true
+                "}"
             );
+
+            return (int)result.Result;
+        }
+
+        private static class BrowserUtil
+        {
+            public static string GetViewsOfClassWithText(string className, string text)
+            {
+                return $"Array.prototype.filter.call({GetViewsOfClass(className)}, view => view.textContent === '{text}')";
+            }
+
+            public static string GetViewsOfClass(string className)
+            {
+                return $"document.getElementsByClassName('{className}')";
+            }
         }
     }
 }

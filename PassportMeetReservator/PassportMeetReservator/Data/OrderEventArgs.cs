@@ -2,11 +2,11 @@
 
 namespace PassportMeetReservator.Data
 {
-    public class OrderChangedEventArgs : EventArgs
+    public class OrderEventArgs : EventArgs
     {
         public ReservationOrder Order { get; private set; }
 
-        public OrderChangedEventArgs(ReservationOrder order)
+        public OrderEventArgs(ReservationOrder order)
         {
             Order = order;
         }

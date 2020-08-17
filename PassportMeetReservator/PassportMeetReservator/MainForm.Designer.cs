@@ -78,99 +78,105 @@
             // BrowserPanel1
             // 
             this.BrowserPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel1.Location = new System.Drawing.Point(12, 155);
+            this.BrowserPanel1.Location = new System.Drawing.Point(9, 126);
+            this.BrowserPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserPanel1.Name = "BrowserPanel1";
-            this.BrowserPanel1.Size = new System.Drawing.Size(300, 457);
+            this.BrowserPanel1.Size = new System.Drawing.Size(350, 514);
             this.BrowserPanel1.TabIndex = 0;
             // 
             // BrowserPanel2
             // 
             this.BrowserPanel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel2.Location = new System.Drawing.Point(318, 155);
+            this.BrowserPanel2.Location = new System.Drawing.Point(363, 126);
+            this.BrowserPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserPanel2.Name = "BrowserPanel2";
-            this.BrowserPanel2.Size = new System.Drawing.Size(300, 457);
+            this.BrowserPanel2.Size = new System.Drawing.Size(350, 514);
             this.BrowserPanel2.TabIndex = 1;
             // 
             // BrowserPanel4
             // 
             this.BrowserPanel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel4.Location = new System.Drawing.Point(930, 155);
+            this.BrowserPanel4.Location = new System.Drawing.Point(1071, 126);
+            this.BrowserPanel4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserPanel4.Name = "BrowserPanel4";
-            this.BrowserPanel4.Size = new System.Drawing.Size(300, 457);
+            this.BrowserPanel4.Size = new System.Drawing.Size(350, 514);
             this.BrowserPanel4.TabIndex = 3;
             // 
             // BrowserPanel3
             // 
             this.BrowserPanel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel3.Location = new System.Drawing.Point(624, 155);
+            this.BrowserPanel3.Location = new System.Drawing.Point(717, 126);
+            this.BrowserPanel3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserPanel3.Name = "BrowserPanel3";
-            this.BrowserPanel3.Size = new System.Drawing.Size(300, 457);
+            this.BrowserPanel3.Size = new System.Drawing.Size(350, 514);
             this.BrowserPanel3.TabIndex = 2;
             // 
             // BrowserPanel5
             // 
             this.BrowserPanel5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel5.Location = new System.Drawing.Point(1236, 155);
+            this.BrowserPanel5.Location = new System.Drawing.Point(1425, 126);
+            this.BrowserPanel5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserPanel5.Name = "BrowserPanel5";
-            this.BrowserPanel5.Size = new System.Drawing.Size(300, 457);
+            this.BrowserPanel5.Size = new System.Drawing.Size(350, 514);
             this.BrowserPanel5.TabIndex = 3;
             // 
             // Browser1
             // 
 // TODO: Code generation for '' failed because of Exception 'Invalid Primitive Type: System.IntPtr. Consider using CodeObjectCreateExpression.'.
-            this.Browser1.InputMsgFilter = null;
+            //this.Browser1.InputMsgFilter = null;
             this.Browser1.Number = 0;
-            this.Browser1.ObjectForScripting = null;
+            //this.Browser1.ObjectForScripting = null;
             this.Browser1.Order = null;
             this.Browser1.Paused = true;
-            this.Browser1.Title = null;
+            //this.Browser1.Title = null;
             // 
             // Browser2
             // 
 // TODO: Code generation for '' failed because of Exception 'Invalid Primitive Type: System.IntPtr. Consider using CodeObjectCreateExpression.'.
-            this.Browser2.InputMsgFilter = null;
+            //this.Browser2.InputMsgFilter = null;
             this.Browser2.Number = 0;
-            this.Browser2.ObjectForScripting = null;
+            //this.Browser2.ObjectForScripting = null;
             this.Browser2.Order = null;
             this.Browser2.Paused = true;
-            this.Browser2.Title = null;
+            //this.Browser2.Title = null;
             // 
             // Browser3
             // 
 // TODO: Code generation for '' failed because of Exception 'Invalid Primitive Type: System.IntPtr. Consider using CodeObjectCreateExpression.'.
-            this.Browser3.InputMsgFilter = null;
+            //this.Browser3.InputMsgFilter = null;
             this.Browser3.Number = 0;
-            this.Browser3.ObjectForScripting = null;
+            //this.Browser3.ObjectForScripting = null;
             this.Browser3.Order = null;
             this.Browser3.Paused = true;
-            this.Browser3.Title = null;
+            //this.Browser3.Title = null;
             // 
             // Browser4
             // 
 // TODO: Code generation for '' failed because of Exception 'Invalid Primitive Type: System.IntPtr. Consider using CodeObjectCreateExpression.'.
-            this.Browser4.InputMsgFilter = null;
+            //this.Browser4.InputMsgFilter = null;
             this.Browser4.Number = 0;
-            this.Browser4.ObjectForScripting = null;
+            //this.Browser4.ObjectForScripting = null;
             this.Browser4.Order = null;
             this.Browser4.Paused = true;
-            this.Browser4.Title = null;
+            //this.Browser4.Title = null;
             // 
             // Browser5
             // 
 // TODO: Code generation for '' failed because of Exception 'Invalid Primitive Type: System.IntPtr. Consider using CodeObjectCreateExpression.'.
-            this.Browser5.InputMsgFilter = null;
+            //this.Browser5.InputMsgFilter = null;
             this.Browser5.Number = 0;
-            this.Browser5.ObjectForScripting = null;
+            //this.Browser5.ObjectForScripting = null;
             this.Browser5.Order = null;
             this.Browser5.Paused = true;
-            this.Browser5.Title = null;
+            //this.Browser5.Title = null;
             // 
             // OrdersInfo
             // 
             this.OrdersInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.OrdersInfo.Location = new System.Drawing.Point(0, 666);
+            this.OrdersInfo.Location = new System.Drawing.Point(0, 682);
+            this.OrdersInfo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.OrdersInfo.Name = "OrdersInfo";
-            this.OrdersInfo.Size = new System.Drawing.Size(1547, 138);
+            this.OrdersInfo.Size = new System.Drawing.Size(1779, 179);
             this.OrdersInfo.TabIndex = 4;
             this.OrdersInfo.Text = "";
             // 
@@ -181,10 +187,12 @@
             this.BrowserInfo1.Controls.Add(this.NameInput1);
             this.BrowserInfo1.Controls.Add(this.SurnameInput1);
             this.BrowserInfo1.EmailInput = this.EmailInput1;
-            this.BrowserInfo1.Location = new System.Drawing.Point(12, 12);
+            this.BrowserInfo1.Location = new System.Drawing.Point(9, 10);
+            this.BrowserInfo1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserInfo1.Name = "BrowserInfo1";
             this.BrowserInfo1.NameInput = this.NameInput1;
-            this.BrowserInfo1.Size = new System.Drawing.Size(300, 137);
+            this.BrowserInfo1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BrowserInfo1.Size = new System.Drawing.Size(350, 111);
             this.BrowserInfo1.SurnameInput = this.SurnameInput1;
             this.BrowserInfo1.TabIndex = 8;
             this.BrowserInfo1.TabStop = false;
@@ -194,14 +202,15 @@
             // UrlInput1
             // 
             this.UrlInput1.Editable = false;
-            this.UrlInput1.InputLeft = 100;
-            this.UrlInput1.InputSize = new System.Drawing.Size(185, 22);
+            this.UrlInput1.InputLeft = 75;
+            this.UrlInput1.InputSize = new System.Drawing.Size(140, 20);
             this.UrlInput1.InputText = "";
             this.UrlInput1.LabelLeft = 0;
             this.UrlInput1.LabelText = "URL:";
-            this.UrlInput1.Location = new System.Drawing.Point(6, 108);
+            this.UrlInput1.Location = new System.Drawing.Point(4, 88);
+            this.UrlInput1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.UrlInput1.Name = "UrlInput1";
-            this.UrlInput1.Size = new System.Drawing.Size(288, 23);
+            this.UrlInput1.Size = new System.Drawing.Size(216, 19);
             this.UrlInput1.TabIndex = 5;
             this.UrlInput1.Text = "namedInput1";
             this.UrlInput1.TopPosition = 0;
@@ -209,14 +218,15 @@
             // EmailInput1
             // 
             this.EmailInput1.Editable = false;
-            this.EmailInput1.InputLeft = 100;
-            this.EmailInput1.InputSize = new System.Drawing.Size(185, 22);
+            this.EmailInput1.InputLeft = 75;
+            this.EmailInput1.InputSize = new System.Drawing.Size(140, 20);
             this.EmailInput1.InputText = "";
             this.EmailInput1.LabelLeft = 0;
             this.EmailInput1.LabelText = "Email:";
-            this.EmailInput1.Location = new System.Drawing.Point(6, 79);
+            this.EmailInput1.Location = new System.Drawing.Point(4, 64);
+            this.EmailInput1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.EmailInput1.Name = "EmailInput1";
-            this.EmailInput1.Size = new System.Drawing.Size(288, 23);
+            this.EmailInput1.Size = new System.Drawing.Size(216, 19);
             this.EmailInput1.TabIndex = 4;
             this.EmailInput1.Text = "namedInput1";
             this.EmailInput1.TopPosition = 0;
@@ -224,14 +234,15 @@
             // NameInput1
             // 
             this.NameInput1.Editable = false;
-            this.NameInput1.InputLeft = 100;
-            this.NameInput1.InputSize = new System.Drawing.Size(185, 22);
+            this.NameInput1.InputLeft = 75;
+            this.NameInput1.InputSize = new System.Drawing.Size(140, 20);
             this.NameInput1.InputText = "";
             this.NameInput1.LabelLeft = 0;
             this.NameInput1.LabelText = "Name:";
-            this.NameInput1.Location = new System.Drawing.Point(6, 50);
+            this.NameInput1.Location = new System.Drawing.Point(4, 41);
+            this.NameInput1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.NameInput1.Name = "NameInput1";
-            this.NameInput1.Size = new System.Drawing.Size(288, 23);
+            this.NameInput1.Size = new System.Drawing.Size(216, 19);
             this.NameInput1.TabIndex = 3;
             this.NameInput1.Text = "namedInput1";
             this.NameInput1.TopPosition = 0;
@@ -239,14 +250,15 @@
             // SurnameInput1
             // 
             this.SurnameInput1.Editable = false;
-            this.SurnameInput1.InputLeft = 100;
-            this.SurnameInput1.InputSize = new System.Drawing.Size(185, 22);
+            this.SurnameInput1.InputLeft = 75;
+            this.SurnameInput1.InputSize = new System.Drawing.Size(140, 20);
             this.SurnameInput1.InputText = "";
             this.SurnameInput1.LabelLeft = 0;
             this.SurnameInput1.LabelText = "Surname:";
-            this.SurnameInput1.Location = new System.Drawing.Point(6, 21);
+            this.SurnameInput1.Location = new System.Drawing.Point(4, 17);
+            this.SurnameInput1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SurnameInput1.Name = "SurnameInput1";
-            this.SurnameInput1.Size = new System.Drawing.Size(288, 23);
+            this.SurnameInput1.Size = new System.Drawing.Size(216, 19);
             this.SurnameInput1.TabIndex = 2;
             this.SurnameInput1.Text = "namedInput1";
             this.SurnameInput1.TopPosition = 0;
@@ -258,10 +270,12 @@
             this.BrowserInfo2.Controls.Add(this.NameInput2);
             this.BrowserInfo2.Controls.Add(this.SurnameInput2);
             this.BrowserInfo2.EmailInput = this.EmailInput2;
-            this.BrowserInfo2.Location = new System.Drawing.Point(318, 12);
+            this.BrowserInfo2.Location = new System.Drawing.Point(363, 10);
+            this.BrowserInfo2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserInfo2.Name = "BrowserInfo2";
             this.BrowserInfo2.NameInput = this.NameInput2;
-            this.BrowserInfo2.Size = new System.Drawing.Size(300, 137);
+            this.BrowserInfo2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BrowserInfo2.Size = new System.Drawing.Size(350, 111);
             this.BrowserInfo2.SurnameInput = this.SurnameInput2;
             this.BrowserInfo2.TabIndex = 9;
             this.BrowserInfo2.TabStop = false;
@@ -271,14 +285,15 @@
             // UrlInput2
             // 
             this.UrlInput2.Editable = false;
-            this.UrlInput2.InputLeft = 100;
-            this.UrlInput2.InputSize = new System.Drawing.Size(185, 22);
+            this.UrlInput2.InputLeft = 75;
+            this.UrlInput2.InputSize = new System.Drawing.Size(140, 20);
             this.UrlInput2.InputText = "";
             this.UrlInput2.LabelLeft = 0;
             this.UrlInput2.LabelText = "URL:";
-            this.UrlInput2.Location = new System.Drawing.Point(6, 108);
+            this.UrlInput2.Location = new System.Drawing.Point(4, 88);
+            this.UrlInput2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.UrlInput2.Name = "UrlInput2";
-            this.UrlInput2.Size = new System.Drawing.Size(288, 23);
+            this.UrlInput2.Size = new System.Drawing.Size(216, 19);
             this.UrlInput2.TabIndex = 5;
             this.UrlInput2.Text = "namedInput1";
             this.UrlInput2.TopPosition = 0;
@@ -286,14 +301,15 @@
             // EmailInput2
             // 
             this.EmailInput2.Editable = false;
-            this.EmailInput2.InputLeft = 100;
-            this.EmailInput2.InputSize = new System.Drawing.Size(185, 22);
+            this.EmailInput2.InputLeft = 75;
+            this.EmailInput2.InputSize = new System.Drawing.Size(140, 20);
             this.EmailInput2.InputText = "";
             this.EmailInput2.LabelLeft = 0;
             this.EmailInput2.LabelText = "Email:";
-            this.EmailInput2.Location = new System.Drawing.Point(6, 79);
+            this.EmailInput2.Location = new System.Drawing.Point(4, 64);
+            this.EmailInput2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.EmailInput2.Name = "EmailInput2";
-            this.EmailInput2.Size = new System.Drawing.Size(288, 23);
+            this.EmailInput2.Size = new System.Drawing.Size(216, 19);
             this.EmailInput2.TabIndex = 4;
             this.EmailInput2.Text = "namedInput1";
             this.EmailInput2.TopPosition = 0;
@@ -301,14 +317,15 @@
             // NameInput2
             // 
             this.NameInput2.Editable = false;
-            this.NameInput2.InputLeft = 100;
-            this.NameInput2.InputSize = new System.Drawing.Size(185, 22);
+            this.NameInput2.InputLeft = 75;
+            this.NameInput2.InputSize = new System.Drawing.Size(140, 20);
             this.NameInput2.InputText = "";
             this.NameInput2.LabelLeft = 0;
             this.NameInput2.LabelText = "Name:";
-            this.NameInput2.Location = new System.Drawing.Point(6, 50);
+            this.NameInput2.Location = new System.Drawing.Point(4, 41);
+            this.NameInput2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.NameInput2.Name = "NameInput2";
-            this.NameInput2.Size = new System.Drawing.Size(288, 23);
+            this.NameInput2.Size = new System.Drawing.Size(216, 19);
             this.NameInput2.TabIndex = 3;
             this.NameInput2.Text = "namedInput1";
             this.NameInput2.TopPosition = 0;
@@ -316,14 +333,15 @@
             // SurnameInput2
             // 
             this.SurnameInput2.Editable = false;
-            this.SurnameInput2.InputLeft = 100;
-            this.SurnameInput2.InputSize = new System.Drawing.Size(185, 22);
+            this.SurnameInput2.InputLeft = 75;
+            this.SurnameInput2.InputSize = new System.Drawing.Size(140, 20);
             this.SurnameInput2.InputText = "";
             this.SurnameInput2.LabelLeft = 0;
             this.SurnameInput2.LabelText = "Surname:";
-            this.SurnameInput2.Location = new System.Drawing.Point(6, 21);
+            this.SurnameInput2.Location = new System.Drawing.Point(4, 17);
+            this.SurnameInput2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SurnameInput2.Name = "SurnameInput2";
-            this.SurnameInput2.Size = new System.Drawing.Size(288, 23);
+            this.SurnameInput2.Size = new System.Drawing.Size(216, 19);
             this.SurnameInput2.TabIndex = 2;
             this.SurnameInput2.Text = "namedInput1";
             this.SurnameInput2.TopPosition = 0;
@@ -335,10 +353,12 @@
             this.BrowserInfo3.Controls.Add(this.NameInput3);
             this.BrowserInfo3.Controls.Add(this.SurnameInput3);
             this.BrowserInfo3.EmailInput = this.EmailInput3;
-            this.BrowserInfo3.Location = new System.Drawing.Point(624, 12);
+            this.BrowserInfo3.Location = new System.Drawing.Point(717, 10);
+            this.BrowserInfo3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserInfo3.Name = "BrowserInfo3";
             this.BrowserInfo3.NameInput = this.NameInput3;
-            this.BrowserInfo3.Size = new System.Drawing.Size(300, 137);
+            this.BrowserInfo3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BrowserInfo3.Size = new System.Drawing.Size(350, 111);
             this.BrowserInfo3.SurnameInput = this.SurnameInput3;
             this.BrowserInfo3.TabIndex = 10;
             this.BrowserInfo3.TabStop = false;
@@ -348,14 +368,15 @@
             // UrlInput3
             // 
             this.UrlInput3.Editable = false;
-            this.UrlInput3.InputLeft = 100;
-            this.UrlInput3.InputSize = new System.Drawing.Size(185, 22);
+            this.UrlInput3.InputLeft = 75;
+            this.UrlInput3.InputSize = new System.Drawing.Size(140, 20);
             this.UrlInput3.InputText = "";
             this.UrlInput3.LabelLeft = 0;
             this.UrlInput3.LabelText = "URL:";
-            this.UrlInput3.Location = new System.Drawing.Point(6, 108);
+            this.UrlInput3.Location = new System.Drawing.Point(4, 88);
+            this.UrlInput3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.UrlInput3.Name = "UrlInput3";
-            this.UrlInput3.Size = new System.Drawing.Size(288, 23);
+            this.UrlInput3.Size = new System.Drawing.Size(216, 19);
             this.UrlInput3.TabIndex = 5;
             this.UrlInput3.Text = "namedInput5";
             this.UrlInput3.TopPosition = 0;
@@ -363,14 +384,15 @@
             // EmailInput3
             // 
             this.EmailInput3.Editable = false;
-            this.EmailInput3.InputLeft = 100;
-            this.EmailInput3.InputSize = new System.Drawing.Size(185, 22);
+            this.EmailInput3.InputLeft = 75;
+            this.EmailInput3.InputSize = new System.Drawing.Size(140, 20);
             this.EmailInput3.InputText = "";
             this.EmailInput3.LabelLeft = 0;
             this.EmailInput3.LabelText = "Email:";
-            this.EmailInput3.Location = new System.Drawing.Point(6, 79);
+            this.EmailInput3.Location = new System.Drawing.Point(4, 64);
+            this.EmailInput3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.EmailInput3.Name = "EmailInput3";
-            this.EmailInput3.Size = new System.Drawing.Size(288, 23);
+            this.EmailInput3.Size = new System.Drawing.Size(216, 19);
             this.EmailInput3.TabIndex = 4;
             this.EmailInput3.Text = "namedInput1";
             this.EmailInput3.TopPosition = 0;
@@ -378,14 +400,15 @@
             // NameInput3
             // 
             this.NameInput3.Editable = false;
-            this.NameInput3.InputLeft = 100;
-            this.NameInput3.InputSize = new System.Drawing.Size(185, 22);
+            this.NameInput3.InputLeft = 75;
+            this.NameInput3.InputSize = new System.Drawing.Size(140, 20);
             this.NameInput3.InputText = "";
             this.NameInput3.LabelLeft = 0;
             this.NameInput3.LabelText = "Name:";
-            this.NameInput3.Location = new System.Drawing.Point(6, 50);
+            this.NameInput3.Location = new System.Drawing.Point(4, 41);
+            this.NameInput3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.NameInput3.Name = "NameInput3";
-            this.NameInput3.Size = new System.Drawing.Size(288, 23);
+            this.NameInput3.Size = new System.Drawing.Size(216, 19);
             this.NameInput3.TabIndex = 3;
             this.NameInput3.Text = "namedInput1";
             this.NameInput3.TopPosition = 0;
@@ -393,14 +416,15 @@
             // SurnameInput3
             // 
             this.SurnameInput3.Editable = false;
-            this.SurnameInput3.InputLeft = 100;
-            this.SurnameInput3.InputSize = new System.Drawing.Size(185, 22);
+            this.SurnameInput3.InputLeft = 75;
+            this.SurnameInput3.InputSize = new System.Drawing.Size(140, 20);
             this.SurnameInput3.InputText = "";
             this.SurnameInput3.LabelLeft = 0;
             this.SurnameInput3.LabelText = "Surname:";
-            this.SurnameInput3.Location = new System.Drawing.Point(6, 21);
+            this.SurnameInput3.Location = new System.Drawing.Point(4, 17);
+            this.SurnameInput3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SurnameInput3.Name = "SurnameInput3";
-            this.SurnameInput3.Size = new System.Drawing.Size(288, 23);
+            this.SurnameInput3.Size = new System.Drawing.Size(216, 19);
             this.SurnameInput3.TabIndex = 2;
             this.SurnameInput3.Text = "namedInput1";
             this.SurnameInput3.TopPosition = 0;
@@ -412,10 +436,12 @@
             this.BrowserInfo4.Controls.Add(this.NameInput4);
             this.BrowserInfo4.Controls.Add(this.SurnameInput4);
             this.BrowserInfo4.EmailInput = this.EmailInput4;
-            this.BrowserInfo4.Location = new System.Drawing.Point(930, 12);
+            this.BrowserInfo4.Location = new System.Drawing.Point(1071, 10);
+            this.BrowserInfo4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserInfo4.Name = "BrowserInfo4";
             this.BrowserInfo4.NameInput = this.NameInput4;
-            this.BrowserInfo4.Size = new System.Drawing.Size(300, 137);
+            this.BrowserInfo4.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BrowserInfo4.Size = new System.Drawing.Size(350, 111);
             this.BrowserInfo4.SurnameInput = this.SurnameInput4;
             this.BrowserInfo4.TabIndex = 10;
             this.BrowserInfo4.TabStop = false;
@@ -425,14 +451,15 @@
             // UrlInput4
             // 
             this.UrlInput4.Editable = false;
-            this.UrlInput4.InputLeft = 100;
-            this.UrlInput4.InputSize = new System.Drawing.Size(185, 22);
+            this.UrlInput4.InputLeft = 75;
+            this.UrlInput4.InputSize = new System.Drawing.Size(140, 20);
             this.UrlInput4.InputText = "";
             this.UrlInput4.LabelLeft = 0;
             this.UrlInput4.LabelText = "URL:";
-            this.UrlInput4.Location = new System.Drawing.Point(6, 108);
+            this.UrlInput4.Location = new System.Drawing.Point(4, 88);
+            this.UrlInput4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.UrlInput4.Name = "UrlInput4";
-            this.UrlInput4.Size = new System.Drawing.Size(288, 23);
+            this.UrlInput4.Size = new System.Drawing.Size(216, 19);
             this.UrlInput4.TabIndex = 5;
             this.UrlInput4.Text = "namedInput9";
             this.UrlInput4.TopPosition = 0;
@@ -440,14 +467,15 @@
             // EmailInput4
             // 
             this.EmailInput4.Editable = false;
-            this.EmailInput4.InputLeft = 100;
-            this.EmailInput4.InputSize = new System.Drawing.Size(185, 22);
+            this.EmailInput4.InputLeft = 75;
+            this.EmailInput4.InputSize = new System.Drawing.Size(140, 20);
             this.EmailInput4.InputText = "";
             this.EmailInput4.LabelLeft = 0;
             this.EmailInput4.LabelText = "Email:";
-            this.EmailInput4.Location = new System.Drawing.Point(6, 79);
+            this.EmailInput4.Location = new System.Drawing.Point(4, 64);
+            this.EmailInput4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.EmailInput4.Name = "EmailInput4";
-            this.EmailInput4.Size = new System.Drawing.Size(288, 23);
+            this.EmailInput4.Size = new System.Drawing.Size(216, 19);
             this.EmailInput4.TabIndex = 4;
             this.EmailInput4.Text = "namedInput1";
             this.EmailInput4.TopPosition = 0;
@@ -455,14 +483,15 @@
             // NameInput4
             // 
             this.NameInput4.Editable = false;
-            this.NameInput4.InputLeft = 100;
-            this.NameInput4.InputSize = new System.Drawing.Size(185, 22);
+            this.NameInput4.InputLeft = 75;
+            this.NameInput4.InputSize = new System.Drawing.Size(140, 20);
             this.NameInput4.InputText = "";
             this.NameInput4.LabelLeft = 0;
             this.NameInput4.LabelText = "Name:";
-            this.NameInput4.Location = new System.Drawing.Point(6, 50);
+            this.NameInput4.Location = new System.Drawing.Point(4, 41);
+            this.NameInput4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.NameInput4.Name = "NameInput4";
-            this.NameInput4.Size = new System.Drawing.Size(288, 23);
+            this.NameInput4.Size = new System.Drawing.Size(216, 19);
             this.NameInput4.TabIndex = 3;
             this.NameInput4.Text = "namedInput1";
             this.NameInput4.TopPosition = 0;
@@ -470,14 +499,15 @@
             // SurnameInput4
             // 
             this.SurnameInput4.Editable = false;
-            this.SurnameInput4.InputLeft = 100;
-            this.SurnameInput4.InputSize = new System.Drawing.Size(185, 22);
+            this.SurnameInput4.InputLeft = 75;
+            this.SurnameInput4.InputSize = new System.Drawing.Size(140, 20);
             this.SurnameInput4.InputText = "";
             this.SurnameInput4.LabelLeft = 0;
             this.SurnameInput4.LabelText = "Surname:";
-            this.SurnameInput4.Location = new System.Drawing.Point(6, 21);
+            this.SurnameInput4.Location = new System.Drawing.Point(4, 17);
+            this.SurnameInput4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SurnameInput4.Name = "SurnameInput4";
-            this.SurnameInput4.Size = new System.Drawing.Size(288, 23);
+            this.SurnameInput4.Size = new System.Drawing.Size(216, 19);
             this.SurnameInput4.TabIndex = 2;
             this.SurnameInput4.Text = "namedInput1";
             this.SurnameInput4.TopPosition = 0;
@@ -489,10 +519,12 @@
             this.BrowserInfo5.Controls.Add(this.NameInput5);
             this.BrowserInfo5.Controls.Add(this.SurnameInput5);
             this.BrowserInfo5.EmailInput = this.EmailInput5;
-            this.BrowserInfo5.Location = new System.Drawing.Point(1236, 12);
+            this.BrowserInfo5.Location = new System.Drawing.Point(1425, 10);
+            this.BrowserInfo5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.BrowserInfo5.Name = "BrowserInfo5";
             this.BrowserInfo5.NameInput = this.NameInput5;
-            this.BrowserInfo5.Size = new System.Drawing.Size(300, 137);
+            this.BrowserInfo5.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BrowserInfo5.Size = new System.Drawing.Size(350, 111);
             this.BrowserInfo5.SurnameInput = this.SurnameInput5;
             this.BrowserInfo5.TabIndex = 10;
             this.BrowserInfo5.TabStop = false;
@@ -502,14 +534,15 @@
             // UrlInput5
             // 
             this.UrlInput5.Editable = false;
-            this.UrlInput5.InputLeft = 100;
-            this.UrlInput5.InputSize = new System.Drawing.Size(185, 22);
+            this.UrlInput5.InputLeft = 75;
+            this.UrlInput5.InputSize = new System.Drawing.Size(140, 20);
             this.UrlInput5.InputText = "";
             this.UrlInput5.LabelLeft = 0;
             this.UrlInput5.LabelText = "URL:";
-            this.UrlInput5.Location = new System.Drawing.Point(6, 108);
+            this.UrlInput5.Location = new System.Drawing.Point(4, 88);
+            this.UrlInput5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.UrlInput5.Name = "UrlInput5";
-            this.UrlInput5.Size = new System.Drawing.Size(288, 23);
+            this.UrlInput5.Size = new System.Drawing.Size(216, 19);
             this.UrlInput5.TabIndex = 5;
             this.UrlInput5.Text = "namedInput13";
             this.UrlInput5.TopPosition = 0;
@@ -517,14 +550,15 @@
             // EmailInput5
             // 
             this.EmailInput5.Editable = false;
-            this.EmailInput5.InputLeft = 100;
-            this.EmailInput5.InputSize = new System.Drawing.Size(185, 22);
+            this.EmailInput5.InputLeft = 75;
+            this.EmailInput5.InputSize = new System.Drawing.Size(140, 20);
             this.EmailInput5.InputText = "";
             this.EmailInput5.LabelLeft = 0;
             this.EmailInput5.LabelText = "Email:";
-            this.EmailInput5.Location = new System.Drawing.Point(6, 79);
+            this.EmailInput5.Location = new System.Drawing.Point(4, 64);
+            this.EmailInput5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.EmailInput5.Name = "EmailInput5";
-            this.EmailInput5.Size = new System.Drawing.Size(288, 23);
+            this.EmailInput5.Size = new System.Drawing.Size(216, 19);
             this.EmailInput5.TabIndex = 4;
             this.EmailInput5.Text = "namedInput1";
             this.EmailInput5.TopPosition = 0;
@@ -532,14 +566,15 @@
             // NameInput5
             // 
             this.NameInput5.Editable = false;
-            this.NameInput5.InputLeft = 100;
-            this.NameInput5.InputSize = new System.Drawing.Size(185, 22);
+            this.NameInput5.InputLeft = 75;
+            this.NameInput5.InputSize = new System.Drawing.Size(140, 20);
             this.NameInput5.InputText = "";
             this.NameInput5.LabelLeft = 0;
             this.NameInput5.LabelText = "Name:";
-            this.NameInput5.Location = new System.Drawing.Point(6, 50);
+            this.NameInput5.Location = new System.Drawing.Point(4, 41);
+            this.NameInput5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.NameInput5.Name = "NameInput5";
-            this.NameInput5.Size = new System.Drawing.Size(288, 23);
+            this.NameInput5.Size = new System.Drawing.Size(216, 19);
             this.NameInput5.TabIndex = 3;
             this.NameInput5.Text = "namedInput1";
             this.NameInput5.TopPosition = 0;
@@ -547,23 +582,25 @@
             // SurnameInput5
             // 
             this.SurnameInput5.Editable = false;
-            this.SurnameInput5.InputLeft = 100;
-            this.SurnameInput5.InputSize = new System.Drawing.Size(185, 22);
+            this.SurnameInput5.InputLeft = 75;
+            this.SurnameInput5.InputSize = new System.Drawing.Size(140, 20);
             this.SurnameInput5.InputText = "";
             this.SurnameInput5.LabelLeft = 0;
             this.SurnameInput5.LabelText = "Surname:";
-            this.SurnameInput5.Location = new System.Drawing.Point(6, 21);
+            this.SurnameInput5.Location = new System.Drawing.Point(4, 17);
+            this.SurnameInput5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SurnameInput5.Name = "SurnameInput5";
-            this.SurnameInput5.Size = new System.Drawing.Size(288, 23);
+            this.SurnameInput5.Size = new System.Drawing.Size(216, 19);
             this.SurnameInput5.TabIndex = 2;
             this.SurnameInput5.Text = "namedInput1";
             this.SurnameInput5.TopPosition = 0;
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(12, 618);
+            this.StartButton.Location = new System.Drawing.Point(9, 644);
+            this.StartButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(375, 42);
+            this.StartButton.Size = new System.Drawing.Size(281, 34);
             this.StartButton.TabIndex = 11;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -571,9 +608,10 @@
             // 
             // PauseButton
             // 
-            this.PauseButton.Location = new System.Drawing.Point(393, 618);
+            this.PauseButton.Location = new System.Drawing.Point(295, 644);
+            this.PauseButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.PauseButton.Name = "PauseButton";
-            this.PauseButton.Size = new System.Drawing.Size(375, 42);
+            this.PauseButton.Size = new System.Drawing.Size(281, 34);
             this.PauseButton.TabIndex = 12;
             this.PauseButton.Text = "Pause";
             this.PauseButton.UseVisualStyleBackColor = true;
@@ -581,9 +619,10 @@
             // 
             // ObserveOrdersListButton
             // 
-            this.ObserveOrdersListButton.Location = new System.Drawing.Point(774, 618);
+            this.ObserveOrdersListButton.Location = new System.Drawing.Point(580, 644);
+            this.ObserveOrdersListButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ObserveOrdersListButton.Name = "ObserveOrdersListButton";
-            this.ObserveOrdersListButton.Size = new System.Drawing.Size(375, 42);
+            this.ObserveOrdersListButton.Size = new System.Drawing.Size(281, 34);
             this.ObserveOrdersListButton.TabIndex = 13;
             this.ObserveOrdersListButton.Text = "Observe Orders List";
             this.ObserveOrdersListButton.UseVisualStyleBackColor = true;
@@ -591,9 +630,10 @@
             // 
             // AddOrderButton
             // 
-            this.AddOrderButton.Location = new System.Drawing.Point(1155, 618);
+            this.AddOrderButton.Location = new System.Drawing.Point(866, 644);
+            this.AddOrderButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AddOrderButton.Name = "AddOrderButton";
-            this.AddOrderButton.Size = new System.Drawing.Size(381, 42);
+            this.AddOrderButton.Size = new System.Drawing.Size(286, 34);
             this.AddOrderButton.TabIndex = 14;
             this.AddOrderButton.Text = "Add Order";
             this.AddOrderButton.UseVisualStyleBackColor = true;
@@ -601,9 +641,9 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1547, 804);
+            this.ClientSize = new System.Drawing.Size(1779, 861);
             this.Controls.Add(this.AddOrderButton);
             this.Controls.Add(this.ObserveOrdersListButton);
             this.Controls.Add(this.PauseButton);
@@ -619,6 +659,7 @@
             this.Controls.Add(this.BrowserPanel2);
             this.Controls.Add(this.BrowserPanel3);
             this.Controls.Add(this.BrowserPanel1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";

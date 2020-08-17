@@ -23,11 +23,12 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "reserved.txt"
         );
 
-        private const int FREE_BROWSER_SCAN_DELAY = 500;
+        private const int FREE_BROWSER_SCAN_DELAY = 100;
 
         private const int BROWSERS_COUNT = 5;
         private ReserverWebView[] Browsers { get; set; }
         private ReserverInfoView[] Infos { get; set; }
+        private Panel[] BrowserWrappers { get; set; }
 
         private List<ReservationOrder> Orders { get; set; }
 
@@ -54,21 +55,24 @@ namespace PassportMeetReservator
                 BrowserInfo4, BrowserInfo5
             };
 
+            BrowserWrappers = new Panel[BROWSERS_COUNT]
+            {
+                BrowserPanel1, BrowserPanel2, BrowserPanel3,
+                BrowserPanel4, BrowserPanel5
+            };
+
             for (int i = 0; i < BROWSERS_COUNT; ++i)
             {
                 Browsers[i].Number = i;
                 Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
                 Browsers[i].OnOrderChanged += Browser_OnOrderChanged;
-            }
 
-            Browser1.BodyHandle = BrowserPanel1.Handle;
-            Browser2.BodyHandle = BrowserPanel2.Handle;
-            Browser3.BodyHandle = BrowserPanel3.Handle;
-            Browser4.BodyHandle = BrowserPanel4.Handle;
-            Browser5.BodyHandle = BrowserPanel5.Handle;
+                Browsers[i].Size = BrowserWrappers[i].Size;
+                BrowserWrappers[i].Controls.Add(Browsers[i]);
+            }
         }
 
-        private void Browser_OnOrderChanged(object sender, OrderChangedEventArgs e)
+        private void Browser_OnOrderChanged(object sender, OrderEventArgs e)
         {
             ReserverWebView browser = sender as ReserverWebView;
             ReserverInfoView info = Infos[browser.Number];

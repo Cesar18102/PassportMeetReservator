@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using PassportMeetReservator.Data;
-using System.Drawing;
+using PassportMeetReservator.Controls;
 
 namespace PassportMeetReservator.Forms
 {
@@ -19,9 +19,6 @@ namespace PassportMeetReservator.Forms
         }
 
         private const int ROW_HEIGHT = 30;
-        private const string DELETE_BUTTON_TEXT = "DELETE";
-
-        private static Size DELETE_BUTTON_SIZE = new Size(100, 25);
 
         public void InitList()
         {
@@ -29,29 +26,41 @@ namespace PassportMeetReservator.Forms
 
             for(int i = 0; i < Orders.Count; ++i)
             {
-                Button orderDeleteButton = new Button();
+                OrderListItemView orderInfoView = new OrderListItemView(i, Orders[i]);
+                orderInfoView.Top = ROW_HEIGHT * i;
 
-                orderDeleteButton.Top = ROW_HEIGHT * i;
-                orderDeleteButton.Left = OrderListWrapper.Width - DELETE_BUTTON_SIZE.Width;
-                orderDeleteButton.Size = DELETE_BUTTON_SIZE;
-                orderDeleteButton.Text = DELETE_BUTTON_TEXT;
-
-                int temp = i;
-                orderDeleteButton.Click += (sender, e) =>
+                orderInfoView.OnOrderDeleted += (sender, e) =>
                 {
-                    Orders.RemoveAt(temp);
+                    Orders.RemoveAt(e.Number);
                     InitList();
                 };
 
-                Label orderInfoLabel = new Label();
+                orderInfoView.OnOrderUp += (sender, e) =>
+                {
+                    if (MoveOrder(e.Number, e.Number - 1))
+                        InitList();
+                };
 
-                orderInfoLabel.AutoSize = true;
-                orderInfoLabel.Text = $"{Orders[i].Surname} {Orders[i].Name}; {Orders[i].Email}";
-                orderInfoLabel.Top = ROW_HEIGHT * i + (orderDeleteButton.Height - orderInfoLabel.Height);
+                orderInfoView.OnOrderDown += (sender, e) =>
+                {
+                    if (MoveOrder(e.Number, e.Number + 1))
+                        InitList();
+                };
 
-                OrderListWrapper.Controls.Add(orderInfoLabel);
-                OrderListWrapper.Controls.Add(orderDeleteButton);
+                OrderListWrapper.Controls.Add(orderInfoView);
             }
+        }
+
+        private bool MoveOrder(int from, int to)
+        {
+            if (to < 0 || to > Orders.Count)
+                return false;
+
+            ReservationOrder order = Orders[from];
+            Orders.RemoveAt(from);
+            Orders.Insert(to, order);
+
+            return true;
         }
     }
 }

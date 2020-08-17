@@ -33,7 +33,8 @@
             this.EmailInput = new PassportMeetReservator.Controls.NamedInput();
             this.OrderTypeLabel = new System.Windows.Forms.Label();
             this.OrderTypeSelector = new System.Windows.Forms.ComboBox();
-            this.AddOrderButton = new System.Windows.Forms.Button();
+            this.AddFirstButton = new System.Windows.Forms.Button();
+            this.AddLastButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // SurnameInput
@@ -110,22 +111,33 @@
             this.OrderTypeSelector.Size = new System.Drawing.Size(233, 24);
             this.OrderTypeSelector.TabIndex = 4;
             // 
-            // AddOrderButton
+            // AddFirstButton
             // 
-            this.AddOrderButton.Location = new System.Drawing.Point(12, 131);
-            this.AddOrderButton.Name = "AddOrderButton";
-            this.AddOrderButton.Size = new System.Drawing.Size(384, 23);
-            this.AddOrderButton.TabIndex = 5;
-            this.AddOrderButton.Text = "Add Order";
-            this.AddOrderButton.UseVisualStyleBackColor = true;
-            this.AddOrderButton.Click += new System.EventHandler(this.AddOrderButton_Click);
+            this.AddFirstButton.Location = new System.Drawing.Point(12, 131);
+            this.AddFirstButton.Name = "AddFirstButton";
+            this.AddFirstButton.Size = new System.Drawing.Size(188, 23);
+            this.AddFirstButton.TabIndex = 5;
+            this.AddFirstButton.Text = "Add First";
+            this.AddFirstButton.UseVisualStyleBackColor = true;
+            this.AddFirstButton.Click += new System.EventHandler(this.AddFirstButton_Click);
+            // 
+            // AddLastButton
+            // 
+            this.AddLastButton.Location = new System.Drawing.Point(206, 131);
+            this.AddLastButton.Name = "AddLastButton";
+            this.AddLastButton.Size = new System.Drawing.Size(190, 23);
+            this.AddLastButton.TabIndex = 6;
+            this.AddLastButton.Text = "Add Last";
+            this.AddLastButton.UseVisualStyleBackColor = true;
+            this.AddLastButton.Click += new System.EventHandler(this.AddLastButton_Click);
             // 
             // AddOrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(408, 162);
-            this.Controls.Add(this.AddOrderButton);
+            this.Controls.Add(this.AddLastButton);
+            this.Controls.Add(this.AddFirstButton);
             this.Controls.Add(this.OrderTypeSelector);
             this.Controls.Add(this.OrderTypeLabel);
             this.Controls.Add(this.EmailInput);
@@ -146,6 +158,7 @@
         private Controls.NamedInput EmailInput;
         private System.Windows.Forms.Label OrderTypeLabel;
         private System.Windows.Forms.ComboBox OrderTypeSelector;
-        private System.Windows.Forms.Button AddOrderButton;
+        private System.Windows.Forms.Button AddFirstButton;
+        private System.Windows.Forms.Button AddLastButton;
     }
 }

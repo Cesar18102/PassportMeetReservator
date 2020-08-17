@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 
+using CefSharp;
+using CefSharp.WinForms;
+
 namespace PassportMeetReservator
 {
     static class Program
@@ -11,6 +14,11 @@ namespace PassportMeetReservator
         [STAThread]
         static void Main()
         {
+            var settings = new CefSettings();
+            settings.BrowserSubprocessPath = Environment.CurrentDirectory + "/x86/CefSharp.BrowserSubprocess.exe";
+
+            Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
