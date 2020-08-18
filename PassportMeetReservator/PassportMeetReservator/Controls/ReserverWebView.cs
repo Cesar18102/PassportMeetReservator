@@ -18,8 +18,6 @@ namespace PassportMeetReservator.Controls
         public event EventHandler<OrderEventArgs> OnOrderChanged;
         public event EventHandler<BrowserPausedChangedEventArgs> OnPausedChanged;
 
-        private const int WAIT_DELAY = 100;//700
-        private const int UPDATE_DELAY = 100;
         private const string INIT_URL = "https://rejestracjapoznan.poznan.uw.gov.pl/";
 
         private const string RESERVATION_TYPE_BUTTON_CLASS = "operation-button";
@@ -78,6 +76,7 @@ namespace PassportMeetReservator.Controls
         public int Number { get; set; }
         public bool IsBusy { get; private set; }
 
+        public DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
 
         [Obsolete]
@@ -136,7 +135,7 @@ namespace PassportMeetReservator.Controls
 
             while (true)
             {
-                await Task.Delay(UPDATE_DELAY);
+                await Task.Delay(DelayInfo.BrowserIterationDelay);
 
                 if (Paused)
                     continue;
@@ -162,7 +161,7 @@ namespace PassportMeetReservator.Controls
             //SELECT ORDER TYPE
 
             await WaitForView(CALENDAR_CLASS);
-            await Task.Delay(WAIT_DELAY);
+            await Task.Delay(DelayInfo.ActionResultDelay);
 
             int activeDatesCount = await GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
 
@@ -183,7 +182,7 @@ namespace PassportMeetReservator.Controls
             //SELECT DATE
 
             await WaitForView(TIME_SELECTOR_CLASS);
-            await Task.Delay(WAIT_DELAY);
+            await Task.Delay(DelayInfo.ActionResultDelay);
 
             if (!await SelectValue(TIME_SELECTOR_CLASS, Number))
                 return false;
@@ -191,7 +190,7 @@ namespace PassportMeetReservator.Controls
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT TIME
 
-            await Task.Delay(WAIT_DELAY);
+            await Task.Delay(DelayInfo.ActionResultDelay);
 
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
                 return false;
@@ -202,7 +201,7 @@ namespace PassportMeetReservator.Controls
             //SAME TIME ERROR
 
             await WaitForView(INPUT_CLASS);
-            await Task.Delay(WAIT_DELAY);
+            await Task.Delay(DelayInfo.ActionResultDelay);
 
             await ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
             if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname))
@@ -231,7 +230,7 @@ namespace PassportMeetReservator.Controls
             this.AddressChanged += ReserverWebView_UrlChanged;
 
             await WaitForView(ACCEPT_TICK_CLASS);
-            await Task.Delay(WAIT_DELAY);
+            await Task.Delay(DelayInfo.ActionResultDelay);
 
             await ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
             await ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);

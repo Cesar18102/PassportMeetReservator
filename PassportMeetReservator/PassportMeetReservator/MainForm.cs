@@ -27,7 +27,9 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "schedule.json"
         );
 
-        private const int FREE_BROWSER_SCAN_DELAY = 100;
+        private static string DELAY_SETTINGS_FILE_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "delay_settings.json"
+        );
 
         private const int BROWSERS_COUNT = 5;
         private ReserverWebView[] Browsers { get; set; }
@@ -41,10 +43,14 @@ namespace PassportMeetReservator
         private List<ReservationOrder> Orders { get; set; }
         private List<ReservedInfo> Reserved { get; set; }
         private BootSchedule Schedule { get; set; }
+        private DelayInfo DelayInfo { get; set; }
 
         public MainForm()
         {
             InitializeComponent();
+
+            DelayInfo = LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
+
             InitBrowsers();
 
             Orders = LoadData<List<ReservationOrder>>(DATA_FILE_PATH);
@@ -99,6 +105,7 @@ namespace PassportMeetReservator
                 Browsers[i].OnOrderChanged += Browser_OnOrderChanged;
                 Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
                 Browsers[i].OnReserved += Browser_OnReserved;
+                Browsers[i].DelayInfo = DelayInfo;
 
                 Browsers[i].Size = BrowserWrappers[i].Size;
                 BrowserWrappers[i].Controls.Add(Browsers[i]);
@@ -255,7 +262,7 @@ namespace PassportMeetReservator
         {
             while(true)
             {
-                await Task.Delay(FREE_BROWSER_SCAN_DELAY);
+                await Task.Delay(DelayInfo.OrderLoadingIterationDelay);
                 ReserveIteration(orders);
             }
         }
@@ -372,6 +379,14 @@ namespace PassportMeetReservator
                 browser.Schedule = null;
 
             Log("Schedule detached. Manual control");
+        }
+
+        private void DelaySettings_Click(object sender, EventArgs e)
+        {
+            DelayInfoForm delayInfoForm = new DelayInfoForm(DelayInfo);
+            delayInfoForm.ShowDialog();
+
+            SaveData(DELAY_SETTINGS_FILE_PATH, DelayInfo);
         }
 
         private void ResetBrowserOrderBinding()
