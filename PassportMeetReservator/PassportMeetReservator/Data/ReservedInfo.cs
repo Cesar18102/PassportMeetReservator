@@ -2,12 +2,12 @@
 {
     public class ReservedInfo
     {
-        public ReservationOrder Order { get; private set; }
+       // public ReservationOrder Order { get; private set; }
         public string Url { get; private set; }
 
-        public ReservedInfo(ReservationOrder order, string url)
+        public ReservedInfo( string url)
         {
-            Order = order;
+           // Order = order;
             Url = url;
         }
     }

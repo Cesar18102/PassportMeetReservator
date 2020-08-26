@@ -48,11 +48,11 @@ namespace PassportMeetReservator.Forms
             if (Reserved.Count == 0)
                 return;
 
-            IEnumerable<string> infos = Reserved.Select(
+           /* IEnumerable<string> infos = Reserved.Select(
                 reserved => $"{reserved.Order.Surname} {reserved.Order.Name} {reserved.Url}"
             );
 
-            Clipboard.SetText(string.Join("\n", infos));
+            Clipboard.SetText(string.Join("\n", infos));*/
         }
     }
 }

@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="Data\BootPeriod.cs" />
     <Compile Include="Data\DelayInfo.cs" />
+    <Compile Include="Data\LogEventArgs.cs" />
     <Compile Include="Data\NumberEventArgs.cs" />
     <Compile Include="Data\BootSchedule.cs" />
     <Compile Include="Data\BrowserPausedChangedEventArgs.cs" />

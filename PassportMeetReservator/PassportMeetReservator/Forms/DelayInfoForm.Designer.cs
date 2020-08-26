@@ -43,19 +43,17 @@
             // OrderLoadingDelayLabel
             // 
             this.OrderLoadingDelayLabel.AutoSize = true;
-            this.OrderLoadingDelayLabel.Location = new System.Drawing.Point(16, 17);
-            this.OrderLoadingDelayLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.OrderLoadingDelayLabel.Location = new System.Drawing.Point(12, 14);
             this.OrderLoadingDelayLabel.Name = "OrderLoadingDelayLabel";
-            this.OrderLoadingDelayLabel.Size = new System.Drawing.Size(136, 16);
+            this.OrderLoadingDelayLabel.Size = new System.Drawing.Size(107, 13);
             this.OrderLoadingDelayLabel.TabIndex = 0;
             this.OrderLoadingDelayLabel.Text = "Order Loading Delay:";
             // 
             // OrderLoadingDelay
             // 
-            this.OrderLoadingDelay.Location = new System.Drawing.Point(204, 15);
-            this.OrderLoadingDelay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OrderLoadingDelay.Location = new System.Drawing.Point(153, 12);
             this.OrderLoadingDelay.Maximum = new decimal(new int[] {
-            1000,
+            100000,
             0,
             0,
             0});
@@ -65,7 +63,7 @@
             0,
             0});
             this.OrderLoadingDelay.Name = "OrderLoadingDelay";
-            this.OrderLoadingDelay.Size = new System.Drawing.Size(160, 22);
+            this.OrderLoadingDelay.Size = new System.Drawing.Size(120, 20);
             this.OrderLoadingDelay.TabIndex = 1;
             this.OrderLoadingDelay.Value = new decimal(new int[] {
             10,
@@ -75,10 +73,9 @@
             // 
             // BrowserIterationDelay
             // 
-            this.BrowserIterationDelay.Location = new System.Drawing.Point(203, 47);
-            this.BrowserIterationDelay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BrowserIterationDelay.Location = new System.Drawing.Point(152, 38);
             this.BrowserIterationDelay.Maximum = new decimal(new int[] {
-            1000,
+            100000,
             0,
             0,
             0});
@@ -88,7 +85,7 @@
             0,
             0});
             this.BrowserIterationDelay.Name = "BrowserIterationDelay";
-            this.BrowserIterationDelay.Size = new System.Drawing.Size(160, 22);
+            this.BrowserIterationDelay.Size = new System.Drawing.Size(120, 20);
             this.BrowserIterationDelay.TabIndex = 3;
             this.BrowserIterationDelay.Value = new decimal(new int[] {
             10,
@@ -99,19 +96,17 @@
             // BrowserIterationDelayLabel
             // 
             this.BrowserIterationDelayLabel.AutoSize = true;
-            this.BrowserIterationDelayLabel.Location = new System.Drawing.Point(15, 49);
-            this.BrowserIterationDelayLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.BrowserIterationDelayLabel.Location = new System.Drawing.Point(11, 40);
             this.BrowserIterationDelayLabel.Name = "BrowserIterationDelayLabel";
-            this.BrowserIterationDelayLabel.Size = new System.Drawing.Size(149, 16);
+            this.BrowserIterationDelayLabel.Size = new System.Drawing.Size(119, 13);
             this.BrowserIterationDelayLabel.TabIndex = 2;
             this.BrowserIterationDelayLabel.Text = "Browser Iteration Delay:";
             // 
             // ActionResultDelay
             // 
-            this.ActionResultDelay.Location = new System.Drawing.Point(203, 79);
-            this.ActionResultDelay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ActionResultDelay.Location = new System.Drawing.Point(152, 64);
             this.ActionResultDelay.Maximum = new decimal(new int[] {
-            1000,
+            100000,
             0,
             0,
             0});
@@ -121,7 +116,7 @@
             0,
             0});
             this.ActionResultDelay.Name = "ActionResultDelay";
-            this.ActionResultDelay.Size = new System.Drawing.Size(160, 22);
+            this.ActionResultDelay.Size = new System.Drawing.Size(120, 20);
             this.ActionResultDelay.TabIndex = 5;
             this.ActionResultDelay.Value = new decimal(new int[] {
             10,
@@ -132,19 +127,17 @@
             // ActionResultDelayLabel
             // 
             this.ActionResultDelayLabel.AutoSize = true;
-            this.ActionResultDelayLabel.Location = new System.Drawing.Point(15, 81);
-            this.ActionResultDelayLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ActionResultDelayLabel.Location = new System.Drawing.Point(11, 66);
             this.ActionResultDelayLabel.Name = "ActionResultDelayLabel";
-            this.ActionResultDelayLabel.Size = new System.Drawing.Size(128, 16);
+            this.ActionResultDelayLabel.Size = new System.Drawing.Size(103, 13);
             this.ActionResultDelayLabel.TabIndex = 4;
             this.ActionResultDelayLabel.Text = "Action Result Delay:";
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(16, 111);
-            this.SaveButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SaveButton.Location = new System.Drawing.Point(12, 90);
             this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(347, 28);
+            this.SaveButton.Size = new System.Drawing.Size(260, 23);
             this.SaveButton.TabIndex = 6;
             this.SaveButton.Text = "SAVE";
             this.SaveButton.UseVisualStyleBackColor = true;
@@ -152,9 +145,9 @@
             // 
             // DelayInfoForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(379, 148);
+            this.ClientSize = new System.Drawing.Size(284, 120);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.ActionResultDelay);
             this.Controls.Add(this.ActionResultDelayLabel);
@@ -162,7 +155,6 @@
             this.Controls.Add(this.BrowserIterationDelayLabel);
             this.Controls.Add(this.OrderLoadingDelay);
             this.Controls.Add(this.OrderLoadingDelayLabel);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "DelayInfoForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DelayInfoForm";

@@ -17,6 +17,7 @@ namespace PassportMeetReservator.Controls
         public event EventHandler<UrlChangedEventArgs> OnUrlChanged;
         public event EventHandler<OrderEventArgs> OnOrderChanged;
         public event EventHandler<BrowserPausedChangedEventArgs> OnPausedChanged;
+        public event EventHandler<LogEventArgs> OnLogRequired;
 
         private const string INIT_URL = "https://rejestracjapoznan.poznan.uw.gov.pl/";
 
@@ -48,6 +49,8 @@ namespace PassportMeetReservator.Controls
         private CancellationToken Token { get; set; }
         private CancellationTokenSource TokenSource { get; set; }
 
+        public bool IsBusy { get; private set; }
+
         private bool paused = true;
         public bool Paused
         {
@@ -57,12 +60,12 @@ namespace PassportMeetReservator.Controls
                 if(paused != value)
                 {
                     paused = value;
-                    Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(Number, paused));
+                    Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(BrowserNumber, paused));
                 }
             }
         }
 
-        private ReservationOrder order = null;
+       /* private ReservationOrder order = null;
         public ReservationOrder Order
         {
             get => order; 
@@ -71,10 +74,14 @@ namespace PassportMeetReservator.Controls
                 order = value;
                 OnOrderChanged?.Invoke(this, new OrderEventArgs(Order));
             }
-        }
+        }*/
 
-        public int Number { get; set; }
-        public bool IsBusy { get; private set; }
+        public int BotNumber { get; set; }
+        public int BrowserNumber { get; set; }
+        public int BrowsersCount { get; set; }
+
+        public string Operation { get; set; }
+        public DateTime ReserveDate { get; set; }
 
         public DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
@@ -83,30 +90,36 @@ namespace PassportMeetReservator.Controls
         public ReserverWebView()
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
+            Scale(new System.Drawing.SizeF(0.5f, 0.5f));
         }
 
         public void Free()
         {
-            if (Order == null)
+            /*if (Order == null)
                 return;
 
             Order.Doing = false;
-            Order = null;
+            Order = null;*/
 
             IsBusy = false;
         }
 
         public void Reset()
         {
-            TokenSource.Cancel();
+            try
+            {
+                TokenSource.Cancel();
+                IsBusy = false;
+            }
+            catch (OperationCanceledException ex) { throw; }
         }
 
         public void Done()
         {
-            Invoke(OnReserved, this, new ReservedEventArgs(Address, Order));
+            Invoke(OnReserved, this, new ReservedEventArgs(Address));
 
-            Order.Done = true;
-            Order.Doing = false;
+           /* Order.Done = true;
+            Order.Doing = false;*/
             IsBusy = false;
 
             TokenSource.Cancel();
@@ -127,11 +140,11 @@ namespace PassportMeetReservator.Controls
 
         private async Task Init()
         {
-            if (Order == null || Order.Done)
-                return;
+           // if (Order == null || Order.Done)
+               // return;
 
             IsBusy = true;
-            Order.Doing = true;
+          //  Order.Doing = true;
 
             while (true)
             {
@@ -144,47 +157,43 @@ namespace PassportMeetReservator.Controls
                     continue;
 
                 if (await Iteration())
-                    break;
+                    await Task.Delay(1000000);
             }
 
-            Order.Done = true;
-            Order.Doing = false;
+           // Order.Done = true;
+            //Order.Doing = false;
             IsBusy = false;
+        }
+
+        private string GetFormattedDate(DateTime date)
+        {
+            string month = (date.Month < 10 ? "0" : "") + date.Month.ToString();
+            string day = (date.Day < 10 ? "0" : "") + date.Day.ToString();
+
+            return $"{date.Year}-{month}-{day}";
         }
 
         private async Task<bool> Iteration()
         {
             Load(INIT_URL);
 
-            await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Order.ReservationTypeText);
+            await Task.Delay(DelayInfo.ActionResultDelay);
+
+            await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Operation);
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT ORDER TYPE
 
             await WaitForView(CALENDAR_CLASS);
             await Task.Delay(DelayInfo.ActionResultDelay);
 
-            int activeDatesCount = await GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
-
-            if (activeDatesCount == 0)
-            {
-                await ClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
-                //await Task.Delay(WAIT_DELAY);
-
-                int activeDatesNextMonthCount = await GetCountOfViewsOfClass(DATE_CLASS, INACTIVE_DATE_CLASS);
-
-                if (activeDatesNextMonthCount == 0)
-                    return false;
-                else if (!await TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, activeDatesNextMonthCount), INACTIVE_DATE_CLASS))
-                    return false;
-            }
-            else if (!await TryClickViewOfClassWithNumber(DATE_CLASS, Random.Next(0, activeDatesCount), INACTIVE_DATE_CLASS))
-                return false;
+            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{GetFormattedDate(ReserveDate)}')[0].children[0].children[0].click()");
             //SELECT DATE
 
-            await WaitForView(TIME_SELECTOR_CLASS);
             await Task.Delay(DelayInfo.ActionResultDelay);
+            if (!await TryFindView(TIME_SELECTOR_CLASS))
+                return false;
 
-            if (!await SelectValue(TIME_SELECTOR_CLASS, Number))
+            if (!await SelectValue(TIME_SELECTOR_CLASS, BotNumber * BrowsersCount + BrowserNumber))
                 return false;
 
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
@@ -196,11 +205,8 @@ namespace PassportMeetReservator.Controls
                 return false;
             //CHECK TIME RESERVED ERROR
 
-            if(await TryClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Order.ReservationTypeText))
-                await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
-            //SAME TIME ERROR
-
-            await WaitForView(INPUT_CLASS);
+            return true;
+          /*  await WaitForView(INPUT_CLASS);
             await Task.Delay(DelayInfo.ActionResultDelay);
 
             await ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
@@ -236,12 +242,12 @@ namespace PassportMeetReservator.Controls
             await ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
             //ACCEPT
 
-            return true;
+            return true;*/
         }
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {
-            Invoke(OnReserved, this, new ReservedEventArgs(Address, Order));
+            Invoke(OnReserved, this, new ReservedEventArgs(Address));
             this.AddressChanged -= ReserverWebView_UrlChanged;
         }
 
@@ -305,7 +311,7 @@ namespace PassportMeetReservator.Controls
                     "found.length != 0;" +
                 "}"
             );
-
+            //return true;
             return (bool)result.Result;
         }
 
