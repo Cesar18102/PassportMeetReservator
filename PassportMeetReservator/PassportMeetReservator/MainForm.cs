@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,15 +11,12 @@ using Newtonsoft.Json;
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
+using PassportMeetReservator.Telegram;
 
 namespace PassportMeetReservator
 {
     public partial class MainForm : Form
     {
-        private static string DATA_FILE_PATH = Path.Combine(
-            Environment.CurrentDirectory, "Data", "orders.json"
-        );
-
         private static string OUTPUT_FILE_PATH = Path.Combine(
             Environment.CurrentDirectory, "Data", "reserved.txt"
         );
@@ -31,7 +29,7 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "delay_settings.json"
         );
 
-        private const int BROWSERS_COUNT = 10;
+        private const int BROWSERS_COUNT = 5;
         private ReserverWebView[] Browsers { get; set; }
         private ReserverInfoView[] Infos { get; set; }
         private Panel[] BrowserWrappers { get; set; }
@@ -40,10 +38,21 @@ namespace PassportMeetReservator
         private Button[] ResetButtons { get; set; }
         private Button[] DoneButtons { get; set; }
 
+        private ComboBox[] OperationSelectors { get; set; }
+        private DateTimePicker[] ReserveDates { get; set; }
+
         private List<ReservationOrder> Orders { get; set; }
         private List<ReservedInfo> Reserved { get; set; }
         private BootSchedule Schedule { get; set; }
         private DelayInfo DelayInfo { get; set; }
+
+        private Size NonZoomedSize { get; set; }
+        private Point NonZoomedLocation { get; set; }
+
+        private Panel ZoomedBrowserWrapper { get; set; }
+        private ReserverWebView ZoomedBrowser { get; set; }
+
+        private TelegramNotifier Notifier { get; set; } = new TelegramNotifier();
 
         public MainForm()
         {
@@ -53,7 +62,6 @@ namespace PassportMeetReservator
 
             InitBrowsers();
 
-            Orders = LoadData<List<ReservationOrder>>(DATA_FILE_PATH);
             Reserved = LoadData<List<ReservedInfo>>(OUTPUT_FILE_PATH);
             Schedule = LoadData<BootSchedule>(SCHEDULE_FILE_PATH);
 
@@ -65,60 +73,75 @@ namespace PassportMeetReservator
             Browsers = new ReserverWebView[BROWSERS_COUNT]
             {
                 Browser1, Browser2, Browser3, 
-                Browser4, Browser5, Browser6,
+                Browser4, Browser5/*, Browser6,
                 Browser7, Browser8, Browser9,
-                Browser10
+                Browser10*/
             };
 
             Infos = new ReserverInfoView[BROWSERS_COUNT]
             {
                 BrowserInfo1, BrowserInfo2, BrowserInfo3,
                 BrowserInfo4, BrowserInfo5, 
-                null, null, null, null, null
+                //null, null, null, null, null
             };
 
             BrowserWrappers = new Panel[BROWSERS_COUNT]
             {
                 BrowserPanel1, BrowserPanel2, BrowserPanel3,
-                BrowserPanel4, BrowserPanel5, BrowserPanel6,
+                BrowserPanel4, BrowserPanel5/*, BrowserPanel6,
                 BrowserPanel7, BrowserPanel8, BrowserPanel9,
-                BrowserPanel10
+                BrowserPanel10*/
             };
 
             PausedChangeButtons = new Button[BROWSERS_COUNT]
             {
                 PauseChangeButton1, PauseChangeButton2, PauseChangeButton3,
-                PauseChangeButton4, PauseChangeButton5, PauseChangeButton6,
+                PauseChangeButton4, PauseChangeButton5/*, PauseChangeButton6,
                 PauseChangeButton7, PauseChangeButton8, PauseChangeButton9,
-                PauseChangeButton10
+                PauseChangeButton10*/
             };
 
             ResetButtons = new Button[BROWSERS_COUNT]
             {
                 ResetButton1, ResetButton2, ResetButton3,
-                ResetButton4, ResetButton5, ResetButton6,
+                ResetButton4, ResetButton5/*, ResetButton6,
                 ResetButton7, ResetButton8, ResetButton9,
-                ResetButton10
+                ResetButton10*/
             };
 
             DoneButtons = new Button[BROWSERS_COUNT]
             {
                 DoneButton1, DoneButton2, DoneButton3,
-                DoneButton4, DoneButton5, DoneButton6,
+                DoneButton4, DoneButton5/*, DoneButton6,
                 DoneButton7, DoneButton8, DoneButton9,
-                DoneButton10
+                DoneButton10*/
+            };
+
+            OperationSelectors = new ComboBox[BROWSERS_COUNT]
+            {
+                OrderTypeSelector1, OrderTypeSelector2, OrderTypeSelector3,
+                OrderTypeSelector4, OrderTypeSelector5
+            };
+
+            ReserveDates = new DateTimePicker[BROWSERS_COUNT]
+            {
+                ReserveDate1, ReserveDate2, ReserveDate3,
+                ReserveDate4, ReserveDate5
             };
 
             for (int i = 0; i < BROWSERS_COUNT; ++i)
             {
                 Browsers[i].BrowserNumber = i;
                 Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
-                Browsers[i].OnOrderChanged += Browser_OnOrderChanged;
                 Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
                 Browsers[i].OnReserved += Browser_OnReserved;
+                Browsers[i].OnDateTimeSelected += MainForm_OnDateTimeSelected;
+                Browsers[i].OnManualReactionWaiting += MainForm_OnManualReactionWaiting;
                 Browsers[i].DelayInfo = DelayInfo;
 
                 Browsers[i].Size = BrowserWrappers[i].Size;
+                Browsers[i].BrowsersCount = BROWSERS_COUNT;
+
                 BrowserWrappers[i].Controls.Add(Browsers[i]);
 
                 PausedChangeButtons[i].Click += BrowserContinue_Click;
@@ -132,25 +155,13 @@ namespace PassportMeetReservator
             OrdersInfo.Text += $"{DateTime.Now.ToLongTimeString()}: {text}\n";
         }
 
-       /* private int FindBrowserNumberByOrder(ReservationOrder order)
+        private int FindBrowserNumberByInfoControl(Control[] controls, Control control)
         {
-            if (order == null)
+            if (control == null)
                 return -1;
 
-            for (int i = 0; i < Browsers.Length; ++i)
-                if (Browsers[i].Order.Equals(order))
-                    return i;
-
-            return -1;
-        }*/
-
-        private int FindBrowserNumberByButton(Button[] buttons, Button find)
-        {
-            if (find == null)
-                return -1;
-
-            for (int i = 0; i < buttons.Length; ++i)
-                if (buttons[i].Equals(find))
+            for (int i = 0; i < controls.Length; ++i)
+                if (controls[i].Equals(control))
                     return i;
 
             return -1;
@@ -158,7 +169,7 @@ namespace PassportMeetReservator
 
         private void HandlePausedChangeButtonClick(bool paused, Button sender)
         {
-            int browser = FindBrowserNumberByButton(PausedChangeButtons, sender);
+            int browser = FindBrowserNumberByInfoControl(PausedChangeButtons, sender);
 
             if (browser == -1)
                 return;
@@ -166,35 +177,67 @@ namespace PassportMeetReservator
             Browsers[browser].Paused = paused;
         }
 
-        private void Browser_OnReserved(object sender, ReservedEventArgs e)
+        private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
         {
+            if (!string.IsNullOrEmpty(LogChatId.InputText))
+                await Notifier.NotifyMessage("Чекаю на заповення форми", LogChatId.InputText);
+        }
+
+        private async void MainForm_OnDateTimeSelected(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(LogChatId.InputText))
+                await Notifier.NotifyMessage("Злапав дату", LogChatId.InputText);
+        }
+
+        private async void Browser_OnReserved(object sender, ReservedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(LogChatId.InputText))
+                await Notifier.NotifyMessage(e.Url, LogChatId.InputText);
+
             Reserved.Add(new ReservedInfo(e.Url));
             SaveData(OUTPUT_FILE_PATH, Reserved);
 
             Log($"Link: {e.Url}");
-            HandleBusyChange();
         }
 
         private void DoneButton_Click(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByButton(DoneButtons, sender as Button);
+            int browser = FindBrowserNumberByInfoControl(DoneButtons, sender as Button);
 
             if (browser == -1)
                 return;
 
             Browsers[browser].Done();
-            HandleBusyChange();
         }
 
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByButton(ResetButtons, sender as Button);
+            int browser = FindBrowserNumberByInfoControl(ResetButtons, sender as Button);
 
             if (browser == -1)
                 return;
 
             Browsers[browser].Reset();
-            HandleBusyChange();
+        }
+
+        private void OrderTypeSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int browser = FindBrowserNumberByInfoControl(OperationSelectors, sender as ComboBox);
+
+            if (browser == -1)
+                return;
+
+            Browsers[browser].Operation = (sender as ComboBox).SelectedItem.ToString();
+        }
+
+        private void ReserveDate_ValueChanged(object sender, EventArgs e)
+        {
+            int browser = FindBrowserNumberByInfoControl(ReserveDates, sender as DateTimePicker);
+
+            if (browser == -1)
+                return;
+
+            Browsers[browser].ReserveDate = (sender as DateTimePicker).Value;
         }
 
         private void BrowserContinue_Click(object sender, EventArgs e)
@@ -211,8 +254,6 @@ namespace PassportMeetReservator
         {
             if(e.Paused)
             {
-                HandleBusyChange();
-
                 PausedChangeButtons[e.BrowserNumber].Text = "Continue";
                 PausedChangeButtons[e.BrowserNumber].Click -= BrowserPause_Click;
                 PausedChangeButtons[e.BrowserNumber].Click += BrowserContinue_Click;
@@ -221,8 +262,6 @@ namespace PassportMeetReservator
             }
             else
             {
-                HandleBusyChange();
-
                 PausedChangeButtons[e.BrowserNumber].Text = "Pause";
                 PausedChangeButtons[e.BrowserNumber].Click -= BrowserContinue_Click;
                 PausedChangeButtons[e.BrowserNumber].Click += BrowserPause_Click;
@@ -231,20 +270,10 @@ namespace PassportMeetReservator
             }
         }
 
-        private void Browser_OnOrderChanged(object sender, OrderEventArgs e)
-        {
-            ReserverWebView browser = sender as ReserverWebView;
-            ReserverInfoView info = Infos[browser.BrowserNumber];
-
-            info.SurnameInput.InputText = e.Order?.Surname;
-            info.NameInput.InputText = e.Order?.Name;
-            info.EmailInput.InputText = e.Order?.Email;
-        }
-
         private void Browser_OnUrlChanged(object sender, UrlChangedEventArgs e)
         {
             ReserverWebView browser = sender as ReserverWebView;
-            //Infos[browser.BrowserNumber].UrlInput.InputText = e.Url;
+            Infos[browser.BrowserNumber].UrlInput.InputText = e.Url;
         }
 
         private T LoadData<T>(string filename) where T : new()
@@ -280,21 +309,12 @@ namespace PassportMeetReservator
 
         private void ReserveIteration(List<ReservationOrder> orders)
         {
-           /* foreach (ReservationOrder order in orders)
-            {
-                if (order.Done || order.Doing)
-                    continue;*/
+            ReserverWebView browser = GetFirstFreeBrowser();
 
-                ReserverWebView browser = GetFirstFreeBrowser();
+            if (browser == null)
+                return;
 
-                if (browser == null)
-                    return;
-
-                //Log($"{order.ToString()} is on the {browser.Number} browser");
-
-               // browser.Order = order;
-                browser.Start();
-           // }
+            browser.Start();
         }
 
         private ReserverWebView GetFirstFreeBrowser()
@@ -302,20 +322,10 @@ namespace PassportMeetReservator
             return Browsers.FirstOrDefault(browser => !browser.IsBusy);
         }
 
-        private void HandleBusyChange()
-        {
-            bool changesAllowed = Browsers.All(browser => !browser.IsBusy || browser.Paused);
-
-            ObserveOrdersListButton.Enabled = changesAllowed;
-            AddOrderButton.Enabled = changesAllowed;
-        }
-
         private void StartButton_Click(object sender, EventArgs e)
         {
             foreach (ReserverWebView browser in Browsers)
                 browser.Paused = false;
-
-            HandleBusyChange();
 
             Log("All browsers started");
         }
@@ -325,30 +335,7 @@ namespace PassportMeetReservator
             foreach (ReserverWebView browser in Browsers)
                 browser.Paused = true;
 
-            HandleBusyChange();
-
             Log("All browsers paused");
-        }
-
-        private void ObserveOrdersListButton_Click(object sender, EventArgs e)
-        {
-            OrderListObserverForm observerForm = new OrderListObserverForm(Orders);
-            observerForm.ShowDialog();
-
-            SaveData(DATA_FILE_PATH, Orders);
-            ResetBrowserOrderBinding();
-
-            Log("Orders updated and saved");
-        }
-
-        private void AddOrderButton_Click(object sender, EventArgs e)
-        {
-            AddOrderForm addOrderForm = new AddOrderForm(Orders);
-            addOrderForm.ShowDialog();
-
-            SaveData(DATA_FILE_PATH, Orders);
-
-            Log("Order added and saved");
         }
 
         private void ReservedListButton_Click(object sender, EventArgs e)
@@ -379,8 +366,6 @@ namespace PassportMeetReservator
                 browser.Paused = false;
             }
 
-            HandleBusyChange();
-
             Log("All browsers started scheduled");
         }
 
@@ -408,20 +393,12 @@ namespace PassportMeetReservator
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //ask for removing?
             Orders.RemoveAll(order => order.Done);
 
-            SaveData(DATA_FILE_PATH, Orders);
             SaveData(OUTPUT_FILE_PATH, Reserved);
             SaveData(SCHEDULE_FILE_PATH, Schedule);
 
             Log("ALL Saved");
-        }
-
-        private void OrderTypeSelector_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            for (int i = 0; i < Browsers.Length; ++i)
-                Browsers[i].Operation = OrderTypeSelector.SelectedItem.ToString();
         }
 
         private void BotNumber_ValueChanged(object sender, EventArgs e)
@@ -430,10 +407,55 @@ namespace PassportMeetReservator
                 Browsers[i].BotNumber = (int)BotNumber.Value;
         }
 
-        private void ReserveDate_ValueChanged(object sender, EventArgs e)
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            for (int i = 0; i < Browsers.Length; ++i)
-                Browsers[i].ReserveDate = ReserveDate.Value;
+            if (e.KeyCode == Keys.Escape)
+                ResetZoom();
+            else if (e.KeyCode >= Keys.D1 && e.KeyCode < Keys.D1 + BROWSERS_COUNT)
+            {
+                ResetZoom();
+                ZoomBrowser(e.KeyCode - Keys.D1);
+            }
+        }
+
+        private void ZoomBrowser(int browser)
+        {
+            ZoomedBrowser = Browsers[browser];
+            ZoomedBrowserWrapper = BrowserWrappers[browser];
+
+            NonZoomedSize = ZoomedBrowserWrapper.Size;
+            NonZoomedLocation = ZoomedBrowserWrapper.Location;
+
+            ZoomedBrowser.Size = new Size(this.Width, this.Height);
+
+            ZoomedBrowserWrapper.Location = new Point(0, 0);
+            ZoomedBrowserWrapper.Size = new Size(this.Width, this.Height);
+
+            ZoomedBrowserWrapper.BringToFront();
+        }
+
+        private void ResetZoom()
+        {
+            if (ZoomedBrowserWrapper != null)
+            {
+                ZoomedBrowserWrapper.Size = NonZoomedSize;
+                ZoomedBrowserWrapper.Location = NonZoomedLocation;
+            }
+
+            if (ZoomedBrowser != null)
+                ZoomedBrowser.Size = NonZoomedSize;
+        }
+
+        private void OrderTypeSelector_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            foreach (ComboBox orderTypeSelector in OperationSelectors)
+                orderTypeSelector.SelectedIndex = OrderTypeSelector.SelectedIndex;
+        }
+
+        private void ReserveDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            foreach (DateTimePicker reserveDatePicker in ReserveDates)
+                reserveDatePicker.Value = ReserveDatePicker.Value;
         }
     }
 }

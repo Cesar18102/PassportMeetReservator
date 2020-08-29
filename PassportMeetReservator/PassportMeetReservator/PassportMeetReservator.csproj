@@ -51,6 +51,9 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="RestSharp, Version=106.11.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.11.4\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -60,6 +63,7 @@
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -103,12 +107,6 @@
     <Compile Include="Data\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\UrlChangedEventArgs.cs" />
-    <Compile Include="Forms\AddOrderForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AddOrderForm.Designer.cs">
-      <DependentUpon>AddOrderForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\BootScheduleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,18 +118,6 @@
     </Compile>
     <Compile Include="Forms\DelayInfoForm.Designer.cs">
       <DependentUpon>DelayInfoForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\EditOrderForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\EditOrderForm.Designer.cs">
-      <DependentUpon>EditOrderForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\OrderListObserverForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\OrderListObserverForm.Designer.cs">
-      <DependentUpon>OrderListObserverForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ReservedListForm.cs">
       <SubType>Form</SubType>
@@ -145,22 +131,14 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\OrderListItemView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\OrderListItemView.Designer.cs">
-      <DependentUpon>OrderListItemView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Telegram\TelegramNotifier.cs" />
     <EmbeddedResource Include="Controls\BootPeriodView.resx">
       <DependentUpon>BootPeriodView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ReservedListItemView.resx">
       <DependentUpon>ReservedListItemView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddOrderForm.resx">
-      <DependentUpon>AddOrderForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BootScheduleForm.resx">
       <DependentUpon>BootScheduleForm.cs</DependentUpon>
@@ -168,20 +146,11 @@
     <EmbeddedResource Include="Forms\DelayInfoForm.resx">
       <DependentUpon>DelayInfoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditOrderForm.resx">
-      <DependentUpon>EditOrderForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\OrderListObserverForm.resx">
-      <DependentUpon>OrderListObserverForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ReservedListForm.resx">
       <DependentUpon>ReservedListForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\OrderListItemView.resx">
-      <DependentUpon>OrderListItemView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

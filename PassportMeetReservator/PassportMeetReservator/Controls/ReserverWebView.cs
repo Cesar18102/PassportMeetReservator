@@ -11,13 +11,12 @@ namespace PassportMeetReservator.Controls
 {
     public class ReserverWebView : ChromiumWebBrowser
     {
-        private Random Random = new Random();
-
         public event EventHandler<ReservedEventArgs> OnReserved;
         public event EventHandler<UrlChangedEventArgs> OnUrlChanged;
-        public event EventHandler<OrderEventArgs> OnOrderChanged;
         public event EventHandler<BrowserPausedChangedEventArgs> OnPausedChanged;
-        public event EventHandler<LogEventArgs> OnLogRequired;
+
+        public event EventHandler<EventArgs> OnDateTimeSelected;
+        public event EventHandler<EventArgs> OnManualReactionWaiting;
 
         private const string INIT_URL = "https://rejestracjapoznan.poznan.uw.gov.pl/";
 
@@ -45,6 +44,9 @@ namespace PassportMeetReservator.Controls
         private const string FAILED_RESERVE_TIME_CLASS = "alert alert-danger";
         private const string FAILED_RESERVE_TIME_TEXT = "Niestety wybrana data jest już zarezerwowana, prosimy wybrać inną.";
 
+        private const string CONTINUE_RESERVATION_BUTTON_CLASS = "btn btn-success btn-lg btn-block";
+        private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
+
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
         private CancellationTokenSource TokenSource { get; set; }
@@ -65,18 +67,8 @@ namespace PassportMeetReservator.Controls
             }
         }
 
-       /* private ReservationOrder order = null;
-        public ReservationOrder Order
-        {
-            get => order; 
-            set
-            {
-                order = value;
-                OnOrderChanged?.Invoke(this, new OrderEventArgs(Order));
-            }
-        }*/
-
         public int BotNumber { get; set; }
+
         public int BrowserNumber { get; set; }
         public int BrowsersCount { get; set; }
 
@@ -85,6 +77,9 @@ namespace PassportMeetReservator.Controls
 
         public DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
+
+        private const int DATE_WAIT_ITERATION_COUNT = 4;
+        private const int TIME_WAIT_ITERATION_COUNT = 4;
 
         [Obsolete]
         public ReserverWebView()
@@ -95,31 +90,18 @@ namespace PassportMeetReservator.Controls
 
         public void Free()
         {
-            /*if (Order == null)
-                return;
-
-            Order.Doing = false;
-            Order = null;*/
-
             IsBusy = false;
         }
 
         public void Reset()
         {
-            try
-            {
-                TokenSource.Cancel();
-                IsBusy = false;
-            }
-            catch (OperationCanceledException ex) { throw; }
+            TokenSource.Cancel();
         }
 
         public void Done()
         {
             Invoke(OnReserved, this, new ReservedEventArgs(Address));
 
-           /* Order.Done = true;
-            Order.Doing = false;*/
             IsBusy = false;
 
             TokenSource.Cancel();
@@ -134,21 +116,17 @@ namespace PassportMeetReservator.Controls
                 Loop = Init();
 
                 try { await Loop; }
-                catch (OperationCanceledException ex) { Start(); }
+                catch (OperationCanceledException ex) { Loop.Dispose(); Start(); }
             }
         }
 
         private async Task Init()
         {
-           // if (Order == null || Order.Done)
-               // return;
-
             IsBusy = true;
-          //  Order.Doing = true;
 
             while (true)
             {
-                await Task.Delay(DelayInfo.BrowserIterationDelay);
+                await Task.Delay(DelayInfo.BrowserIterationDelay, Token);
 
                 if (Paused)
                     continue;
@@ -157,12 +135,28 @@ namespace PassportMeetReservator.Controls
                     continue;
 
                 if (await Iteration())
-                    await Task.Delay(1000000);
+                {
+                    OnDateTimeSelected?.Invoke(this, new EventArgs());
+                    await WaitForManualReaction();
+                }
             }
+        }
 
-           // Order.Done = true;
-            //Order.Doing = false;
-            IsBusy = false;
+        private async Task WaitForManualReaction()
+        {
+            OnManualReactionWaiting?.Invoke(this, new EventArgs());
+            await Task.Delay(DelayInfo.ManualReactionWaitDelay, Token);
+
+            this.Reload(true);
+            await Task.Delay(DelayInfo.ActionResultDelay);
+            this.Reload();
+
+            await WaitForView(CONTINUE_RESERVATION_BUTTON_CLASS);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
+
+            await ClickViewOfClassWithText(CONTINUE_RESERVATION_BUTTON_CLASS, CONTINUE_RESERVATION_BUTTON_TEXT);
+
+            await WaitForManualReaction();
         }
 
         private string GetFormattedDate(DateTime date)
@@ -177,20 +171,54 @@ namespace PassportMeetReservator.Controls
         {
             Load(INIT_URL);
 
-            await Task.Delay(DelayInfo.ActionResultDelay);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
             await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Operation);
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT ORDER TYPE
 
             await WaitForView(CALENDAR_CLASS);
-            await Task.Delay(DelayInfo.ActionResultDelay);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
+
+            if(DateTime.Now.Month != ReserveDate.Month)
+            {
+                await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            }
+
+            bool dateFound = false;
+            for (int i = 0; i < DATE_WAIT_ITERATION_COUNT; ++i)
+            {
+                dateFound = await TryFindView($"vc-day id-{GetFormattedDate(ReserveDate)}");
+
+                if (dateFound)
+                    break;
+
+                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token); // small wait
+            }
+
+            if (!dateFound)
+                return false;
 
             await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{GetFormattedDate(ReserveDate)}')[0].children[0].children[0].click()");
             //SELECT DATE
 
-            await Task.Delay(DelayInfo.ActionResultDelay);
-            if (!await TryFindView(TIME_SELECTOR_CLASS))
+            await WaitForView(TIME_SELECTOR_CLASS);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
+
+            bool timeFound = false;
+            for (int i = 0; i < TIME_WAIT_ITERATION_COUNT; ++i)
+            {
+                JavascriptResponse jsTimesCount = await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options.length");
+                timeFound = jsTimesCount.Success && jsTimesCount.Result != null && (int)jsTimesCount.Result != 0;
+
+                if(timeFound)
+                    break;
+
+                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token); // small wait
+            }
+
+            if (!timeFound)
                 return false;
 
             if (!await SelectValue(TIME_SELECTOR_CLASS, BotNumber * BrowsersCount + BrowserNumber))
@@ -199,51 +227,49 @@ namespace PassportMeetReservator.Controls
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //SELECT TIME
 
-            await Task.Delay(DelayInfo.ActionResultDelay);
-
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
                 return false;
             //CHECK TIME RESERVED ERROR
 
             return true;
-          /*  await WaitForView(INPUT_CLASS);
+
+            /*await WaitForView(INPUT_CLASS);
             await Task.Delay(DelayInfo.ActionResultDelay);
 
-            await ClickViewOfClassWithNumber(INPUT_CLASS, 0, "");
             if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname))
             {
                 Paused = true;
                 return false;
             }
 
-            await ClickViewOfClassWithNumber(INPUT_CLASS, 1, "");
             if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name))
             {
                 Paused = true;
                 return false;
             }
 
-            await ClickViewOfClassWithNumber(INPUT_CLASS, 2, "");
             if (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email))
             {
                 Paused = true;
                 return false;
             }
 
+            await Task.Delay(DelayInfo.PostInputDelay);
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
             //FILL FORM
 
-            this.AddressChanged += ReserverWebView_UrlChanged;
-
             await WaitForView(ACCEPT_TICK_CLASS);
             await Task.Delay(DelayInfo.ActionResultDelay);
+
+            this.AddressChanged += ReserverWebView_UrlChanged;
 
             await ClickViewOfClassWithText(ACCEPT_TICK_CLASS, ACCEPT_TICK_TEXT);
             await ClickViewOfClassWithText(ACCEPT_BUTTON_CLASS, ACCEPT_BUTTON_TEXT);
             //ACCEPT
 
             return true;*/
-        }
+        } 
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {

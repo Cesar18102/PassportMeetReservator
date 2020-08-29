@@ -19,7 +19,7 @@ namespace PassportMeetReservator.Controls
 
             InitializeComponent();
 
-           // InfoLabel.Text = $"{Reserved.Order.Surname} {Reserved.Order.Name}";
+            InfoLabel.Text = Reserved.Url;
             CopyInfoButton.Click += CopyInfoButton_Click;
 
             ForgetButton.Click += (sender, e) => OnReservedForgotten?.Invoke(
@@ -29,7 +29,7 @@ namespace PassportMeetReservator.Controls
 
         private void CopyInfoButton_Click(object sender, EventArgs e)
         {
-            //Clipboard.SetText($"{Reserved.Order.Surname} {Reserved.Order.Name} {Reserved.Url}");
+            Clipboard.SetText(Reserved.Url);
         }
     }
 }
