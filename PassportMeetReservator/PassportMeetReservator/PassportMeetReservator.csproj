@@ -102,8 +102,6 @@
     <Compile Include="Data\NumberEventArgs.cs" />
     <Compile Include="Data\BootSchedule.cs" />
     <Compile Include="Data\BrowserPausedChangedEventArgs.cs" />
-    <Compile Include="Data\OrderEventArgs.cs" />
-    <Compile Include="Data\ReservationOrder.cs" />
     <Compile Include="Data\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\UrlChangedEventArgs.cs" />

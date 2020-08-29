@@ -41,7 +41,6 @@ namespace PassportMeetReservator
         private ComboBox[] OperationSelectors { get; set; }
         private DateTimePicker[] ReserveDates { get; set; }
 
-        private List<ReservationOrder> Orders { get; set; }
         private List<ReservedInfo> Reserved { get; set; }
         private BootSchedule Schedule { get; set; }
         private DelayInfo DelayInfo { get; set; }
@@ -58,6 +57,8 @@ namespace PassportMeetReservator
         {
             InitializeComponent();
 
+            KeyPreview = true;
+
             DelayInfo = LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
 
             InitBrowsers();
@@ -65,7 +66,7 @@ namespace PassportMeetReservator
             Reserved = LoadData<List<ReservedInfo>>(OUTPUT_FILE_PATH);
             Schedule = LoadData<BootSchedule>(SCHEDULE_FILE_PATH);
 
-            StartReserving(Orders);
+            StartReserving();
         }
 
         private void InitBrowsers()
@@ -298,16 +299,16 @@ namespace PassportMeetReservator
                 strw.Write(JsonConvert.SerializeObject(data));
         }
 
-        private async void StartReserving(List<ReservationOrder> orders)
+        private async void StartReserving()
         {
             while(true)
             {
                 await Task.Delay(DelayInfo.OrderLoadingIterationDelay);
-                ReserveIteration(orders);
+                ReserveIteration();
             }
         }
 
-        private void ReserveIteration(List<ReservationOrder> orders)
+        private void ReserveIteration()
         {
             ReserverWebView browser = GetFirstFreeBrowser();
 
@@ -393,8 +394,6 @@ namespace PassportMeetReservator
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Orders.RemoveAll(order => order.Done);
-
             SaveData(OUTPUT_FILE_PATH, Reserved);
             SaveData(SCHEDULE_FILE_PATH, Schedule);
 

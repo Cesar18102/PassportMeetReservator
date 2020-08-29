@@ -230,6 +230,7 @@
             this.OrdersInfo.Location = new System.Drawing.Point(0, 718);
             this.OrdersInfo.Margin = new System.Windows.Forms.Padding(2);
             this.OrdersInfo.Name = "OrdersInfo";
+            this.OrdersInfo.ReadOnly = true;
             this.OrdersInfo.Size = new System.Drawing.Size(1834, 144);
             this.OrdersInfo.TabIndex = 4;
             this.OrdersInfo.Text = "";
