@@ -18,7 +18,7 @@ namespace PassportMeetReservator.Forms
             OrderLoadingDelay.Value = DelayInfo.OrderLoadingIterationDelay;
             BrowserIterationDelay.Value = DelayInfo.BrowserIterationDelay;
             ActionResultDelay.Value = DelayInfo.ActionResultDelay;
-            PostInputDelay.Value = DelayInfo.PostInputDelay;
+            RefreshSessionUpdateDelay.Value = DelayInfo.RefreshSessionUpdateDelay;
             DiscreteWaitDelay.Value = DelayInfo.DiscreteWaitDelay;
             ManualReactionWaitDelay.Value = DelayInfo.ManualReactionWaitDelay;
         }
@@ -28,7 +28,7 @@ namespace PassportMeetReservator.Forms
             DelayInfo.OrderLoadingIterationDelay = (int)OrderLoadingDelay.Value;
             DelayInfo.BrowserIterationDelay = (int)BrowserIterationDelay.Value;
             DelayInfo.ActionResultDelay = (int)ActionResultDelay.Value;
-            DelayInfo.PostInputDelay = (int)PostInputDelay.Value;
+            DelayInfo.RefreshSessionUpdateDelay = (int)RefreshSessionUpdateDelay.Value;
             DelayInfo.DiscreteWaitDelay = (int)DiscreteWaitDelay.Value;
             DelayInfo.ManualReactionWaitDelay = (int)ManualReactionWaitDelay.Value;
 

@@ -12,6 +12,7 @@ using PassportMeetReservator.Data;
 using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
 using PassportMeetReservator.Telegram;
+using CefSharp.WinForms;
 
 namespace PassportMeetReservator
 {
@@ -29,6 +30,16 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "delay_settings.json"
         );
 
+        private static string PROFILE_FILE_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "profile.json"
+        );
+
+        private static string SCREENS_FOLDER_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "Screens"
+        );
+
+        private const string URL_TO_SCREEN_FILENAME_TRASH_PREFIX = "https://rejestracjapoznan.poznan.uw.gov.pl/Info/";
+
         private const int BROWSERS_COUNT = 5;
         private ReserverWebView[] Browsers { get; set; }
         private ReserverInfoView[] Infos { get; set; }
@@ -39,11 +50,13 @@ namespace PassportMeetReservator
         private Button[] DoneButtons { get; set; }
 
         private ComboBox[] OperationSelectors { get; set; }
-        private DateTimePicker[] ReserveDates { get; set; }
+        private DateTimePicker[] ReserveDatesMin { get; set; }
+        private DateTimePicker[] ReserveDatesMax { get; set; }
 
         private List<ReservedInfo> Reserved { get; set; }
         private BootSchedule Schedule { get; set; }
         private DelayInfo DelayInfo { get; set; }
+        private Profile Profile { get; set; }
 
         private Size NonZoomedSize { get; set; }
         private Point NonZoomedLocation { get; set; }
@@ -65,6 +78,9 @@ namespace PassportMeetReservator
 
             Reserved = LoadData<List<ReservedInfo>>(OUTPUT_FILE_PATH);
             Schedule = LoadData<BootSchedule>(SCHEDULE_FILE_PATH);
+
+            Profile = LoadData<Profile>(PROFILE_FILE_PATH);
+            LogChatId.Text = Profile?.TelegramChatId;
 
             StartReserving();
         }
@@ -124,10 +140,16 @@ namespace PassportMeetReservator
                 OrderTypeSelector4, OrderTypeSelector5
             };
 
-            ReserveDates = new DateTimePicker[BROWSERS_COUNT]
+            ReserveDatesMin = new DateTimePicker[BROWSERS_COUNT]
             {
-                ReserveDate1, ReserveDate2, ReserveDate3,
-                ReserveDate4, ReserveDate5
+                ReserveDateMin1, ReserveDateMin2, ReserveDateMin3,
+                ReserveDateMin4, ReserveDateMin5
+            };
+
+            ReserveDatesMax = new DateTimePicker[BROWSERS_COUNT]
+            {
+                ReserveDateMax1, ReserveDateMax2, ReserveDateMax3,
+                ReserveDateMax4, ReserveDateMax5
             };
 
             for (int i = 0; i < BROWSERS_COUNT; ++i)
@@ -180,20 +202,44 @@ namespace PassportMeetReservator
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LogChatId.InputText))
-                await Notifier.NotifyMessage("Чекаю на заповення форми", LogChatId.InputText);
+            if (!string.IsNullOrEmpty(LogChatId.Text))
+                await Notifier.NotifyMessage("Чекаю на заповення форми", LogChatId.Text);
         }
 
         private async void MainForm_OnDateTimeSelected(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LogChatId.InputText))
-                await Notifier.NotifyMessage("Злапав дату", LogChatId.InputText);
+            if (!string.IsNullOrEmpty(LogChatId.Text))
+                await Notifier.NotifyMessage("Злапав дату", LogChatId.Text);
         }
 
         private async void Browser_OnReserved(object sender, ReservedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(LogChatId.InputText))
-                await Notifier.NotifyMessage(e.Url, LogChatId.InputText);
+            ReserverWebView view = sender as ReserverWebView;
+
+            bool screenSaved = false;
+            string path = Path.Combine(SCREENS_FOLDER_PATH, $"{e.Url.Replace(URL_TO_SCREEN_FILENAME_TRASH_PREFIX, "")}.png");
+
+            ZoomBrowser(view.BrowserNumber);
+            view.ResetScroll();
+
+            Task.Delay(1000).GetAwaiter().GetResult();
+
+            try
+            {
+                this.Snapshot(view).Save(path);
+                screenSaved = true;
+            }
+            catch (Exception ex) { }
+
+            ResetZoom();
+
+            if (!string.IsNullOrEmpty(LogChatId.Text))
+            {
+                if (screenSaved)
+                    await Notifier.NotifyPhoto(path, e.Url, LogChatId.Text);
+                else
+                    await Notifier.NotifyMessage(e.Url, LogChatId.Text);
+            }
 
             Reserved.Add(new ReservedInfo(e.Url));
             SaveData(OUTPUT_FILE_PATH, Reserved);
@@ -231,14 +277,24 @@ namespace PassportMeetReservator
             Browsers[browser].Operation = (sender as ComboBox).SelectedItem.ToString();
         }
 
-        private void ReserveDate_ValueChanged(object sender, EventArgs e)
+        private void ReserveDateMin_ValueChanged(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByInfoControl(ReserveDates, sender as DateTimePicker);
+            int browser = FindBrowserNumberByInfoControl(ReserveDatesMin, sender as DateTimePicker);
 
             if (browser == -1)
                 return;
 
-            Browsers[browser].ReserveDate = (sender as DateTimePicker).Value;
+            Browsers[browser].ReserveDateMin = (sender as DateTimePicker).Value;
+        }
+
+        private void ReserveDateMax_ValueChanged(object sender, EventArgs e)
+        {
+            int browser = FindBrowserNumberByInfoControl(ReserveDatesMax, sender as DateTimePicker);
+
+            if (browser == -1)
+                return;
+
+            Browsers[browser].ReserveDateMax = (sender as DateTimePicker).Value;
         }
 
         private void BrowserContinue_Click(object sender, EventArgs e)
@@ -263,6 +319,9 @@ namespace PassportMeetReservator
             }
             else
             {
+                Browsers[e.BrowserNumber].ReserveDateMin = ReserveDatesMin[e.BrowserNumber].Value;
+                Browsers[e.BrowserNumber].ReserveDateMax = ReserveDatesMax[e.BrowserNumber].Value;
+
                 PausedChangeButtons[e.BrowserNumber].Text = "Pause";
                 PausedChangeButtons[e.BrowserNumber].Click -= BrowserContinue_Click;
                 PausedChangeButtons[e.BrowserNumber].Click += BrowserPause_Click;
@@ -451,10 +510,22 @@ namespace PassportMeetReservator
                 orderTypeSelector.SelectedIndex = OrderTypeSelector.SelectedIndex;
         }
 
-        private void ReserveDatePicker_ValueChanged(object sender, EventArgs e)
+        private void ReserveDateMinPicker_ValueChanged(object sender, EventArgs e)
         {
-            foreach (DateTimePicker reserveDatePicker in ReserveDates)
-                reserveDatePicker.Value = ReserveDatePicker.Value;
+            foreach (DateTimePicker reserveDatePicker in ReserveDatesMin)
+                reserveDatePicker.Value = ReserveDateMinPicker.Value;
+        }
+
+        private void ReserveDateMaxPicker_ValueChanged(object sender, EventArgs e)
+        {
+            foreach (DateTimePicker reserveDatePicker in ReserveDatesMax)
+                reserveDatePicker.Value = ReserveDateMaxPicker.Value;
+        }
+
+        private void LogChatId_TextChanged(object sender, EventArgs e)
+        {
+            Profile.TelegramChatId = LogChatId.Text;
+            SaveData(PROFILE_FILE_PATH, Profile);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -73,13 +74,15 @@ namespace PassportMeetReservator.Controls
         public int BrowsersCount { get; set; }
 
         public string Operation { get; set; }
-        public DateTime ReserveDate { get; set; }
+        public DateTime ReserveDateMin { get; set; } = DateTime.Now;
+        public DateTime ReserveDateMax { get; set; } = DateTime.Now;
 
         public DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
 
         private const int DATE_WAIT_ITERATION_COUNT = 4;
         private const int TIME_WAIT_ITERATION_COUNT = 4;
+        private const int SITE_FALL_WAIT_ATTEMPTS = 40;
 
         [Obsolete]
         public ReserverWebView()
@@ -96,6 +99,11 @@ namespace PassportMeetReservator.Controls
         public void Reset()
         {
             TokenSource.Cancel();
+        }
+
+        public void ResetScroll()
+        {
+            this.GetMainFrame().ExecuteJavaScriptAsync("window.scrollTo(0, 0);");
         }
 
         public void Done()
@@ -147,14 +155,13 @@ namespace PassportMeetReservator.Controls
             OnManualReactionWaiting?.Invoke(this, new EventArgs());
             await Task.Delay(DelayInfo.ManualReactionWaitDelay, Token);
 
-            this.Reload(true);
-            await Task.Delay(DelayInfo.ActionResultDelay);
             this.Reload();
+            await Task.Delay(DelayInfo.RefreshSessionUpdateDelay);
 
-            await WaitForView(CONTINUE_RESERVATION_BUTTON_CLASS);
+            await WaitForView(CONTINUE_RESERVATION_BUTTON_CLASS, SITE_FALL_WAIT_ATTEMPTS);
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
-            await ClickViewOfClassWithText(CONTINUE_RESERVATION_BUTTON_CLASS, CONTINUE_RESERVATION_BUTTON_TEXT);
+            await ClickViewOfClassWithText(CONTINUE_RESERVATION_BUTTON_CLASS, CONTINUE_RESERVATION_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
 
             await WaitForManualReaction();
         }
@@ -173,59 +180,54 @@ namespace PassportMeetReservator.Controls
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
-            await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Operation);
-            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
+            if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Operation, SITE_FALL_WAIT_ATTEMPTS))
+                return false;
+
+            if (!await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
+                return false;
             //SELECT ORDER TYPE
 
-            await WaitForView(CALENDAR_CLASS);
+            if (!await WaitForView(CALENDAR_CLASS, SITE_FALL_WAIT_ATTEMPTS))
+                return false;
+
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
-            if(DateTime.Now.Month != ReserveDate.Month)
+            if (DateTime.Now.Month != ReserveDateMin.Month)
             {
                 await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
                 await Task.Delay(DelayInfo.ActionResultDelay, Token);
             }
+            //PUSH CALENDAR FIRST TIME IF NEEDED
 
-            bool dateFound = false;
-            for (int i = 0; i < DATE_WAIT_ITERATION_COUNT; ++i)
+            bool dateSelected = false;
+            DateTime currentScanDate = ReserveDateMin;
+
+            while (currentScanDate >= ReserveDateMin && currentScanDate <= ReserveDateMax)
             {
-                dateFound = await TryFindView($"vc-day id-{GetFormattedDate(ReserveDate)}");
+                bool isStartMonth = currentScanDate.Year == ReserveDateMin.Year && currentScanDate.Month == ReserveDateMin.Month;
+                bool isEndMonth = currentScanDate.Year == ReserveDateMax.Year && currentScanDate.Month == ReserveDateMax.Month;
 
-                if (dateFound)
+                int dayStart = isStartMonth ? ReserveDateMin.Day : 1;
+                int dayEnd = isEndMonth ? ReserveDateMax.Day : DateTime.DaysInMonth(currentScanDate.Year, currentScanDate.Month);
+
+                dateSelected = await ScanCalendar(dayStart, dayEnd, currentScanDate.Month, currentScanDate.Year); //TRY SELECT DATE AND TIME
+
+                if (dateSelected || isEndMonth)
                     break;
 
-                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token); // small wait
+                DateTime temp = currentScanDate.AddMonths(1);
+                currentScanDate = new DateTime(temp.Year, temp.Month, 1);
+
+                await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+                //PUSH CALENDAR IF NO ACTIVE DATES FOUND
             }
 
-            if (!dateFound)
+            if (!dateSelected)
                 return false;
 
-            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{GetFormattedDate(ReserveDate)}')[0].children[0].children[0].click()");
-            //SELECT DATE
-
-            await WaitForView(TIME_SELECTOR_CLASS);
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
-
-            bool timeFound = false;
-            for (int i = 0; i < TIME_WAIT_ITERATION_COUNT; ++i)
-            {
-                JavascriptResponse jsTimesCount = await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options.length");
-                timeFound = jsTimesCount.Success && jsTimesCount.Result != null && (int)jsTimesCount.Result != 0;
-
-                if(timeFound)
-                    break;
-
-                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token); // small wait
-            }
-
-            if (!timeFound)
-                return false;
-
-            if (!await SelectValue(TIME_SELECTOR_CLASS, BotNumber * BrowsersCount + BrowserNumber))
-                return false;
-
-            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT);
-            //SELECT TIME
+            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
+            //CONFIRM SELECTED DATE
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
@@ -270,6 +272,51 @@ namespace PassportMeetReservator.Controls
 
             return true;*/
         } 
+
+        private async Task<bool> ScanCalendar(int dayStart, int dayEnd, int month, int year)
+        {
+            for (int i = dayStart; i <= dayEnd; ++i)
+            {
+                DateTime date = new DateTime(year, month, i);
+                string formattedDate = GetFormattedDate(date);
+
+                bool dayFound = false;
+                for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
+                {
+                    dayFound = await TryFindView($"vc-day id-{formattedDate}");
+
+                    if(dayFound)
+                        break;
+
+                    await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
+                } //WAIT FOR DAY FOR SEVERAL TIMES - WAIT FOR LOADING
+
+                if (!dayFound)
+                    continue;
+
+                await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click()");
+
+                await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+
+                bool timeFound = false;
+                for (int j = 0; j < TIME_WAIT_ITERATION_COUNT; ++j)
+                {
+                    JavascriptResponse jsTimesCount = await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options.length");
+                    timeFound = jsTimesCount.Success && jsTimesCount.Result != null && (int)jsTimesCount.Result != 0;
+
+                    if (timeFound)
+                        break;
+
+                    await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
+                } //WAIT FOR TIME FOR SEVERAL TIMES - WAIT FOR LOADING
+
+                if (timeFound && await SelectValue(TIME_SELECTOR_CLASS, BotNumber * BrowsersCount + BrowserNumber))
+                    return true;
+            }
+
+            return false;
+        }
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {
@@ -320,10 +367,18 @@ namespace PassportMeetReservator.Controls
             await ClickViewOfClassWithNumber(className, 0, "");
         }
 
-        private async Task ClickViewOfClassWithText(string className, string text)
+        private async Task<bool> ClickViewOfClassWithText(string className, string text, int attempts)
         {
-            while (!await TryClickViewOfClassWithText(className, text))
+            for(int i = 0; i < attempts; ++i)
+            {
+                if (await TryClickViewOfClassWithText(className, text))
+                    return true;
+
                 Token.ThrowIfCancellationRequested();
+                await Task.Delay(DelayInfo.DiscreteWaitDelay);
+            }
+
+            return false;
         }
 
         private async Task<bool> TryClickViewOfClassWithText(string className, string text)
@@ -362,10 +417,17 @@ namespace PassportMeetReservator.Controls
             return (bool)result.Result;
         }
 
-        private async Task WaitForView(string className)
+        private async Task<bool> WaitForView(string className, int attempts)
         {
-            while (!await TryFindView(className))
+            for(int i = 0; i < attempts; ++i)
+            {
+                if (await TryFindView(className))
+                    return true;
+
                 Token.ThrowIfCancellationRequested();
+            }
+
+            return false;
         }
 
         private async Task<bool> TryFindView(string className)

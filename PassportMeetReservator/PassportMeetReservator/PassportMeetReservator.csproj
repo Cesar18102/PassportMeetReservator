@@ -96,12 +96,14 @@
     <Compile Include="Controls\ReserverWebView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\WebViewExtensions.cs" />
     <Compile Include="Data\BootPeriod.cs" />
     <Compile Include="Data\DelayInfo.cs" />
     <Compile Include="Data\LogEventArgs.cs" />
     <Compile Include="Data\NumberEventArgs.cs" />
     <Compile Include="Data\BootSchedule.cs" />
     <Compile Include="Data\BrowserPausedChangedEventArgs.cs" />
+    <Compile Include="Data\Profile.cs" />
     <Compile Include="Data\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\UrlChangedEventArgs.cs" />

@@ -40,35 +40,40 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.ReserveDate1 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMax1 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMin1 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector1 = new System.Windows.Forms.ComboBox();
             this.DoneButton1 = new System.Windows.Forms.Button();
             this.ResetButton1 = new System.Windows.Forms.Button();
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.ReserveDate2 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMax2 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMin2 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector2 = new System.Windows.Forms.ComboBox();
             this.DoneButton2 = new System.Windows.Forms.Button();
             this.ResetButton2 = new System.Windows.Forms.Button();
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.ReserveDate3 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMax3 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMin3 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector3 = new System.Windows.Forms.ComboBox();
             this.DoneButton3 = new System.Windows.Forms.Button();
             this.ResetButton3 = new System.Windows.Forms.Button();
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.ReserveDate4 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMax4 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMin4 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector4 = new System.Windows.Forms.ComboBox();
             this.DoneButton4 = new System.Windows.Forms.Button();
             this.ResetButton4 = new System.Windows.Forms.Button();
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.ReserveDate5 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMax5 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMin5 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector5 = new System.Windows.Forms.ComboBox();
             this.DoneButton5 = new System.Windows.Forms.Button();
             this.ResetButton5 = new System.Windows.Forms.Button();
@@ -83,9 +88,11 @@
             this.DelaySettings = new System.Windows.Forms.Button();
             this.BotNumberLabel = new System.Windows.Forms.Label();
             this.BotNumber = new System.Windows.Forms.NumericUpDown();
-            this.LogChatId = new PassportMeetReservator.Controls.NamedInput();
-            this.ReserveDatePicker = new System.Windows.Forms.DateTimePicker();
+            this.ReserveDateMinPicker = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector = new System.Windows.Forms.ComboBox();
+            this.ReserveDateMaxPicker = new System.Windows.Forms.DateTimePicker();
+            this.LogChatIdLabel = new System.Windows.Forms.Label();
+            this.LogChatId = new System.Windows.Forms.TextBox();
             this.BrowserInfo1.SuspendLayout();
             this.BrowserInfo2.SuspendLayout();
             this.BrowserInfo3.SuspendLayout();
@@ -151,7 +158,8 @@
             this.Browser1.Name = "Browser1";
             this.Browser1.Operation = null;
             this.Browser1.Paused = true;
-            this.Browser1.ReserveDate = new System.DateTime(((long)(0)));
+            this.Browser1.ReserveDateMax = new System.DateTime(((long)(0)));
+            this.Browser1.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser1.Schedule = null;
             this.Browser1.Size = new System.Drawing.Size(200, 100);
             this.Browser1.TabIndex = 0;
@@ -168,7 +176,8 @@
             this.Browser2.Name = "Browser2";
             this.Browser2.Operation = null;
             this.Browser2.Paused = true;
-            this.Browser2.ReserveDate = new System.DateTime(((long)(0)));
+            this.Browser2.ReserveDateMax = new System.DateTime(((long)(0)));
+            this.Browser2.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser2.Schedule = null;
             this.Browser2.Size = new System.Drawing.Size(200, 100);
             this.Browser2.TabIndex = 0;
@@ -185,7 +194,8 @@
             this.Browser3.Name = "Browser3";
             this.Browser3.Operation = null;
             this.Browser3.Paused = true;
-            this.Browser3.ReserveDate = new System.DateTime(((long)(0)));
+            this.Browser3.ReserveDateMax = new System.DateTime(((long)(0)));
+            this.Browser3.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser3.Schedule = null;
             this.Browser3.Size = new System.Drawing.Size(200, 100);
             this.Browser3.TabIndex = 0;
@@ -202,7 +212,8 @@
             this.Browser4.Name = "Browser4";
             this.Browser4.Operation = null;
             this.Browser4.Paused = true;
-            this.Browser4.ReserveDate = new System.DateTime(((long)(0)));
+            this.Browser4.ReserveDateMax = new System.DateTime(((long)(0)));
+            this.Browser4.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser4.Schedule = null;
             this.Browser4.Size = new System.Drawing.Size(200, 100);
             this.Browser4.TabIndex = 0;
@@ -219,7 +230,8 @@
             this.Browser5.Name = "Browser5";
             this.Browser5.Operation = null;
             this.Browser5.Paused = true;
-            this.Browser5.ReserveDate = new System.DateTime(((long)(0)));
+            this.Browser5.ReserveDateMax = new System.DateTime(((long)(0)));
+            this.Browser5.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser5.Schedule = null;
             this.Browser5.Size = new System.Drawing.Size(200, 100);
             this.Browser5.TabIndex = 0;
@@ -231,13 +243,14 @@
             this.OrdersInfo.Margin = new System.Windows.Forms.Padding(2);
             this.OrdersInfo.Name = "OrdersInfo";
             this.OrdersInfo.ReadOnly = true;
-            this.OrdersInfo.Size = new System.Drawing.Size(1834, 144);
+            this.OrdersInfo.Size = new System.Drawing.Size(1680, 144);
             this.OrdersInfo.TabIndex = 4;
             this.OrdersInfo.Text = "";
             // 
             // BrowserInfo1
             // 
-            this.BrowserInfo1.Controls.Add(this.ReserveDate1);
+            this.BrowserInfo1.Controls.Add(this.ReserveDateMax1);
+            this.BrowserInfo1.Controls.Add(this.ReserveDateMin1);
             this.BrowserInfo1.Controls.Add(this.OrderTypeSelector1);
             this.BrowserInfo1.Controls.Add(this.DoneButton1);
             this.BrowserInfo1.Controls.Add(this.ResetButton1);
@@ -253,14 +266,23 @@
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
             // 
-            // ReserveDate1
+            // ReserveDateMax1
             // 
-            this.ReserveDate1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDate1.Location = new System.Drawing.Point(7, 87);
-            this.ReserveDate1.Name = "ReserveDate1";
-            this.ReserveDate1.Size = new System.Drawing.Size(237, 20);
-            this.ReserveDate1.TabIndex = 22;
-            this.ReserveDate1.ValueChanged += new System.EventHandler(this.ReserveDate_ValueChanged);
+            this.ReserveDateMax1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMax1.Location = new System.Drawing.Point(131, 87);
+            this.ReserveDateMax1.Name = "ReserveDateMax1";
+            this.ReserveDateMax1.Size = new System.Drawing.Size(114, 20);
+            this.ReserveDateMax1.TabIndex = 23;
+            this.ReserveDateMax1.ValueChanged += new System.EventHandler(this.ReserveDateMax_ValueChanged);
+            // 
+            // ReserveDateMin1
+            // 
+            this.ReserveDateMin1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMin1.Location = new System.Drawing.Point(7, 87);
+            this.ReserveDateMin1.Name = "ReserveDateMin1";
+            this.ReserveDateMin1.Size = new System.Drawing.Size(120, 20);
+            this.ReserveDateMin1.TabIndex = 22;
+            this.ReserveDateMin1.ValueChanged += new System.EventHandler(this.ReserveDateMin_ValueChanged);
             // 
             // OrderTypeSelector1
             // 
@@ -329,7 +351,8 @@
             // 
             // BrowserInfo2
             // 
-            this.BrowserInfo2.Controls.Add(this.ReserveDate2);
+            this.BrowserInfo2.Controls.Add(this.ReserveDateMax2);
+            this.BrowserInfo2.Controls.Add(this.ReserveDateMin2);
             this.BrowserInfo2.Controls.Add(this.OrderTypeSelector2);
             this.BrowserInfo2.Controls.Add(this.DoneButton2);
             this.BrowserInfo2.Controls.Add(this.ResetButton2);
@@ -345,14 +368,23 @@
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
             // 
-            // ReserveDate2
+            // ReserveDateMax2
             // 
-            this.ReserveDate2.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDate2.Location = new System.Drawing.Point(6, 88);
-            this.ReserveDate2.Name = "ReserveDate2";
-            this.ReserveDate2.Size = new System.Drawing.Size(237, 20);
-            this.ReserveDate2.TabIndex = 23;
-            this.ReserveDate2.ValueChanged += new System.EventHandler(this.ReserveDate_ValueChanged);
+            this.ReserveDateMax2.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMax2.Location = new System.Drawing.Point(130, 88);
+            this.ReserveDateMax2.Name = "ReserveDateMax2";
+            this.ReserveDateMax2.Size = new System.Drawing.Size(114, 20);
+            this.ReserveDateMax2.TabIndex = 24;
+            this.ReserveDateMax2.ValueChanged += new System.EventHandler(this.ReserveDateMax_ValueChanged);
+            // 
+            // ReserveDateMin2
+            // 
+            this.ReserveDateMin2.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMin2.Location = new System.Drawing.Point(6, 88);
+            this.ReserveDateMin2.Name = "ReserveDateMin2";
+            this.ReserveDateMin2.Size = new System.Drawing.Size(119, 20);
+            this.ReserveDateMin2.TabIndex = 23;
+            this.ReserveDateMin2.ValueChanged += new System.EventHandler(this.ReserveDateMin_ValueChanged);
             // 
             // OrderTypeSelector2
             // 
@@ -421,7 +453,8 @@
             // 
             // BrowserInfo3
             // 
-            this.BrowserInfo3.Controls.Add(this.ReserveDate3);
+            this.BrowserInfo3.Controls.Add(this.ReserveDateMax3);
+            this.BrowserInfo3.Controls.Add(this.ReserveDateMin3);
             this.BrowserInfo3.Controls.Add(this.OrderTypeSelector3);
             this.BrowserInfo3.Controls.Add(this.DoneButton3);
             this.BrowserInfo3.Controls.Add(this.ResetButton3);
@@ -437,14 +470,23 @@
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
             // 
-            // ReserveDate3
+            // ReserveDateMax3
             // 
-            this.ReserveDate3.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDate3.Location = new System.Drawing.Point(8, 88);
-            this.ReserveDate3.Name = "ReserveDate3";
-            this.ReserveDate3.Size = new System.Drawing.Size(237, 20);
-            this.ReserveDate3.TabIndex = 24;
-            this.ReserveDate3.ValueChanged += new System.EventHandler(this.ReserveDate_ValueChanged);
+            this.ReserveDateMax3.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMax3.Location = new System.Drawing.Point(136, 88);
+            this.ReserveDateMax3.Name = "ReserveDateMax3";
+            this.ReserveDateMax3.Size = new System.Drawing.Size(110, 20);
+            this.ReserveDateMax3.TabIndex = 25;
+            this.ReserveDateMax3.ValueChanged += new System.EventHandler(this.ReserveDateMax_ValueChanged);
+            // 
+            // ReserveDateMin3
+            // 
+            this.ReserveDateMin3.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMin3.Location = new System.Drawing.Point(8, 88);
+            this.ReserveDateMin3.Name = "ReserveDateMin3";
+            this.ReserveDateMin3.Size = new System.Drawing.Size(122, 20);
+            this.ReserveDateMin3.TabIndex = 24;
+            this.ReserveDateMin3.ValueChanged += new System.EventHandler(this.ReserveDateMin_ValueChanged);
             // 
             // OrderTypeSelector3
             // 
@@ -513,7 +555,8 @@
             // 
             // BrowserInfo4
             // 
-            this.BrowserInfo4.Controls.Add(this.ReserveDate4);
+            this.BrowserInfo4.Controls.Add(this.ReserveDateMax4);
+            this.BrowserInfo4.Controls.Add(this.ReserveDateMin4);
             this.BrowserInfo4.Controls.Add(this.OrderTypeSelector4);
             this.BrowserInfo4.Controls.Add(this.DoneButton4);
             this.BrowserInfo4.Controls.Add(this.ResetButton4);
@@ -529,14 +572,23 @@
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
             // 
-            // ReserveDate4
+            // ReserveDateMax4
             // 
-            this.ReserveDate4.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDate4.Location = new System.Drawing.Point(5, 88);
-            this.ReserveDate4.Name = "ReserveDate4";
-            this.ReserveDate4.Size = new System.Drawing.Size(237, 20);
-            this.ReserveDate4.TabIndex = 24;
-            this.ReserveDate4.ValueChanged += new System.EventHandler(this.ReserveDate_ValueChanged);
+            this.ReserveDateMax4.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMax4.Location = new System.Drawing.Point(131, 87);
+            this.ReserveDateMax4.Name = "ReserveDateMax4";
+            this.ReserveDateMax4.Size = new System.Drawing.Size(112, 20);
+            this.ReserveDateMax4.TabIndex = 25;
+            this.ReserveDateMax4.ValueChanged += new System.EventHandler(this.ReserveDateMax_ValueChanged);
+            // 
+            // ReserveDateMin4
+            // 
+            this.ReserveDateMin4.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMin4.Location = new System.Drawing.Point(5, 88);
+            this.ReserveDateMin4.Name = "ReserveDateMin4";
+            this.ReserveDateMin4.Size = new System.Drawing.Size(121, 20);
+            this.ReserveDateMin4.TabIndex = 24;
+            this.ReserveDateMin4.ValueChanged += new System.EventHandler(this.ReserveDateMin_ValueChanged);
             // 
             // OrderTypeSelector4
             // 
@@ -605,7 +657,8 @@
             // 
             // BrowserInfo5
             // 
-            this.BrowserInfo5.Controls.Add(this.ReserveDate5);
+            this.BrowserInfo5.Controls.Add(this.ReserveDateMax5);
+            this.BrowserInfo5.Controls.Add(this.ReserveDateMin5);
             this.BrowserInfo5.Controls.Add(this.OrderTypeSelector5);
             this.BrowserInfo5.Controls.Add(this.DoneButton5);
             this.BrowserInfo5.Controls.Add(this.ResetButton5);
@@ -621,14 +674,23 @@
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
             // 
-            // ReserveDate5
+            // ReserveDateMax5
             // 
-            this.ReserveDate5.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDate5.Location = new System.Drawing.Point(5, 88);
-            this.ReserveDate5.Name = "ReserveDate5";
-            this.ReserveDate5.Size = new System.Drawing.Size(237, 20);
-            this.ReserveDate5.TabIndex = 24;
-            this.ReserveDate5.ValueChanged += new System.EventHandler(this.ReserveDate_ValueChanged);
+            this.ReserveDateMax5.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMax5.Location = new System.Drawing.Point(137, 88);
+            this.ReserveDateMax5.Name = "ReserveDateMax5";
+            this.ReserveDateMax5.Size = new System.Drawing.Size(105, 20);
+            this.ReserveDateMax5.TabIndex = 25;
+            this.ReserveDateMax5.ValueChanged += new System.EventHandler(this.ReserveDateMax_ValueChanged);
+            // 
+            // ReserveDateMin5
+            // 
+            this.ReserveDateMin5.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMin5.Location = new System.Drawing.Point(5, 88);
+            this.ReserveDateMin5.Name = "ReserveDateMin5";
+            this.ReserveDateMin5.Size = new System.Drawing.Size(126, 20);
+            this.ReserveDateMin5.TabIndex = 24;
+            this.ReserveDateMin5.ValueChanged += new System.EventHandler(this.ReserveDateMin_ValueChanged);
             // 
             // OrderTypeSelector5
             // 
@@ -789,29 +851,14 @@
             this.BotNumber.TabIndex = 21;
             this.BotNumber.ValueChanged += new System.EventHandler(this.BotNumber_ValueChanged);
             // 
-            // LogChatId
+            // ReserveDateMinPicker
             // 
-            this.LogChatId.Editable = true;
-            this.LogChatId.InputLeft = 90;
-            this.LogChatId.InputSize = new System.Drawing.Size(120, 20);
-            this.LogChatId.InputText = "";
-            this.LogChatId.LabelLeft = 0;
-            this.LogChatId.LabelText = "Log Chat Id:";
-            this.LogChatId.Location = new System.Drawing.Point(1001, 673);
-            this.LogChatId.Name = "LogChatId";
-            this.LogChatId.Size = new System.Drawing.Size(230, 23);
-            this.LogChatId.TabIndex = 22;
-            this.LogChatId.Text = "namedInput1";
-            this.LogChatId.TopPosition = 0;
-            // 
-            // ReserveDatePicker
-            // 
-            this.ReserveDatePicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDatePicker.Location = new System.Drawing.Point(1273, 672);
-            this.ReserveDatePicker.Name = "ReserveDatePicker";
-            this.ReserveDatePicker.Size = new System.Drawing.Size(305, 20);
-            this.ReserveDatePicker.TabIndex = 26;
-            this.ReserveDatePicker.ValueChanged += new System.EventHandler(this.ReserveDatePicker_ValueChanged);
+            this.ReserveDateMinPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMinPicker.Location = new System.Drawing.Point(1273, 672);
+            this.ReserveDateMinPicker.Name = "ReserveDateMinPicker";
+            this.ReserveDateMinPicker.Size = new System.Drawing.Size(148, 20);
+            this.ReserveDateMinPicker.TabIndex = 26;
+            this.ReserveDateMinPicker.ValueChanged += new System.EventHandler(this.ReserveDateMinPicker_ValueChanged);
             // 
             // OrderTypeSelector
             // 
@@ -835,19 +882,47 @@
             this.OrderTypeSelector.TabIndex = 25;
             this.OrderTypeSelector.SelectedIndexChanged += new System.EventHandler(this.OrderTypeSelector_SelectedIndexChanged_1);
             // 
+            // ReserveDateMaxPicker
+            // 
+            this.ReserveDateMaxPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1430, 672);
+            this.ReserveDateMaxPicker.Name = "ReserveDateMaxPicker";
+            this.ReserveDateMaxPicker.Size = new System.Drawing.Size(148, 20);
+            this.ReserveDateMaxPicker.TabIndex = 27;
+            this.ReserveDateMaxPicker.ValueChanged += new System.EventHandler(this.ReserveDateMaxPicker_ValueChanged);
+            // 
+            // LogChatIdLabel
+            // 
+            this.LogChatIdLabel.AutoSize = true;
+            this.LogChatIdLabel.Location = new System.Drawing.Point(1001, 678);
+            this.LogChatIdLabel.Name = "LogChatIdLabel";
+            this.LogChatIdLabel.Size = new System.Drawing.Size(65, 13);
+            this.LogChatIdLabel.TabIndex = 28;
+            this.LogChatIdLabel.Text = "Log Chat Id:";
+            // 
+            // LogChatId
+            // 
+            this.LogChatId.Location = new System.Drawing.Point(1091, 673);
+            this.LogChatId.Name = "LogChatId";
+            this.LogChatId.Size = new System.Drawing.Size(120, 20);
+            this.LogChatId.TabIndex = 29;
+            this.LogChatId.TextChanged += new System.EventHandler(this.LogChatId_TextChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1834, 862);
+            this.ClientSize = new System.Drawing.Size(1680, 862);
+            this.Controls.Add(this.LogChatId);
+            this.Controls.Add(this.LogChatIdLabel);
+            this.Controls.Add(this.ReserveDateMaxPicker);
             this.Controls.Add(this.BrowserPanel5);
             this.Controls.Add(this.BrowserPanel4);
             this.Controls.Add(this.BrowserPanel2);
             this.Controls.Add(this.BrowserPanel3);
             this.Controls.Add(this.BrowserPanel1);
-            this.Controls.Add(this.ReserveDatePicker);
+            this.Controls.Add(this.ReserveDateMinPicker);
             this.Controls.Add(this.OrderTypeSelector);
-            this.Controls.Add(this.LogChatId);
             this.Controls.Add(this.BotNumber);
             this.Controls.Add(this.BotNumberLabel);
             this.Controls.Add(this.DelaySettings);
@@ -928,18 +1003,25 @@
         private System.Windows.Forms.ComboBox OrderTypeSelector1;
         private System.Windows.Forms.Label BotNumberLabel;
         private System.Windows.Forms.NumericUpDown BotNumber;
-        private System.Windows.Forms.DateTimePicker ReserveDate1;
+        private System.Windows.Forms.DateTimePicker ReserveDateMin1;
         private System.Windows.Forms.ComboBox OrderTypeSelector2;
         private System.Windows.Forms.ComboBox OrderTypeSelector3;
         private System.Windows.Forms.ComboBox OrderTypeSelector4;
         private System.Windows.Forms.ComboBox OrderTypeSelector5;
-        private System.Windows.Forms.DateTimePicker ReserveDate2;
-        private System.Windows.Forms.DateTimePicker ReserveDate3;
-        private System.Windows.Forms.DateTimePicker ReserveDate4;
-        private System.Windows.Forms.DateTimePicker ReserveDate5;
-        private Controls.NamedInput LogChatId;
-        private System.Windows.Forms.DateTimePicker ReserveDatePicker;
+        private System.Windows.Forms.DateTimePicker ReserveDateMin2;
+        private System.Windows.Forms.DateTimePicker ReserveDateMin3;
+        private System.Windows.Forms.DateTimePicker ReserveDateMin4;
+        private System.Windows.Forms.DateTimePicker ReserveDateMin5;
+        private System.Windows.Forms.DateTimePicker ReserveDateMinPicker;
         private System.Windows.Forms.ComboBox OrderTypeSelector;
+        private System.Windows.Forms.DateTimePicker ReserveDateMax1;
+        private System.Windows.Forms.DateTimePicker ReserveDateMax2;
+        private System.Windows.Forms.DateTimePicker ReserveDateMax3;
+        private System.Windows.Forms.DateTimePicker ReserveDateMax4;
+        private System.Windows.Forms.DateTimePicker ReserveDateMax5;
+        private System.Windows.Forms.DateTimePicker ReserveDateMaxPicker;
+        private System.Windows.Forms.Label LogChatIdLabel;
+        private System.Windows.Forms.TextBox LogChatId;
     }
 }
 
