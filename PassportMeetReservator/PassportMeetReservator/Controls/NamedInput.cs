@@ -17,7 +17,7 @@ namespace PassportMeetReservator.Controls
             Controls.Add(Label);
             Controls.Add(Input);
 
-            SuspendLayout();
+            this.GotFocus += (sender, e) => Input.Focus();
         }
 
         [Category("CustomLayout")]

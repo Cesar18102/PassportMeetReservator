@@ -40,6 +40,7 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.Auto1 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax1 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin1 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector1 = new System.Windows.Forms.ComboBox();
@@ -48,6 +49,7 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.Auto2 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax2 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin2 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector2 = new System.Windows.Forms.ComboBox();
@@ -56,6 +58,7 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.Auto3 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax3 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin3 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector3 = new System.Windows.Forms.ComboBox();
@@ -64,6 +67,7 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.Auto4 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax4 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin4 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector4 = new System.Windows.Forms.ComboBox();
@@ -72,6 +76,7 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.Auto5 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax5 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin5 = new System.Windows.Forms.DateTimePicker();
             this.OrderTypeSelector5 = new System.Windows.Forms.ComboBox();
@@ -93,6 +98,9 @@
             this.ReserveDateMaxPicker = new System.Windows.Forms.DateTimePicker();
             this.LogChatIdLabel = new System.Windows.Forms.Label();
             this.LogChatId = new System.Windows.Forms.TextBox();
+            this.OrderListButton = new System.Windows.Forms.Button();
+            this.AddOrderButton = new System.Windows.Forms.Button();
+            this.ResetAllButton = new System.Windows.Forms.Button();
             this.BrowserInfo1.SuspendLayout();
             this.BrowserInfo2.SuspendLayout();
             this.BrowserInfo3.SuspendLayout();
@@ -149,6 +157,7 @@
             // Browser1
             // 
             this.Browser1.ActivateBrowserOnCreation = false;
+            this.Browser1.Auto = false;
             this.Browser1.BotNumber = 0;
             this.Browser1.BrowserNumber = 0;
             this.Browser1.BrowsersCount = 0;
@@ -157,6 +166,7 @@
             this.Browser1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser1.Name = "Browser1";
             this.Browser1.Operation = null;
+            this.Browser1.Order = null;
             this.Browser1.Paused = true;
             this.Browser1.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser1.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -167,6 +177,7 @@
             // Browser2
             // 
             this.Browser2.ActivateBrowserOnCreation = false;
+            this.Browser2.Auto = false;
             this.Browser2.BotNumber = 0;
             this.Browser2.BrowserNumber = 0;
             this.Browser2.BrowsersCount = 0;
@@ -175,6 +186,7 @@
             this.Browser2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser2.Name = "Browser2";
             this.Browser2.Operation = null;
+            this.Browser2.Order = null;
             this.Browser2.Paused = true;
             this.Browser2.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser2.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -185,6 +197,7 @@
             // Browser3
             // 
             this.Browser3.ActivateBrowserOnCreation = false;
+            this.Browser3.Auto = false;
             this.Browser3.BotNumber = 0;
             this.Browser3.BrowserNumber = 0;
             this.Browser3.BrowsersCount = 0;
@@ -193,6 +206,7 @@
             this.Browser3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser3.Name = "Browser3";
             this.Browser3.Operation = null;
+            this.Browser3.Order = null;
             this.Browser3.Paused = true;
             this.Browser3.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser3.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -203,6 +217,7 @@
             // Browser4
             // 
             this.Browser4.ActivateBrowserOnCreation = false;
+            this.Browser4.Auto = false;
             this.Browser4.BotNumber = 0;
             this.Browser4.BrowserNumber = 0;
             this.Browser4.BrowsersCount = 0;
@@ -211,6 +226,7 @@
             this.Browser4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser4.Name = "Browser4";
             this.Browser4.Operation = null;
+            this.Browser4.Order = null;
             this.Browser4.Paused = true;
             this.Browser4.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser4.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -221,6 +237,7 @@
             // Browser5
             // 
             this.Browser5.ActivateBrowserOnCreation = false;
+            this.Browser5.Auto = false;
             this.Browser5.BotNumber = 0;
             this.Browser5.BrowserNumber = 0;
             this.Browser5.BrowsersCount = 0;
@@ -229,6 +246,7 @@
             this.Browser5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser5.Name = "Browser5";
             this.Browser5.Operation = null;
+            this.Browser5.Order = null;
             this.Browser5.Paused = true;
             this.Browser5.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser5.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -239,16 +257,17 @@
             // OrdersInfo
             // 
             this.OrdersInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.OrdersInfo.Location = new System.Drawing.Point(0, 718);
+            this.OrdersInfo.Location = new System.Drawing.Point(0, 760);
             this.OrdersInfo.Margin = new System.Windows.Forms.Padding(2);
             this.OrdersInfo.Name = "OrdersInfo";
             this.OrdersInfo.ReadOnly = true;
-            this.OrdersInfo.Size = new System.Drawing.Size(1680, 144);
+            this.OrdersInfo.Size = new System.Drawing.Size(1786, 144);
             this.OrdersInfo.TabIndex = 4;
             this.OrdersInfo.Text = "";
             // 
             // BrowserInfo1
             // 
+            this.BrowserInfo1.Controls.Add(this.Auto1);
             this.BrowserInfo1.Controls.Add(this.ReserveDateMax1);
             this.BrowserInfo1.Controls.Add(this.ReserveDateMin1);
             this.BrowserInfo1.Controls.Add(this.OrderTypeSelector1);
@@ -265,6 +284,17 @@
             this.BrowserInfo1.TabStop = false;
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
+            // 
+            // Auto1
+            // 
+            this.Auto1.AutoSize = true;
+            this.Auto1.Location = new System.Drawing.Point(282, 18);
+            this.Auto1.Name = "Auto1";
+            this.Auto1.Size = new System.Drawing.Size(48, 17);
+            this.Auto1.TabIndex = 24;
+            this.Auto1.Text = "Auto";
+            this.Auto1.UseVisualStyleBackColor = true;
+            this.Auto1.CheckedChanged += new System.EventHandler(this.Auto_CheckedChanged);
             // 
             // ReserveDateMax1
             // 
@@ -351,6 +381,7 @@
             // 
             // BrowserInfo2
             // 
+            this.BrowserInfo2.Controls.Add(this.Auto2);
             this.BrowserInfo2.Controls.Add(this.ReserveDateMax2);
             this.BrowserInfo2.Controls.Add(this.ReserveDateMin2);
             this.BrowserInfo2.Controls.Add(this.OrderTypeSelector2);
@@ -367,6 +398,17 @@
             this.BrowserInfo2.TabStop = false;
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
+            // 
+            // Auto2
+            // 
+            this.Auto2.AutoSize = true;
+            this.Auto2.Location = new System.Drawing.Point(284, 18);
+            this.Auto2.Name = "Auto2";
+            this.Auto2.Size = new System.Drawing.Size(48, 17);
+            this.Auto2.TabIndex = 25;
+            this.Auto2.Text = "Auto";
+            this.Auto2.UseVisualStyleBackColor = true;
+            this.Auto2.CheckedChanged += new System.EventHandler(this.Auto_CheckedChanged);
             // 
             // ReserveDateMax2
             // 
@@ -453,6 +495,7 @@
             // 
             // BrowserInfo3
             // 
+            this.BrowserInfo3.Controls.Add(this.Auto3);
             this.BrowserInfo3.Controls.Add(this.ReserveDateMax3);
             this.BrowserInfo3.Controls.Add(this.ReserveDateMin3);
             this.BrowserInfo3.Controls.Add(this.OrderTypeSelector3);
@@ -469,6 +512,17 @@
             this.BrowserInfo3.TabStop = false;
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
+            // 
+            // Auto3
+            // 
+            this.Auto3.AutoSize = true;
+            this.Auto3.Location = new System.Drawing.Point(287, 18);
+            this.Auto3.Name = "Auto3";
+            this.Auto3.Size = new System.Drawing.Size(48, 17);
+            this.Auto3.TabIndex = 26;
+            this.Auto3.Text = "Auto";
+            this.Auto3.UseVisualStyleBackColor = true;
+            this.Auto3.CheckedChanged += new System.EventHandler(this.Auto_CheckedChanged);
             // 
             // ReserveDateMax3
             // 
@@ -555,6 +609,7 @@
             // 
             // BrowserInfo4
             // 
+            this.BrowserInfo4.Controls.Add(this.Auto4);
             this.BrowserInfo4.Controls.Add(this.ReserveDateMax4);
             this.BrowserInfo4.Controls.Add(this.ReserveDateMin4);
             this.BrowserInfo4.Controls.Add(this.OrderTypeSelector4);
@@ -571,6 +626,17 @@
             this.BrowserInfo4.TabStop = false;
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
+            // 
+            // Auto4
+            // 
+            this.Auto4.AutoSize = true;
+            this.Auto4.Location = new System.Drawing.Point(276, 18);
+            this.Auto4.Name = "Auto4";
+            this.Auto4.Size = new System.Drawing.Size(48, 17);
+            this.Auto4.TabIndex = 27;
+            this.Auto4.Text = "Auto";
+            this.Auto4.UseVisualStyleBackColor = true;
+            this.Auto4.CheckedChanged += new System.EventHandler(this.Auto_CheckedChanged);
             // 
             // ReserveDateMax4
             // 
@@ -657,6 +723,7 @@
             // 
             // BrowserInfo5
             // 
+            this.BrowserInfo5.Controls.Add(this.Auto5);
             this.BrowserInfo5.Controls.Add(this.ReserveDateMax5);
             this.BrowserInfo5.Controls.Add(this.ReserveDateMin5);
             this.BrowserInfo5.Controls.Add(this.OrderTypeSelector5);
@@ -673,6 +740,17 @@
             this.BrowserInfo5.TabStop = false;
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
+            // 
+            // Auto5
+            // 
+            this.Auto5.AutoSize = true;
+            this.Auto5.Location = new System.Drawing.Point(275, 18);
+            this.Auto5.Name = "Auto5";
+            this.Auto5.Size = new System.Drawing.Size(48, 17);
+            this.Auto5.TabIndex = 28;
+            this.Auto5.Text = "Auto";
+            this.Auto5.UseVisualStyleBackColor = true;
+            this.Auto5.CheckedChanged += new System.EventHandler(this.Auto_CheckedChanged);
             // 
             // ReserveDateMax5
             // 
@@ -762,7 +840,7 @@
             this.StartButton.Location = new System.Drawing.Point(9, 646);
             this.StartButton.Margin = new System.Windows.Forms.Padding(2);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(188, 34);
+            this.StartButton.Size = new System.Drawing.Size(150, 34);
             this.StartButton.TabIndex = 11;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -773,7 +851,7 @@
             this.PauseButton.Location = new System.Drawing.Point(9, 684);
             this.PauseButton.Margin = new System.Windows.Forms.Padding(2);
             this.PauseButton.Name = "PauseButton";
-            this.PauseButton.Size = new System.Drawing.Size(188, 34);
+            this.PauseButton.Size = new System.Drawing.Size(150, 34);
             this.PauseButton.TabIndex = 12;
             this.PauseButton.Text = "Pause";
             this.PauseButton.UseVisualStyleBackColor = true;
@@ -781,10 +859,10 @@
             // 
             // ReservedListButton
             // 
-            this.ReservedListButton.Location = new System.Drawing.Point(725, 682);
+            this.ReservedListButton.Location = new System.Drawing.Point(606, 682);
             this.ReservedListButton.Margin = new System.Windows.Forms.Padding(2);
             this.ReservedListButton.Name = "ReservedListButton";
-            this.ReservedListButton.Size = new System.Drawing.Size(188, 34);
+            this.ReservedListButton.Size = new System.Drawing.Size(150, 34);
             this.ReservedListButton.TabIndex = 15;
             this.ReservedListButton.Text = "Reserved List";
             this.ReservedListButton.UseVisualStyleBackColor = true;
@@ -792,10 +870,10 @@
             // 
             // ScheduleButton
             // 
-            this.ScheduleButton.Location = new System.Drawing.Point(256, 645);
+            this.ScheduleButton.Location = new System.Drawing.Point(209, 646);
             this.ScheduleButton.Margin = new System.Windows.Forms.Padding(2);
             this.ScheduleButton.Name = "ScheduleButton";
-            this.ScheduleButton.Size = new System.Drawing.Size(188, 34);
+            this.ScheduleButton.Size = new System.Drawing.Size(150, 34);
             this.ScheduleButton.TabIndex = 16;
             this.ScheduleButton.Text = "Schedule";
             this.ScheduleButton.UseVisualStyleBackColor = true;
@@ -803,10 +881,10 @@
             // 
             // StartScheduledButton
             // 
-            this.StartScheduledButton.Location = new System.Drawing.Point(448, 645);
+            this.StartScheduledButton.Location = new System.Drawing.Point(209, 684);
             this.StartScheduledButton.Margin = new System.Windows.Forms.Padding(2);
             this.StartScheduledButton.Name = "StartScheduledButton";
-            this.StartScheduledButton.Size = new System.Drawing.Size(188, 34);
+            this.StartScheduledButton.Size = new System.Drawing.Size(150, 34);
             this.StartScheduledButton.TabIndex = 17;
             this.StartScheduledButton.Text = "Start Scheduled";
             this.StartScheduledButton.UseVisualStyleBackColor = true;
@@ -814,10 +892,10 @@
             // 
             // UnbindScheduleButton
             // 
-            this.UnbindScheduleButton.Location = new System.Drawing.Point(448, 682);
+            this.UnbindScheduleButton.Location = new System.Drawing.Point(209, 722);
             this.UnbindScheduleButton.Margin = new System.Windows.Forms.Padding(2);
             this.UnbindScheduleButton.Name = "UnbindScheduleButton";
-            this.UnbindScheduleButton.Size = new System.Drawing.Size(188, 34);
+            this.UnbindScheduleButton.Size = new System.Drawing.Size(150, 34);
             this.UnbindScheduleButton.TabIndex = 18;
             this.UnbindScheduleButton.Text = "Unbind Schedule";
             this.UnbindScheduleButton.UseVisualStyleBackColor = true;
@@ -825,10 +903,10 @@
             // 
             // DelaySettings
             // 
-            this.DelaySettings.Location = new System.Drawing.Point(725, 646);
+            this.DelaySettings.Location = new System.Drawing.Point(606, 646);
             this.DelaySettings.Margin = new System.Windows.Forms.Padding(2);
             this.DelaySettings.Name = "DelaySettings";
-            this.DelaySettings.Size = new System.Drawing.Size(188, 34);
+            this.DelaySettings.Size = new System.Drawing.Size(150, 34);
             this.DelaySettings.TabIndex = 19;
             this.DelaySettings.Text = "Delay Settings";
             this.DelaySettings.UseVisualStyleBackColor = true;
@@ -837,7 +915,7 @@
             // BotNumberLabel
             // 
             this.BotNumberLabel.AutoSize = true;
-            this.BotNumberLabel.Location = new System.Drawing.Point(1001, 649);
+            this.BotNumberLabel.Location = new System.Drawing.Point(818, 649);
             this.BotNumberLabel.Name = "BotNumberLabel";
             this.BotNumberLabel.Size = new System.Drawing.Size(66, 13);
             this.BotNumberLabel.TabIndex = 20;
@@ -845,7 +923,7 @@
             // 
             // BotNumber
             // 
-            this.BotNumber.Location = new System.Drawing.Point(1091, 647);
+            this.BotNumber.Location = new System.Drawing.Point(908, 647);
             this.BotNumber.Name = "BotNumber";
             this.BotNumber.Size = new System.Drawing.Size(120, 20);
             this.BotNumber.TabIndex = 21;
@@ -854,7 +932,7 @@
             // ReserveDateMinPicker
             // 
             this.ReserveDateMinPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMinPicker.Location = new System.Drawing.Point(1273, 672);
+            this.ReserveDateMinPicker.Location = new System.Drawing.Point(1090, 672);
             this.ReserveDateMinPicker.Name = "ReserveDateMinPicker";
             this.ReserveDateMinPicker.Size = new System.Drawing.Size(148, 20);
             this.ReserveDateMinPicker.TabIndex = 26;
@@ -875,7 +953,7 @@
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
             "Obywatelstwo polskie"});
-            this.OrderTypeSelector.Location = new System.Drawing.Point(1273, 646);
+            this.OrderTypeSelector.Location = new System.Drawing.Point(1090, 646);
             this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
             this.OrderTypeSelector.Size = new System.Drawing.Size(305, 21);
@@ -885,7 +963,7 @@
             // ReserveDateMaxPicker
             // 
             this.ReserveDateMaxPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1430, 672);
+            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1247, 672);
             this.ReserveDateMaxPicker.Name = "ReserveDateMaxPicker";
             this.ReserveDateMaxPicker.Size = new System.Drawing.Size(148, 20);
             this.ReserveDateMaxPicker.TabIndex = 27;
@@ -894,7 +972,7 @@
             // LogChatIdLabel
             // 
             this.LogChatIdLabel.AutoSize = true;
-            this.LogChatIdLabel.Location = new System.Drawing.Point(1001, 678);
+            this.LogChatIdLabel.Location = new System.Drawing.Point(818, 678);
             this.LogChatIdLabel.Name = "LogChatIdLabel";
             this.LogChatIdLabel.Size = new System.Drawing.Size(65, 13);
             this.LogChatIdLabel.TabIndex = 28;
@@ -902,17 +980,53 @@
             // 
             // LogChatId
             // 
-            this.LogChatId.Location = new System.Drawing.Point(1091, 673);
+            this.LogChatId.Location = new System.Drawing.Point(908, 673);
             this.LogChatId.Name = "LogChatId";
             this.LogChatId.Size = new System.Drawing.Size(120, 20);
             this.LogChatId.TabIndex = 29;
             this.LogChatId.TextChanged += new System.EventHandler(this.LogChatId_TextChanged);
             // 
+            // OrderListButton
+            // 
+            this.OrderListButton.Location = new System.Drawing.Point(407, 684);
+            this.OrderListButton.Margin = new System.Windows.Forms.Padding(2);
+            this.OrderListButton.Name = "OrderListButton";
+            this.OrderListButton.Size = new System.Drawing.Size(150, 34);
+            this.OrderListButton.TabIndex = 31;
+            this.OrderListButton.Text = "Order List";
+            this.OrderListButton.UseVisualStyleBackColor = true;
+            this.OrderListButton.Click += new System.EventHandler(this.OrderListButton_Click);
+            // 
+            // AddOrderButton
+            // 
+            this.AddOrderButton.Location = new System.Drawing.Point(407, 646);
+            this.AddOrderButton.Margin = new System.Windows.Forms.Padding(2);
+            this.AddOrderButton.Name = "AddOrderButton";
+            this.AddOrderButton.Size = new System.Drawing.Size(150, 34);
+            this.AddOrderButton.TabIndex = 30;
+            this.AddOrderButton.Text = "Add Order";
+            this.AddOrderButton.UseVisualStyleBackColor = true;
+            this.AddOrderButton.Click += new System.EventHandler(this.AddOrderButton_Click);
+            // 
+            // ResetAllButton
+            // 
+            this.ResetAllButton.Location = new System.Drawing.Point(9, 722);
+            this.ResetAllButton.Margin = new System.Windows.Forms.Padding(2);
+            this.ResetAllButton.Name = "ResetAllButton";
+            this.ResetAllButton.Size = new System.Drawing.Size(150, 34);
+            this.ResetAllButton.TabIndex = 32;
+            this.ResetAllButton.Text = "Reset ALL";
+            this.ResetAllButton.UseVisualStyleBackColor = true;
+            this.ResetAllButton.Click += new System.EventHandler(this.ResetAllButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1680, 862);
+            this.ClientSize = new System.Drawing.Size(1786, 904);
+            this.Controls.Add(this.ResetAllButton);
+            this.Controls.Add(this.OrderListButton);
+            this.Controls.Add(this.AddOrderButton);
             this.Controls.Add(this.LogChatId);
             this.Controls.Add(this.LogChatIdLabel);
             this.Controls.Add(this.ReserveDateMaxPicker);
@@ -946,10 +1060,15 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.BrowserInfo1.ResumeLayout(false);
+            this.BrowserInfo1.PerformLayout();
             this.BrowserInfo2.ResumeLayout(false);
+            this.BrowserInfo2.PerformLayout();
             this.BrowserInfo3.ResumeLayout(false);
+            this.BrowserInfo3.PerformLayout();
             this.BrowserInfo4.ResumeLayout(false);
+            this.BrowserInfo4.PerformLayout();
             this.BrowserInfo5.ResumeLayout(false);
+            this.BrowserInfo5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BotNumber)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1022,6 +1141,14 @@
         private System.Windows.Forms.DateTimePicker ReserveDateMaxPicker;
         private System.Windows.Forms.Label LogChatIdLabel;
         private System.Windows.Forms.TextBox LogChatId;
+        private System.Windows.Forms.Button OrderListButton;
+        private System.Windows.Forms.Button AddOrderButton;
+        private System.Windows.Forms.CheckBox Auto1;
+        private System.Windows.Forms.CheckBox Auto2;
+        private System.Windows.Forms.CheckBox Auto3;
+        private System.Windows.Forms.CheckBox Auto4;
+        private System.Windows.Forms.CheckBox Auto5;
+        private System.Windows.Forms.Button ResetAllButton;
     }
 }
 

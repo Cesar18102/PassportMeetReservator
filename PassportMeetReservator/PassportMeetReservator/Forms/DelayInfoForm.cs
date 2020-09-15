@@ -21,6 +21,7 @@ namespace PassportMeetReservator.Forms
             RefreshSessionUpdateDelay.Value = DelayInfo.RefreshSessionUpdateDelay;
             DiscreteWaitDelay.Value = DelayInfo.DiscreteWaitDelay;
             ManualReactionWaitDelay.Value = DelayInfo.ManualReactionWaitDelay;
+            PostInputDelay.Value = DelayInfo.PostInputDelay;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -31,6 +32,7 @@ namespace PassportMeetReservator.Forms
             DelayInfo.RefreshSessionUpdateDelay = (int)RefreshSessionUpdateDelay.Value;
             DelayInfo.DiscreteWaitDelay = (int)DiscreteWaitDelay.Value;
             DelayInfo.ManualReactionWaitDelay = (int)ManualReactionWaitDelay.Value;
+            DelayInfo.PostInputDelay = (int)PostInputDelay.Value;
 
             this.Close();
         }
