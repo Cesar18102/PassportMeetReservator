@@ -23,8 +23,6 @@ namespace PassportMeetReservator.Controls
         public event EventHandler<EventArgs> OnManualReactionWaiting;
         public event EventHandler<DateTimeEventArgs> OnDateTimeSelected;
 
-        private const string INIT_URL = "https://rejestracjapoznan.poznan.uw.gov.pl/";
-
         private const string RESERVATION_TYPE_BUTTON_CLASS = "operation-button";
 
         private const string NEXT_STEP_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
@@ -119,6 +117,8 @@ namespace PassportMeetReservator.Controls
         public int BrowsersCount { get; set; }
 
         public string Operation { get; set; }
+        public string InitUrl { get; set; } = "https://rejestracjapoznan.poznan.uw.gov.pl/";
+
         public DateTime ReserveDateMin { get; set; } = DateTime.Now;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now;
 
@@ -219,7 +219,7 @@ namespace PassportMeetReservator.Controls
 
         private async Task<bool> Iteration()
         {
-            Load(INIT_URL);
+            Load(InitUrl);
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
@@ -375,7 +375,7 @@ namespace PassportMeetReservator.Controls
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {
-            if (Address == INIT_URL || Order == null)
+            if (Address == InitUrl || Order == null)
                 return;
 
             Order.Done = true;

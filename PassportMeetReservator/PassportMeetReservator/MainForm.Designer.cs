@@ -40,6 +40,7 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.CityChecker1 = new System.Windows.Forms.ComboBox();
             this.Auto1 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax1 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin1 = new System.Windows.Forms.DateTimePicker();
@@ -49,6 +50,7 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.CityChecker2 = new System.Windows.Forms.ComboBox();
             this.Auto2 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax2 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin2 = new System.Windows.Forms.DateTimePicker();
@@ -58,6 +60,7 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.CityChecker3 = new System.Windows.Forms.ComboBox();
             this.Auto3 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax3 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin3 = new System.Windows.Forms.DateTimePicker();
@@ -67,6 +70,7 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.CityChecker4 = new System.Windows.Forms.ComboBox();
             this.Auto4 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax4 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin4 = new System.Windows.Forms.DateTimePicker();
@@ -76,6 +80,7 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.CityChecker5 = new System.Windows.Forms.ComboBox();
             this.Auto5 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax5 = new System.Windows.Forms.DateTimePicker();
             this.ReserveDateMin5 = new System.Windows.Forms.DateTimePicker();
@@ -101,6 +106,7 @@
             this.OrderListButton = new System.Windows.Forms.Button();
             this.AddOrderButton = new System.Windows.Forms.Button();
             this.ResetAllButton = new System.Windows.Forms.Button();
+            this.CityChecker = new System.Windows.Forms.ComboBox();
             this.BrowserInfo1.SuspendLayout();
             this.BrowserInfo2.SuspendLayout();
             this.BrowserInfo3.SuspendLayout();
@@ -112,46 +118,46 @@
             // BrowserPanel1
             // 
             this.BrowserPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel1.Location = new System.Drawing.Point(9, 154);
+            this.BrowserPanel1.Location = new System.Drawing.Point(9, 201);
             this.BrowserPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel1.Name = "BrowserPanel1";
-            this.BrowserPanel1.Size = new System.Drawing.Size(350, 488);
+            this.BrowserPanel1.Size = new System.Drawing.Size(350, 441);
             this.BrowserPanel1.TabIndex = 0;
             // 
             // BrowserPanel2
             // 
             this.BrowserPanel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel2.Location = new System.Drawing.Point(363, 154);
+            this.BrowserPanel2.Location = new System.Drawing.Point(363, 201);
             this.BrowserPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel2.Name = "BrowserPanel2";
-            this.BrowserPanel2.Size = new System.Drawing.Size(350, 488);
+            this.BrowserPanel2.Size = new System.Drawing.Size(350, 441);
             this.BrowserPanel2.TabIndex = 1;
             // 
             // BrowserPanel4
             // 
             this.BrowserPanel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel4.Location = new System.Drawing.Point(1071, 154);
+            this.BrowserPanel4.Location = new System.Drawing.Point(1071, 201);
             this.BrowserPanel4.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel4.Name = "BrowserPanel4";
-            this.BrowserPanel4.Size = new System.Drawing.Size(350, 488);
+            this.BrowserPanel4.Size = new System.Drawing.Size(350, 441);
             this.BrowserPanel4.TabIndex = 3;
             // 
             // BrowserPanel3
             // 
             this.BrowserPanel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel3.Location = new System.Drawing.Point(717, 154);
+            this.BrowserPanel3.Location = new System.Drawing.Point(717, 201);
             this.BrowserPanel3.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel3.Name = "BrowserPanel3";
-            this.BrowserPanel3.Size = new System.Drawing.Size(350, 488);
+            this.BrowserPanel3.Size = new System.Drawing.Size(350, 441);
             this.BrowserPanel3.TabIndex = 2;
             // 
             // BrowserPanel5
             // 
             this.BrowserPanel5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel5.Location = new System.Drawing.Point(1425, 154);
+            this.BrowserPanel5.Location = new System.Drawing.Point(1425, 201);
             this.BrowserPanel5.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel5.Name = "BrowserPanel5";
-            this.BrowserPanel5.Size = new System.Drawing.Size(350, 488);
+            this.BrowserPanel5.Size = new System.Drawing.Size(350, 441);
             this.BrowserPanel5.TabIndex = 3;
             // 
             // Browser1
@@ -267,6 +273,7 @@
             // 
             // BrowserInfo1
             // 
+            this.BrowserInfo1.Controls.Add(this.CityChecker1);
             this.BrowserInfo1.Controls.Add(this.Auto1);
             this.BrowserInfo1.Controls.Add(this.ReserveDateMax1);
             this.BrowserInfo1.Controls.Add(this.ReserveDateMin1);
@@ -279,11 +286,28 @@
             this.BrowserInfo1.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo1.Name = "BrowserInfo1";
             this.BrowserInfo1.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo1.Size = new System.Drawing.Size(350, 140);
+            this.BrowserInfo1.Size = new System.Drawing.Size(350, 187);
             this.BrowserInfo1.TabIndex = 8;
             this.BrowserInfo1.TabStop = false;
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
+            // 
+            // CityChecker1
+            // 
+            this.CityChecker1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CityChecker1.FormattingEnabled = true;
+            this.CityChecker1.Items.AddRange(new object[] {
+            "https://rejestracjapoznan.poznan.uw.gov.pl/",
+            "https://rejestracjakalisz.poznan.uw.gov.pl/",
+            "https://rejestracjakonin.poznan.uw.gov.pl/",
+            "https://rejestracjaleszno.poznan.uw.gov.pl/",
+            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            this.CityChecker1.Location = new System.Drawing.Point(7, 135);
+            this.CityChecker1.Margin = new System.Windows.Forms.Padding(2);
+            this.CityChecker1.Name = "CityChecker1";
+            this.CityChecker1.Size = new System.Drawing.Size(237, 21);
+            this.CityChecker1.TabIndex = 25;
+            this.CityChecker1.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged);
             // 
             // Auto1
             // 
@@ -328,7 +352,8 @@
                 "h w delegaturach)",
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
+            "Obywatelstwo polskie",
+            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector1.Location = new System.Drawing.Point(7, 61);
             this.OrderTypeSelector1.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector1.Name = "OrderTypeSelector1";
@@ -381,6 +406,7 @@
             // 
             // BrowserInfo2
             // 
+            this.BrowserInfo2.Controls.Add(this.CityChecker2);
             this.BrowserInfo2.Controls.Add(this.Auto2);
             this.BrowserInfo2.Controls.Add(this.ReserveDateMax2);
             this.BrowserInfo2.Controls.Add(this.ReserveDateMin2);
@@ -393,11 +419,28 @@
             this.BrowserInfo2.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo2.Name = "BrowserInfo2";
             this.BrowserInfo2.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo2.Size = new System.Drawing.Size(350, 140);
+            this.BrowserInfo2.Size = new System.Drawing.Size(350, 187);
             this.BrowserInfo2.TabIndex = 9;
             this.BrowserInfo2.TabStop = false;
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
+            // 
+            // CityChecker2
+            // 
+            this.CityChecker2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CityChecker2.FormattingEnabled = true;
+            this.CityChecker2.Items.AddRange(new object[] {
+            "https://rejestracjapoznan.poznan.uw.gov.pl/",
+            "https://rejestracjakalisz.poznan.uw.gov.pl/",
+            "https://rejestracjakonin.poznan.uw.gov.pl/",
+            "https://rejestracjaleszno.poznan.uw.gov.pl/",
+            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            this.CityChecker2.Location = new System.Drawing.Point(6, 135);
+            this.CityChecker2.Margin = new System.Windows.Forms.Padding(2);
+            this.CityChecker2.Name = "CityChecker2";
+            this.CityChecker2.Size = new System.Drawing.Size(237, 21);
+            this.CityChecker2.TabIndex = 26;
+            this.CityChecker2.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged);
             // 
             // Auto2
             // 
@@ -442,7 +485,8 @@
                 "h w delegaturach)",
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
+            "Obywatelstwo polskie",
+            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector2.Location = new System.Drawing.Point(6, 62);
             this.OrderTypeSelector2.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector2.Name = "OrderTypeSelector2";
@@ -495,6 +539,7 @@
             // 
             // BrowserInfo3
             // 
+            this.BrowserInfo3.Controls.Add(this.CityChecker3);
             this.BrowserInfo3.Controls.Add(this.Auto3);
             this.BrowserInfo3.Controls.Add(this.ReserveDateMax3);
             this.BrowserInfo3.Controls.Add(this.ReserveDateMin3);
@@ -507,11 +552,28 @@
             this.BrowserInfo3.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo3.Name = "BrowserInfo3";
             this.BrowserInfo3.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo3.Size = new System.Drawing.Size(350, 140);
+            this.BrowserInfo3.Size = new System.Drawing.Size(350, 187);
             this.BrowserInfo3.TabIndex = 10;
             this.BrowserInfo3.TabStop = false;
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
+            // 
+            // CityChecker3
+            // 
+            this.CityChecker3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CityChecker3.FormattingEnabled = true;
+            this.CityChecker3.Items.AddRange(new object[] {
+            "https://rejestracjapoznan.poznan.uw.gov.pl/",
+            "https://rejestracjakalisz.poznan.uw.gov.pl/",
+            "https://rejestracjakonin.poznan.uw.gov.pl/",
+            "https://rejestracjaleszno.poznan.uw.gov.pl/",
+            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            this.CityChecker3.Location = new System.Drawing.Point(8, 135);
+            this.CityChecker3.Margin = new System.Windows.Forms.Padding(2);
+            this.CityChecker3.Name = "CityChecker3";
+            this.CityChecker3.Size = new System.Drawing.Size(237, 21);
+            this.CityChecker3.TabIndex = 27;
+            this.CityChecker3.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged);
             // 
             // Auto3
             // 
@@ -556,7 +618,8 @@
                 "h w delegaturach)",
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
+            "Obywatelstwo polskie",
+            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector3.Location = new System.Drawing.Point(8, 62);
             this.OrderTypeSelector3.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector3.Name = "OrderTypeSelector3";
@@ -609,6 +672,7 @@
             // 
             // BrowserInfo4
             // 
+            this.BrowserInfo4.Controls.Add(this.CityChecker4);
             this.BrowserInfo4.Controls.Add(this.Auto4);
             this.BrowserInfo4.Controls.Add(this.ReserveDateMax4);
             this.BrowserInfo4.Controls.Add(this.ReserveDateMin4);
@@ -621,11 +685,28 @@
             this.BrowserInfo4.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo4.Name = "BrowserInfo4";
             this.BrowserInfo4.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo4.Size = new System.Drawing.Size(350, 140);
+            this.BrowserInfo4.Size = new System.Drawing.Size(350, 187);
             this.BrowserInfo4.TabIndex = 10;
             this.BrowserInfo4.TabStop = false;
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
+            // 
+            // CityChecker4
+            // 
+            this.CityChecker4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CityChecker4.FormattingEnabled = true;
+            this.CityChecker4.Items.AddRange(new object[] {
+            "https://rejestracjapoznan.poznan.uw.gov.pl/",
+            "https://rejestracjakalisz.poznan.uw.gov.pl/",
+            "https://rejestracjakonin.poznan.uw.gov.pl/",
+            "https://rejestracjaleszno.poznan.uw.gov.pl/",
+            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            this.CityChecker4.Location = new System.Drawing.Point(5, 135);
+            this.CityChecker4.Margin = new System.Windows.Forms.Padding(2);
+            this.CityChecker4.Name = "CityChecker4";
+            this.CityChecker4.Size = new System.Drawing.Size(237, 21);
+            this.CityChecker4.TabIndex = 28;
+            this.CityChecker4.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged);
             // 
             // Auto4
             // 
@@ -670,7 +751,8 @@
                 "h w delegaturach)",
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
+            "Obywatelstwo polskie",
+            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector4.Location = new System.Drawing.Point(5, 62);
             this.OrderTypeSelector4.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector4.Name = "OrderTypeSelector4";
@@ -723,6 +805,7 @@
             // 
             // BrowserInfo5
             // 
+            this.BrowserInfo5.Controls.Add(this.CityChecker5);
             this.BrowserInfo5.Controls.Add(this.Auto5);
             this.BrowserInfo5.Controls.Add(this.ReserveDateMax5);
             this.BrowserInfo5.Controls.Add(this.ReserveDateMin5);
@@ -735,11 +818,28 @@
             this.BrowserInfo5.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo5.Name = "BrowserInfo5";
             this.BrowserInfo5.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo5.Size = new System.Drawing.Size(350, 140);
+            this.BrowserInfo5.Size = new System.Drawing.Size(350, 187);
             this.BrowserInfo5.TabIndex = 10;
             this.BrowserInfo5.TabStop = false;
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
+            // 
+            // CityChecker5
+            // 
+            this.CityChecker5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CityChecker5.FormattingEnabled = true;
+            this.CityChecker5.Items.AddRange(new object[] {
+            "https://rejestracjapoznan.poznan.uw.gov.pl/",
+            "https://rejestracjakalisz.poznan.uw.gov.pl/",
+            "https://rejestracjakonin.poznan.uw.gov.pl/",
+            "https://rejestracjaleszno.poznan.uw.gov.pl/",
+            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            this.CityChecker5.Location = new System.Drawing.Point(5, 135);
+            this.CityChecker5.Margin = new System.Windows.Forms.Padding(2);
+            this.CityChecker5.Name = "CityChecker5";
+            this.CityChecker5.Size = new System.Drawing.Size(237, 21);
+            this.CityChecker5.TabIndex = 29;
+            this.CityChecker5.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged);
             // 
             // Auto5
             // 
@@ -784,7 +884,8 @@
                 "h w delegaturach)",
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
+            "Obywatelstwo polskie",
+            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector5.Location = new System.Drawing.Point(5, 62);
             this.OrderTypeSelector5.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector5.Name = "OrderTypeSelector5";
@@ -952,7 +1053,8 @@
                 "h w delegaturach)",
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
+            "Obywatelstwo polskie",
+            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector.Location = new System.Drawing.Point(1090, 646);
             this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
@@ -1019,11 +1121,29 @@
             this.ResetAllButton.UseVisualStyleBackColor = true;
             this.ResetAllButton.Click += new System.EventHandler(this.ResetAllButton_Click);
             // 
+            // CityChecker
+            // 
+            this.CityChecker.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CityChecker.FormattingEnabled = true;
+            this.CityChecker.Items.AddRange(new object[] {
+            "https://rejestracjapoznan.poznan.uw.gov.pl/",
+            "https://rejestracjakalisz.poznan.uw.gov.pl/",
+            "https://rejestracjakonin.poznan.uw.gov.pl/",
+            "https://rejestracjaleszno.poznan.uw.gov.pl/",
+            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            this.CityChecker.Location = new System.Drawing.Point(1090, 697);
+            this.CityChecker.Margin = new System.Windows.Forms.Padding(2);
+            this.CityChecker.Name = "CityChecker";
+            this.CityChecker.Size = new System.Drawing.Size(305, 21);
+            this.CityChecker.TabIndex = 33;
+            this.CityChecker.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged_1);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1786, 904);
+            this.Controls.Add(this.CityChecker);
             this.Controls.Add(this.ResetAllButton);
             this.Controls.Add(this.OrderListButton);
             this.Controls.Add(this.AddOrderButton);
@@ -1149,6 +1269,12 @@
         private System.Windows.Forms.CheckBox Auto4;
         private System.Windows.Forms.CheckBox Auto5;
         private System.Windows.Forms.Button ResetAllButton;
+        private System.Windows.Forms.ComboBox CityChecker1;
+        private System.Windows.Forms.ComboBox CityChecker2;
+        private System.Windows.Forms.ComboBox CityChecker3;
+        private System.Windows.Forms.ComboBox CityChecker4;
+        private System.Windows.Forms.ComboBox CityChecker5;
+        private System.Windows.Forms.ComboBox CityChecker;
     }
 }
 

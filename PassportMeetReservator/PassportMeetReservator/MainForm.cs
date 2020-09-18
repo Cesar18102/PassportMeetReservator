@@ -55,6 +55,7 @@ namespace PassportMeetReservator
 
         private CheckBox[] AutoCheckers { get; set; }
         private ComboBox[] OperationSelectors { get; set; }
+        private ComboBox[] CitySelectors { get; set; }
 
         private DateTimePicker[] ReserveDatesMin { get; set; }
         private DateTimePicker[] ReserveDatesMax { get; set; }
@@ -134,6 +135,12 @@ namespace PassportMeetReservator
             AutoCheckers = new CheckBox[BROWSERS_COUNT]
             {
                 Auto1, Auto2, Auto3, Auto4, Auto5
+            };
+
+            CitySelectors = new ComboBox[BROWSERS_COUNT]
+            {
+                CityChecker1, CityChecker2, CityChecker3,
+                CityChecker4, CityChecker5
             };
 
             OperationSelectors = new ComboBox[BROWSERS_COUNT]
@@ -331,6 +338,16 @@ namespace PassportMeetReservator
                 return;
 
             Browsers[browser].Operation = (sender as ComboBox).SelectedItem.ToString();
+        }
+
+        private void CityChecker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int browser = FindBrowserNumberByInfoControl(CitySelectors, sender as ComboBox);
+
+            if (browser == -1)
+                return;
+
+            Browsers[browser].InitUrl = (sender as ComboBox).SelectedItem.ToString();
         }
 
         private void ReserveDateMin_ValueChanged(object sender, EventArgs e)
@@ -631,6 +648,12 @@ namespace PassportMeetReservator
         {
             foreach (ComboBox orderTypeSelector in OperationSelectors)
                 orderTypeSelector.SelectedIndex = OrderTypeSelector.SelectedIndex;
+        }
+
+        private void CityChecker_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            foreach (ComboBox citySelector in CitySelectors)
+                citySelector.SelectedIndex = CityChecker.SelectedIndex;
         }
 
         private void ReserveDateMinPicker_ValueChanged(object sender, EventArgs e)
