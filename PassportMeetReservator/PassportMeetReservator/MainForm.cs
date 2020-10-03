@@ -12,7 +12,6 @@ using PassportMeetReservator.Data;
 using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
 using PassportMeetReservator.Telegram;
-using CefSharp.WinForms;
 
 namespace PassportMeetReservator
 {
@@ -56,6 +55,7 @@ namespace PassportMeetReservator
         private CheckBox[] AutoCheckers { get; set; }
         private ComboBox[] OperationSelectors { get; set; }
         private ComboBox[] CitySelectors { get; set; }
+        private NumericUpDown[] BrowserNumbers { get; set; }
 
         private DateTimePicker[] ReserveDatesMin { get; set; }
         private DateTimePicker[] ReserveDatesMax { get; set; }
@@ -149,6 +149,12 @@ namespace PassportMeetReservator
                 OrderTypeSelector4, OrderTypeSelector5
             };
 
+            BrowserNumbers = new NumericUpDown[BROWSERS_COUNT]
+            {
+                BrowserNumber1, BrowserNumber2, BrowserNumber3,
+                BrowserNumber4, BrowserNumber5
+            };
+
             ReserveDatesMin = new DateTimePicker[BROWSERS_COUNT]
             {
                 ReserveDateMin1, ReserveDateMin2, ReserveDateMin3,
@@ -163,7 +169,9 @@ namespace PassportMeetReservator
 
             for (int i = 0; i < BROWSERS_COUNT; ++i)
             {
+                BrowserNumbers[i].Value = i;
                 Browsers[i].BrowserNumber = i;
+                Browsers[i].RealBrowserNumber = i;
                 Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
                 Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
                 Browsers[i].OnReservedManually += Browser_OnReservedManually;
@@ -213,8 +221,10 @@ namespace PassportMeetReservator
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
         {
+            ReserverWebView browser = sender as ReserverWebView;
+
             if (!string.IsNullOrEmpty(LogChatId.Text))
-                await Notifier.NotifyMessage("Чекаю на заповення форми", LogChatId.Text);
+                await Notifier.NotifyMessage($"Бот #{browser.BotNumber + 1} чекає на заповення форми на браузері #{browser.RealBrowserNumber + 1}", LogChatId.Text);
         }
 
         private async void MainForm_OnDateTimeSelected(object sender, DateTimeEventArgs e)
@@ -222,7 +232,7 @@ namespace PassportMeetReservator
             ReserverWebView browser = sender as ReserverWebView;
 
             if (!string.IsNullOrEmpty(LogChatId.Text))
-                await Notifier.NotifyMessage($"Браузер #{browser.BrowserNumber + 1} злапав дату {e.Date.ToString()}", LogChatId.Text);
+                await Notifier.NotifyMessage($"Бот #{browser.BotNumber + 1} злапав дату {e.Date.ToString()} на браузері #{browser.RealBrowserNumber + 1}", LogChatId.Text);
         }
 
         private async void Browser_OnReserved(object sender, ReservedEventArgs e)
@@ -246,7 +256,7 @@ namespace PassportMeetReservator
             bool screenSaved = false;
             string path = Path.Combine(SCREENS_FOLDER_PATH, $"{e.Url.Replace(URL_TO_SCREEN_FILENAME_TRASH_PREFIX, "")}.png");
 
-            ZoomBrowser(view.BrowserNumber);
+            ZoomBrowser(view.RealBrowserNumber);
             view.ResetScroll();
 
             Task.Delay(1000).GetAwaiter().GetResult();
@@ -281,16 +291,16 @@ namespace PassportMeetReservator
 
             if (browser.Order == null)
             {
-                await Notifier.NotifyMessage($"Браузер #{browser.BrowserNumber + 1} не має ордера (працює в ручному режимі)", LogChatId.Text);
-                Log($"Browser #{browser.BrowserNumber + 1} has no order assigned, so working in manual mode");
+                await Notifier.NotifyMessage($"Браузер #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber}) не має ордера (працює в ручному режимі)", LogChatId.Text);
+                Log($"Browser #{browser.RealBrowserNumber + 1} has no order assigned, so working in manual mode");
 
                 if (browser.Auto)
                     PutOrderToBrowser(browser);
             }
             else
             {
-                await Notifier.NotifyMessage($"{browser.Order.Surname} {browser.Order.Name} лапається на браузері #{browser.BrowserNumber + 1}", LogChatId.Text);
-                Log($"{browser.Order.Surname} {browser.Order.Name} is reserving on browser #{browser.BrowserNumber + 1}");
+                await Notifier.NotifyMessage($"{browser.Order.Surname} {browser.Order.Name} лапається на браузері #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber})", LogChatId.Text);
+                Log($"{browser.Order.Surname} {browser.Order.Name} is reserving on browser #{browser.RealBrowserNumber + 1}");
             }
         }
 
@@ -390,7 +400,7 @@ namespace PassportMeetReservator
                 PausedChangeButtons[e.BrowserNumber].Click -= BrowserPause_Click;
                 PausedChangeButtons[e.BrowserNumber].Click += BrowserContinue_Click;
 
-                Log($"Browser {e.BrowserNumber} paused");
+                Log($"Browser {e.BrowserNumber + 1} paused");
             }
             else
             {
@@ -403,14 +413,14 @@ namespace PassportMeetReservator
                 PausedChangeButtons[e.BrowserNumber].Click -= BrowserContinue_Click;
                 PausedChangeButtons[e.BrowserNumber].Click += BrowserPause_Click;
 
-                Log($"Browser {e.BrowserNumber} resumed");
+                Log($"Browser {e.BrowserNumber + 1} resumed");
             }
         }
 
         private void Browser_OnUrlChanged(object sender, UrlChangedEventArgs e)
         {
             ReserverWebView browser = sender as ReserverWebView;
-            Infos[browser.BrowserNumber].UrlInput.InputText = e.Url;
+            Infos[browser.RealBrowserNumber].UrlInput.InputText = e.Url;
         }
 
         private T LoadData<T>(string filename) where T : new()
@@ -489,6 +499,17 @@ namespace PassportMeetReservator
 
             if(checker.Checked)
                 PutOrderToBrowser(Browsers[browser]);
+        }
+
+        private void BrowserNumber_ValueChanged(object sender, EventArgs e)
+        {
+            NumericUpDown browserNumber = sender as NumericUpDown;
+            int browser = FindBrowserNumberByInfoControl(BrowserNumbers, browserNumber);
+
+            if (browser == -1)
+                return;
+
+            Browsers[browser].BrowserNumber = (int)browserNumber.Value;
         }
 
         private void PauseButton_Click(object sender, EventArgs e)
@@ -630,6 +651,7 @@ namespace PassportMeetReservator
             ZoomedBrowserWrapper.Size = new Size(this.Width, this.Height);
 
             ZoomedBrowserWrapper.BringToFront();
+            ForceRollBrowserUp.BringToFront();
         }
 
         private void ResetZoom()
@@ -642,6 +664,11 @@ namespace PassportMeetReservator
 
             if (ZoomedBrowser != null)
                 ZoomedBrowser.Size = NonZoomedSize;
+        }
+
+        private void ForceRollBrowserUp_Click(object sender, EventArgs e)
+        {
+            ResetZoom();
         }
 
         private void OrderTypeSelector_SelectedIndexChanged_1(object sender, EventArgs e)

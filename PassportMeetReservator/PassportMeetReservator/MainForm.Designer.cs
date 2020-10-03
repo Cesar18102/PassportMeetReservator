@@ -40,6 +40,7 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.BrowserNumber1 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker1 = new System.Windows.Forms.ComboBox();
             this.Auto1 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax1 = new System.Windows.Forms.DateTimePicker();
@@ -50,6 +51,7 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.BrowserNumber2 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker2 = new System.Windows.Forms.ComboBox();
             this.Auto2 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax2 = new System.Windows.Forms.DateTimePicker();
@@ -60,6 +62,7 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.BrowserNumber3 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker3 = new System.Windows.Forms.ComboBox();
             this.Auto3 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax3 = new System.Windows.Forms.DateTimePicker();
@@ -70,6 +73,7 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.BrowserNumber4 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker4 = new System.Windows.Forms.ComboBox();
             this.Auto4 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax4 = new System.Windows.Forms.DateTimePicker();
@@ -80,6 +84,7 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.BrowserNumber5 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker5 = new System.Windows.Forms.ComboBox();
             this.Auto5 = new System.Windows.Forms.CheckBox();
             this.ReserveDateMax5 = new System.Windows.Forms.DateTimePicker();
@@ -107,11 +112,17 @@
             this.AddOrderButton = new System.Windows.Forms.Button();
             this.ResetAllButton = new System.Windows.Forms.Button();
             this.CityChecker = new System.Windows.Forms.ComboBox();
+            this.ForceRollBrowserUp = new System.Windows.Forms.Button();
             this.BrowserInfo1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber1)).BeginInit();
             this.BrowserInfo2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber2)).BeginInit();
             this.BrowserInfo3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber3)).BeginInit();
             this.BrowserInfo4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber4)).BeginInit();
             this.BrowserInfo5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BotNumber)).BeginInit();
             this.SuspendLayout();
             // 
@@ -168,12 +179,14 @@
             this.Browser1.BrowserNumber = 0;
             this.Browser1.BrowsersCount = 0;
             this.Browser1.DelayInfo = null;
+            this.Browser1.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser1.Location = new System.Drawing.Point(0, 0);
             this.Browser1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser1.Name = "Browser1";
             this.Browser1.Operation = null;
             this.Browser1.Order = null;
             this.Browser1.Paused = true;
+            this.Browser1.RealBrowserNumber = 0;
             this.Browser1.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser1.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser1.Schedule = null;
@@ -188,12 +201,14 @@
             this.Browser2.BrowserNumber = 0;
             this.Browser2.BrowsersCount = 0;
             this.Browser2.DelayInfo = null;
+            this.Browser2.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser2.Location = new System.Drawing.Point(0, 0);
             this.Browser2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser2.Name = "Browser2";
             this.Browser2.Operation = null;
             this.Browser2.Order = null;
             this.Browser2.Paused = true;
+            this.Browser2.RealBrowserNumber = 0;
             this.Browser2.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser2.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser2.Schedule = null;
@@ -208,12 +223,14 @@
             this.Browser3.BrowserNumber = 0;
             this.Browser3.BrowsersCount = 0;
             this.Browser3.DelayInfo = null;
+            this.Browser3.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser3.Location = new System.Drawing.Point(0, 0);
             this.Browser3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser3.Name = "Browser3";
             this.Browser3.Operation = null;
             this.Browser3.Order = null;
             this.Browser3.Paused = true;
+            this.Browser3.RealBrowserNumber = 0;
             this.Browser3.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser3.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser3.Schedule = null;
@@ -228,12 +245,14 @@
             this.Browser4.BrowserNumber = 0;
             this.Browser4.BrowsersCount = 0;
             this.Browser4.DelayInfo = null;
+            this.Browser4.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser4.Location = new System.Drawing.Point(0, 0);
             this.Browser4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser4.Name = "Browser4";
             this.Browser4.Operation = null;
             this.Browser4.Order = null;
             this.Browser4.Paused = true;
+            this.Browser4.RealBrowserNumber = 0;
             this.Browser4.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser4.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser4.Schedule = null;
@@ -248,12 +267,14 @@
             this.Browser5.BrowserNumber = 0;
             this.Browser5.BrowsersCount = 0;
             this.Browser5.DelayInfo = null;
+            this.Browser5.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser5.Location = new System.Drawing.Point(0, 0);
             this.Browser5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser5.Name = "Browser5";
             this.Browser5.Operation = null;
             this.Browser5.Order = null;
             this.Browser5.Paused = true;
+            this.Browser5.RealBrowserNumber = 0;
             this.Browser5.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser5.ReserveDateMin = new System.DateTime(((long)(0)));
             this.Browser5.Schedule = null;
@@ -273,6 +294,7 @@
             // 
             // BrowserInfo1
             // 
+            this.BrowserInfo1.Controls.Add(this.BrowserNumber1);
             this.BrowserInfo1.Controls.Add(this.CityChecker1);
             this.BrowserInfo1.Controls.Add(this.Auto1);
             this.BrowserInfo1.Controls.Add(this.ReserveDateMax1);
@@ -292,6 +314,14 @@
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
             // 
+            // BrowserNumber1
+            // 
+            this.BrowserNumber1.Location = new System.Drawing.Point(264, 62);
+            this.BrowserNumber1.Name = "BrowserNumber1";
+            this.BrowserNumber1.Size = new System.Drawing.Size(81, 20);
+            this.BrowserNumber1.TabIndex = 26;
+            this.BrowserNumber1.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
+            // 
             // CityChecker1
             // 
             this.CityChecker1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -301,7 +331,8 @@
             "https://rejestracjakalisz.poznan.uw.gov.pl/",
             "https://rejestracjakonin.poznan.uw.gov.pl/",
             "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            "https://rejestracjapila.poznan.uw.gov.pl/",
+            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker1.Location = new System.Drawing.Point(7, 135);
             this.CityChecker1.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker1.Name = "CityChecker1";
@@ -406,6 +437,7 @@
             // 
             // BrowserInfo2
             // 
+            this.BrowserInfo2.Controls.Add(this.BrowserNumber2);
             this.BrowserInfo2.Controls.Add(this.CityChecker2);
             this.BrowserInfo2.Controls.Add(this.Auto2);
             this.BrowserInfo2.Controls.Add(this.ReserveDateMax2);
@@ -425,6 +457,14 @@
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
             // 
+            // BrowserNumber2
+            // 
+            this.BrowserNumber2.Location = new System.Drawing.Point(264, 63);
+            this.BrowserNumber2.Name = "BrowserNumber2";
+            this.BrowserNumber2.Size = new System.Drawing.Size(81, 20);
+            this.BrowserNumber2.TabIndex = 27;
+            this.BrowserNumber2.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
+            // 
             // CityChecker2
             // 
             this.CityChecker2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -434,7 +474,8 @@
             "https://rejestracjakalisz.poznan.uw.gov.pl/",
             "https://rejestracjakonin.poznan.uw.gov.pl/",
             "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            "https://rejestracjapila.poznan.uw.gov.pl/",
+            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker2.Location = new System.Drawing.Point(6, 135);
             this.CityChecker2.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker2.Name = "CityChecker2";
@@ -539,6 +580,7 @@
             // 
             // BrowserInfo3
             // 
+            this.BrowserInfo3.Controls.Add(this.BrowserNumber3);
             this.BrowserInfo3.Controls.Add(this.CityChecker3);
             this.BrowserInfo3.Controls.Add(this.Auto3);
             this.BrowserInfo3.Controls.Add(this.ReserveDateMax3);
@@ -558,6 +600,14 @@
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
             // 
+            // BrowserNumber3
+            // 
+            this.BrowserNumber3.Location = new System.Drawing.Point(264, 63);
+            this.BrowserNumber3.Name = "BrowserNumber3";
+            this.BrowserNumber3.Size = new System.Drawing.Size(81, 20);
+            this.BrowserNumber3.TabIndex = 28;
+            this.BrowserNumber3.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
+            // 
             // CityChecker3
             // 
             this.CityChecker3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -567,7 +617,8 @@
             "https://rejestracjakalisz.poznan.uw.gov.pl/",
             "https://rejestracjakonin.poznan.uw.gov.pl/",
             "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            "https://rejestracjapila.poznan.uw.gov.pl/",
+            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker3.Location = new System.Drawing.Point(8, 135);
             this.CityChecker3.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker3.Name = "CityChecker3";
@@ -672,6 +723,7 @@
             // 
             // BrowserInfo4
             // 
+            this.BrowserInfo4.Controls.Add(this.BrowserNumber4);
             this.BrowserInfo4.Controls.Add(this.CityChecker4);
             this.BrowserInfo4.Controls.Add(this.Auto4);
             this.BrowserInfo4.Controls.Add(this.ReserveDateMax4);
@@ -691,6 +743,14 @@
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
             // 
+            // BrowserNumber4
+            // 
+            this.BrowserNumber4.Location = new System.Drawing.Point(264, 63);
+            this.BrowserNumber4.Name = "BrowserNumber4";
+            this.BrowserNumber4.Size = new System.Drawing.Size(81, 20);
+            this.BrowserNumber4.TabIndex = 29;
+            this.BrowserNumber4.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
+            // 
             // CityChecker4
             // 
             this.CityChecker4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -700,7 +760,8 @@
             "https://rejestracjakalisz.poznan.uw.gov.pl/",
             "https://rejestracjakonin.poznan.uw.gov.pl/",
             "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            "https://rejestracjapila.poznan.uw.gov.pl/",
+            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker4.Location = new System.Drawing.Point(5, 135);
             this.CityChecker4.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker4.Name = "CityChecker4";
@@ -805,6 +866,7 @@
             // 
             // BrowserInfo5
             // 
+            this.BrowserInfo5.Controls.Add(this.BrowserNumber5);
             this.BrowserInfo5.Controls.Add(this.CityChecker5);
             this.BrowserInfo5.Controls.Add(this.Auto5);
             this.BrowserInfo5.Controls.Add(this.ReserveDateMax5);
@@ -824,6 +886,14 @@
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
             // 
+            // BrowserNumber5
+            // 
+            this.BrowserNumber5.Location = new System.Drawing.Point(264, 62);
+            this.BrowserNumber5.Name = "BrowserNumber5";
+            this.BrowserNumber5.Size = new System.Drawing.Size(81, 20);
+            this.BrowserNumber5.TabIndex = 30;
+            this.BrowserNumber5.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
+            // 
             // CityChecker5
             // 
             this.CityChecker5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -833,7 +903,8 @@
             "https://rejestracjakalisz.poznan.uw.gov.pl/",
             "https://rejestracjakonin.poznan.uw.gov.pl/",
             "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            "https://rejestracjapila.poznan.uw.gov.pl/",
+            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker5.Location = new System.Drawing.Point(5, 135);
             this.CityChecker5.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker5.Name = "CityChecker5";
@@ -1130,7 +1201,8 @@
             "https://rejestracjakalisz.poznan.uw.gov.pl/",
             "https://rejestracjakonin.poznan.uw.gov.pl/",
             "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/"});
+            "https://rejestracjapila.poznan.uw.gov.pl/",
+            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker.Location = new System.Drawing.Point(1090, 697);
             this.CityChecker.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker.Name = "CityChecker";
@@ -1138,11 +1210,23 @@
             this.CityChecker.TabIndex = 33;
             this.CityChecker.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged_1);
             // 
+            // ForceRollBrowserUp
+            // 
+            this.ForceRollBrowserUp.Location = new System.Drawing.Point(1636, 870);
+            this.ForceRollBrowserUp.Margin = new System.Windows.Forms.Padding(2);
+            this.ForceRollBrowserUp.Name = "ForceRollBrowserUp";
+            this.ForceRollBrowserUp.Size = new System.Drawing.Size(150, 34);
+            this.ForceRollBrowserUp.TabIndex = 34;
+            this.ForceRollBrowserUp.Text = "Force Roll Browser Up";
+            this.ForceRollBrowserUp.UseVisualStyleBackColor = true;
+            this.ForceRollBrowserUp.Click += new System.EventHandler(this.ForceRollBrowserUp_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1786, 904);
+            this.Controls.Add(this.ForceRollBrowserUp);
             this.Controls.Add(this.CityChecker);
             this.Controls.Add(this.ResetAllButton);
             this.Controls.Add(this.OrderListButton);
@@ -1181,14 +1265,19 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.BrowserInfo1.ResumeLayout(false);
             this.BrowserInfo1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber1)).EndInit();
             this.BrowserInfo2.ResumeLayout(false);
             this.BrowserInfo2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber2)).EndInit();
             this.BrowserInfo3.ResumeLayout(false);
             this.BrowserInfo3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber3)).EndInit();
             this.BrowserInfo4.ResumeLayout(false);
             this.BrowserInfo4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber4)).EndInit();
             this.BrowserInfo5.ResumeLayout(false);
             this.BrowserInfo5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BotNumber)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1275,6 +1364,12 @@
         private System.Windows.Forms.ComboBox CityChecker4;
         private System.Windows.Forms.ComboBox CityChecker5;
         private System.Windows.Forms.ComboBox CityChecker;
+        private System.Windows.Forms.NumericUpDown BrowserNumber1;
+        private System.Windows.Forms.NumericUpDown BrowserNumber2;
+        private System.Windows.Forms.NumericUpDown BrowserNumber3;
+        private System.Windows.Forms.NumericUpDown BrowserNumber4;
+        private System.Windows.Forms.NumericUpDown BrowserNumber5;
+        private System.Windows.Forms.Button ForceRollBrowserUp;
     }
 }
 

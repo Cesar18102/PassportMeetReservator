@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -50,6 +51,9 @@ namespace PassportMeetReservator.Controls
         private const string CONTINUE_RESERVATION_BUTTON_CLASS = "btn btn-success btn-lg btn-block";
         private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
 
+        private const string DATES_ABSENT_ID = "Dataiczas1";
+        private const string DATES_ABSENT_TEXT = "Brak dostępnych rezerwacji dla tej operacji";
+
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
         private CancellationTokenSource TokenSource { get; set; }
@@ -68,7 +72,7 @@ namespace PassportMeetReservator.Controls
                     paused = value;
 
                     if (OnPausedChanged != null)
-                        Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(BrowserNumber, paused));
+                        Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(RealBrowserNumber, paused));
                 }
             }
         }
@@ -113,6 +117,7 @@ namespace PassportMeetReservator.Controls
 
         public int BotNumber { get; set; }
 
+        public int RealBrowserNumber { get; set; }
         public int BrowserNumber { get; set; }
         public int BrowsersCount { get; set; }
 
@@ -177,6 +182,7 @@ namespace PassportMeetReservator.Controls
         private async Task Init()
         {
             IsBusy = true;
+            Load(InitUrl);
 
             while (true)
             {
@@ -219,7 +225,14 @@ namespace PassportMeetReservator.Controls
 
         private async Task<bool> Iteration()
         {
-            Load(InitUrl);
+            Request request = new Request()
+            {
+                Url = InitUrl,
+                Flags = UrlRequestFlags.DisableCache
+            };
+
+            this.GetMainFrame().LoadRequest(request);
+            //Load(InitUrl);
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
@@ -274,6 +287,8 @@ namespace PassportMeetReservator.Controls
             //CONFIRM SELECTED DATE
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);//double delay
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);//triple delay
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
                 return false;
             //CHECK TIME RESERVED ERROR
