@@ -22,7 +22,18 @@ namespace PassportMeetReservator.Telegram
 
         private const string TOKEN = "1337342163:AAHvTWbCp0TuWLB047w2MMckAyDvRR4lZBI";
 
+        private string[] GetChatIds(string chatId)
+        {
+            return chatId.Split(',', '.', ' ');
+        }
+
         public virtual async Task NotifyPhoto(string path, string caption, string chatId)
+        {
+            foreach (string chat in GetChatIds(chatId))
+                await notifyPhoto(path, caption, chat);
+        }
+
+        protected virtual async Task notifyPhoto(string path, string caption, string chatId)
         {
             RestClient client = new RestClient($"{BOT_ENDPOINT}{TOKEN}/{SEND_PHOTO_ENDPOINT}") { Timeout = -1 };
             RestRequest request = new RestRequest(Method.POST);
@@ -35,6 +46,12 @@ namespace PassportMeetReservator.Telegram
         }
 
         public virtual async Task NotifyMessage(string message, string chatId)
+        {
+            foreach (string chat in GetChatIds(chatId))
+                await notifyMessage(message, chat);
+        }
+
+        protected virtual async Task notifyMessage(string message, string chatId)
         {
             await NotifySplitMessage(message, chatId);
         }

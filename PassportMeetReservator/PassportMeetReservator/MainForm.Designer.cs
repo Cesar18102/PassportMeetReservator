@@ -1021,7 +1021,7 @@
             // 
             // ReservedListButton
             // 
-            this.ReservedListButton.Location = new System.Drawing.Point(606, 682);
+            this.ReservedListButton.Location = new System.Drawing.Point(407, 722);
             this.ReservedListButton.Margin = new System.Windows.Forms.Padding(2);
             this.ReservedListButton.Name = "ReservedListButton";
             this.ReservedListButton.Size = new System.Drawing.Size(150, 34);
@@ -1065,10 +1065,10 @@
             // 
             // DelaySettings
             // 
-            this.DelaySettings.Location = new System.Drawing.Point(606, 646);
+            this.DelaySettings.Location = new System.Drawing.Point(914, 722);
             this.DelaySettings.Margin = new System.Windows.Forms.Padding(2);
             this.DelaySettings.Name = "DelaySettings";
-            this.DelaySettings.Size = new System.Drawing.Size(150, 34);
+            this.DelaySettings.Size = new System.Drawing.Size(305, 34);
             this.DelaySettings.TabIndex = 19;
             this.DelaySettings.Text = "Delay Settings";
             this.DelaySettings.UseVisualStyleBackColor = true;
@@ -1077,7 +1077,7 @@
             // BotNumberLabel
             // 
             this.BotNumberLabel.AutoSize = true;
-            this.BotNumberLabel.Location = new System.Drawing.Point(818, 649);
+            this.BotNumberLabel.Location = new System.Drawing.Point(642, 649);
             this.BotNumberLabel.Name = "BotNumberLabel";
             this.BotNumberLabel.Size = new System.Drawing.Size(66, 13);
             this.BotNumberLabel.TabIndex = 20;
@@ -1085,7 +1085,7 @@
             // 
             // BotNumber
             // 
-            this.BotNumber.Location = new System.Drawing.Point(908, 647);
+            this.BotNumber.Location = new System.Drawing.Point(732, 647);
             this.BotNumber.Name = "BotNumber";
             this.BotNumber.Size = new System.Drawing.Size(120, 20);
             this.BotNumber.TabIndex = 21;
@@ -1094,7 +1094,7 @@
             // ReserveDateMinPicker
             // 
             this.ReserveDateMinPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMinPicker.Location = new System.Drawing.Point(1090, 672);
+            this.ReserveDateMinPicker.Location = new System.Drawing.Point(914, 672);
             this.ReserveDateMinPicker.Name = "ReserveDateMinPicker";
             this.ReserveDateMinPicker.Size = new System.Drawing.Size(148, 20);
             this.ReserveDateMinPicker.TabIndex = 26;
@@ -1104,7 +1104,7 @@
             // 
             this.OrderTypeSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector.FormattingEnabled = true;
-            this.OrderTypeSelector.Location = new System.Drawing.Point(1090, 646);
+            this.OrderTypeSelector.Location = new System.Drawing.Point(914, 646);
             this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
             this.OrderTypeSelector.Size = new System.Drawing.Size(305, 21);
@@ -1114,7 +1114,7 @@
             // ReserveDateMaxPicker
             // 
             this.ReserveDateMaxPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1247, 672);
+            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1071, 672);
             this.ReserveDateMaxPicker.Name = "ReserveDateMaxPicker";
             this.ReserveDateMaxPicker.Size = new System.Drawing.Size(148, 20);
             this.ReserveDateMaxPicker.TabIndex = 27;
@@ -1123,7 +1123,7 @@
             // LogChatIdLabel
             // 
             this.LogChatIdLabel.AutoSize = true;
-            this.LogChatIdLabel.Location = new System.Drawing.Point(818, 678);
+            this.LogChatIdLabel.Location = new System.Drawing.Point(642, 678);
             this.LogChatIdLabel.Name = "LogChatIdLabel";
             this.LogChatIdLabel.Size = new System.Drawing.Size(65, 13);
             this.LogChatIdLabel.TabIndex = 28;
@@ -1131,7 +1131,7 @@
             // 
             // LogChatId
             // 
-            this.LogChatId.Location = new System.Drawing.Point(908, 673);
+            this.LogChatId.Location = new System.Drawing.Point(732, 673);
             this.LogChatId.Name = "LogChatId";
             this.LogChatId.Size = new System.Drawing.Size(120, 20);
             this.LogChatId.TabIndex = 29;
@@ -1174,7 +1174,7 @@
             // 
             this.CityChecker.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker.FormattingEnabled = true;
-            this.CityChecker.Location = new System.Drawing.Point(1090, 697);
+            this.CityChecker.Location = new System.Drawing.Point(914, 697);
             this.CityChecker.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker.Name = "CityChecker";
             this.CityChecker.Size = new System.Drawing.Size(305, 21);
