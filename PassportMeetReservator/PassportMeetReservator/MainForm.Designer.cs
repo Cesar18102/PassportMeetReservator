@@ -40,6 +40,7 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PreCheck1 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber1 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker1 = new System.Windows.Forms.ComboBox();
             this.Auto1 = new System.Windows.Forms.CheckBox();
@@ -51,6 +52,7 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PreCheck2 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber2 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker2 = new System.Windows.Forms.ComboBox();
             this.Auto2 = new System.Windows.Forms.CheckBox();
@@ -62,6 +64,7 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PreCheck3 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber3 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker3 = new System.Windows.Forms.ComboBox();
             this.Auto3 = new System.Windows.Forms.CheckBox();
@@ -73,6 +76,7 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PreCheck4 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber4 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker4 = new System.Windows.Forms.ComboBox();
             this.Auto4 = new System.Windows.Forms.CheckBox();
@@ -84,6 +88,7 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PreCheck5 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber5 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker5 = new System.Windows.Forms.ComboBox();
             this.Auto5 = new System.Windows.Forms.CheckBox();
@@ -184,8 +189,10 @@
             this.Browser1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser1.Name = "Browser1";
             this.Browser1.Operation = null;
+            this.Browser1.OperationNumber = 0;
             this.Browser1.Order = null;
             this.Browser1.Paused = true;
+            this.Browser1.PreCheck = false;
             this.Browser1.RealBrowserNumber = 0;
             this.Browser1.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser1.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -206,8 +213,10 @@
             this.Browser2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser2.Name = "Browser2";
             this.Browser2.Operation = null;
+            this.Browser2.OperationNumber = 0;
             this.Browser2.Order = null;
             this.Browser2.Paused = true;
+            this.Browser2.PreCheck = false;
             this.Browser2.RealBrowserNumber = 0;
             this.Browser2.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser2.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -228,8 +237,10 @@
             this.Browser3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser3.Name = "Browser3";
             this.Browser3.Operation = null;
+            this.Browser3.OperationNumber = 0;
             this.Browser3.Order = null;
             this.Browser3.Paused = true;
+            this.Browser3.PreCheck = false;
             this.Browser3.RealBrowserNumber = 0;
             this.Browser3.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser3.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -250,8 +261,10 @@
             this.Browser4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser4.Name = "Browser4";
             this.Browser4.Operation = null;
+            this.Browser4.OperationNumber = 0;
             this.Browser4.Order = null;
             this.Browser4.Paused = true;
+            this.Browser4.PreCheck = false;
             this.Browser4.RealBrowserNumber = 0;
             this.Browser4.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser4.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -272,8 +285,10 @@
             this.Browser5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser5.Name = "Browser5";
             this.Browser5.Operation = null;
+            this.Browser5.OperationNumber = 0;
             this.Browser5.Order = null;
             this.Browser5.Paused = true;
+            this.Browser5.PreCheck = false;
             this.Browser5.RealBrowserNumber = 0;
             this.Browser5.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser5.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -294,6 +309,7 @@
             // 
             // BrowserInfo1
             // 
+            this.BrowserInfo1.Controls.Add(this.PreCheck1);
             this.BrowserInfo1.Controls.Add(this.BrowserNumber1);
             this.BrowserInfo1.Controls.Add(this.CityChecker1);
             this.BrowserInfo1.Controls.Add(this.Auto1);
@@ -314,6 +330,19 @@
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
             // 
+            // PreCheck1
+            // 
+            this.PreCheck1.AutoSize = true;
+            this.PreCheck1.Checked = true;
+            this.PreCheck1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PreCheck1.Location = new System.Drawing.Point(264, 40);
+            this.PreCheck1.Name = "PreCheck1";
+            this.PreCheck1.Size = new System.Drawing.Size(73, 17);
+            this.PreCheck1.TabIndex = 27;
+            this.PreCheck1.Text = "PreCheck";
+            this.PreCheck1.UseVisualStyleBackColor = true;
+            this.PreCheck1.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
+            // 
             // BrowserNumber1
             // 
             this.BrowserNumber1.Location = new System.Drawing.Point(264, 62);
@@ -326,13 +355,6 @@
             // 
             this.CityChecker1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker1.FormattingEnabled = true;
-            this.CityChecker1.Items.AddRange(new object[] {
-            "https://rejestracjapoznan.poznan.uw.gov.pl/",
-            "https://rejestracjakalisz.poznan.uw.gov.pl/",
-            "https://rejestracjakonin.poznan.uw.gov.pl/",
-            "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/",
-            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker1.Location = new System.Drawing.Point(7, 135);
             this.CityChecker1.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker1.Name = "CityChecker1";
@@ -343,7 +365,7 @@
             // Auto1
             // 
             this.Auto1.AutoSize = true;
-            this.Auto1.Location = new System.Drawing.Point(282, 18);
+            this.Auto1.Location = new System.Drawing.Point(264, 17);
             this.Auto1.Name = "Auto1";
             this.Auto1.Size = new System.Drawing.Size(48, 17);
             this.Auto1.TabIndex = 24;
@@ -373,18 +395,6 @@
             // 
             this.OrderTypeSelector1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector1.FormattingEnabled = true;
-            this.OrderTypeSelector1.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie",
-            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector1.Location = new System.Drawing.Point(7, 61);
             this.OrderTypeSelector1.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector1.Name = "OrderTypeSelector1";
@@ -437,6 +447,7 @@
             // 
             // BrowserInfo2
             // 
+            this.BrowserInfo2.Controls.Add(this.PreCheck2);
             this.BrowserInfo2.Controls.Add(this.BrowserNumber2);
             this.BrowserInfo2.Controls.Add(this.CityChecker2);
             this.BrowserInfo2.Controls.Add(this.Auto2);
@@ -457,6 +468,19 @@
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
             // 
+            // PreCheck2
+            // 
+            this.PreCheck2.AutoSize = true;
+            this.PreCheck2.Checked = true;
+            this.PreCheck2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PreCheck2.Location = new System.Drawing.Point(264, 39);
+            this.PreCheck2.Name = "PreCheck2";
+            this.PreCheck2.Size = new System.Drawing.Size(73, 17);
+            this.PreCheck2.TabIndex = 28;
+            this.PreCheck2.Text = "PreCheck";
+            this.PreCheck2.UseVisualStyleBackColor = true;
+            this.PreCheck2.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
+            // 
             // BrowserNumber2
             // 
             this.BrowserNumber2.Location = new System.Drawing.Point(264, 63);
@@ -469,13 +493,6 @@
             // 
             this.CityChecker2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker2.FormattingEnabled = true;
-            this.CityChecker2.Items.AddRange(new object[] {
-            "https://rejestracjapoznan.poznan.uw.gov.pl/",
-            "https://rejestracjakalisz.poznan.uw.gov.pl/",
-            "https://rejestracjakonin.poznan.uw.gov.pl/",
-            "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/",
-            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker2.Location = new System.Drawing.Point(6, 135);
             this.CityChecker2.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker2.Name = "CityChecker2";
@@ -486,7 +503,7 @@
             // Auto2
             // 
             this.Auto2.AutoSize = true;
-            this.Auto2.Location = new System.Drawing.Point(284, 18);
+            this.Auto2.Location = new System.Drawing.Point(264, 18);
             this.Auto2.Name = "Auto2";
             this.Auto2.Size = new System.Drawing.Size(48, 17);
             this.Auto2.TabIndex = 25;
@@ -516,18 +533,6 @@
             // 
             this.OrderTypeSelector2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector2.FormattingEnabled = true;
-            this.OrderTypeSelector2.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie",
-            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector2.Location = new System.Drawing.Point(6, 62);
             this.OrderTypeSelector2.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector2.Name = "OrderTypeSelector2";
@@ -580,6 +585,7 @@
             // 
             // BrowserInfo3
             // 
+            this.BrowserInfo3.Controls.Add(this.PreCheck3);
             this.BrowserInfo3.Controls.Add(this.BrowserNumber3);
             this.BrowserInfo3.Controls.Add(this.CityChecker3);
             this.BrowserInfo3.Controls.Add(this.Auto3);
@@ -600,6 +606,19 @@
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
             // 
+            // PreCheck3
+            // 
+            this.PreCheck3.AutoSize = true;
+            this.PreCheck3.Checked = true;
+            this.PreCheck3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PreCheck3.Location = new System.Drawing.Point(264, 40);
+            this.PreCheck3.Name = "PreCheck3";
+            this.PreCheck3.Size = new System.Drawing.Size(73, 17);
+            this.PreCheck3.TabIndex = 29;
+            this.PreCheck3.Text = "PreCheck";
+            this.PreCheck3.UseVisualStyleBackColor = true;
+            this.PreCheck3.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
+            // 
             // BrowserNumber3
             // 
             this.BrowserNumber3.Location = new System.Drawing.Point(264, 63);
@@ -612,13 +631,6 @@
             // 
             this.CityChecker3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker3.FormattingEnabled = true;
-            this.CityChecker3.Items.AddRange(new object[] {
-            "https://rejestracjapoznan.poznan.uw.gov.pl/",
-            "https://rejestracjakalisz.poznan.uw.gov.pl/",
-            "https://rejestracjakonin.poznan.uw.gov.pl/",
-            "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/",
-            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker3.Location = new System.Drawing.Point(8, 135);
             this.CityChecker3.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker3.Name = "CityChecker3";
@@ -629,7 +641,7 @@
             // Auto3
             // 
             this.Auto3.AutoSize = true;
-            this.Auto3.Location = new System.Drawing.Point(287, 18);
+            this.Auto3.Location = new System.Drawing.Point(264, 17);
             this.Auto3.Name = "Auto3";
             this.Auto3.Size = new System.Drawing.Size(48, 17);
             this.Auto3.TabIndex = 26;
@@ -659,18 +671,6 @@
             // 
             this.OrderTypeSelector3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector3.FormattingEnabled = true;
-            this.OrderTypeSelector3.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie",
-            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector3.Location = new System.Drawing.Point(8, 62);
             this.OrderTypeSelector3.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector3.Name = "OrderTypeSelector3";
@@ -723,6 +723,7 @@
             // 
             // BrowserInfo4
             // 
+            this.BrowserInfo4.Controls.Add(this.PreCheck4);
             this.BrowserInfo4.Controls.Add(this.BrowserNumber4);
             this.BrowserInfo4.Controls.Add(this.CityChecker4);
             this.BrowserInfo4.Controls.Add(this.Auto4);
@@ -743,6 +744,19 @@
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
             // 
+            // PreCheck4
+            // 
+            this.PreCheck4.AutoSize = true;
+            this.PreCheck4.Checked = true;
+            this.PreCheck4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PreCheck4.Location = new System.Drawing.Point(264, 41);
+            this.PreCheck4.Name = "PreCheck4";
+            this.PreCheck4.Size = new System.Drawing.Size(73, 17);
+            this.PreCheck4.TabIndex = 30;
+            this.PreCheck4.Text = "PreCheck";
+            this.PreCheck4.UseVisualStyleBackColor = true;
+            this.PreCheck4.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
+            // 
             // BrowserNumber4
             // 
             this.BrowserNumber4.Location = new System.Drawing.Point(264, 63);
@@ -755,13 +769,6 @@
             // 
             this.CityChecker4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker4.FormattingEnabled = true;
-            this.CityChecker4.Items.AddRange(new object[] {
-            "https://rejestracjapoznan.poznan.uw.gov.pl/",
-            "https://rejestracjakalisz.poznan.uw.gov.pl/",
-            "https://rejestracjakonin.poznan.uw.gov.pl/",
-            "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/",
-            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker4.Location = new System.Drawing.Point(5, 135);
             this.CityChecker4.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker4.Name = "CityChecker4";
@@ -772,7 +779,7 @@
             // Auto4
             // 
             this.Auto4.AutoSize = true;
-            this.Auto4.Location = new System.Drawing.Point(276, 18);
+            this.Auto4.Location = new System.Drawing.Point(264, 18);
             this.Auto4.Name = "Auto4";
             this.Auto4.Size = new System.Drawing.Size(48, 17);
             this.Auto4.TabIndex = 27;
@@ -802,18 +809,6 @@
             // 
             this.OrderTypeSelector4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector4.FormattingEnabled = true;
-            this.OrderTypeSelector4.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie",
-            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector4.Location = new System.Drawing.Point(5, 62);
             this.OrderTypeSelector4.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector4.Name = "OrderTypeSelector4";
@@ -866,6 +861,7 @@
             // 
             // BrowserInfo5
             // 
+            this.BrowserInfo5.Controls.Add(this.PreCheck5);
             this.BrowserInfo5.Controls.Add(this.BrowserNumber5);
             this.BrowserInfo5.Controls.Add(this.CityChecker5);
             this.BrowserInfo5.Controls.Add(this.Auto5);
@@ -886,6 +882,19 @@
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
             // 
+            // PreCheck5
+            // 
+            this.PreCheck5.AutoSize = true;
+            this.PreCheck5.Checked = true;
+            this.PreCheck5.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PreCheck5.Location = new System.Drawing.Point(264, 39);
+            this.PreCheck5.Name = "PreCheck5";
+            this.PreCheck5.Size = new System.Drawing.Size(73, 17);
+            this.PreCheck5.TabIndex = 31;
+            this.PreCheck5.Text = "PreCheck";
+            this.PreCheck5.UseVisualStyleBackColor = true;
+            this.PreCheck5.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
+            // 
             // BrowserNumber5
             // 
             this.BrowserNumber5.Location = new System.Drawing.Point(264, 62);
@@ -898,13 +907,6 @@
             // 
             this.CityChecker5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker5.FormattingEnabled = true;
-            this.CityChecker5.Items.AddRange(new object[] {
-            "https://rejestracjapoznan.poznan.uw.gov.pl/",
-            "https://rejestracjakalisz.poznan.uw.gov.pl/",
-            "https://rejestracjakonin.poznan.uw.gov.pl/",
-            "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/",
-            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker5.Location = new System.Drawing.Point(5, 135);
             this.CityChecker5.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker5.Name = "CityChecker5";
@@ -915,7 +917,7 @@
             // Auto5
             // 
             this.Auto5.AutoSize = true;
-            this.Auto5.Location = new System.Drawing.Point(275, 18);
+            this.Auto5.Location = new System.Drawing.Point(264, 16);
             this.Auto5.Name = "Auto5";
             this.Auto5.Size = new System.Drawing.Size(48, 17);
             this.Auto5.TabIndex = 28;
@@ -945,18 +947,6 @@
             // 
             this.OrderTypeSelector5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector5.FormattingEnabled = true;
-            this.OrderTypeSelector5.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie",
-            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector5.Location = new System.Drawing.Point(5, 62);
             this.OrderTypeSelector5.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector5.Name = "OrderTypeSelector5";
@@ -1114,18 +1104,6 @@
             // 
             this.OrderTypeSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector.FormattingEnabled = true;
-            this.OrderTypeSelector.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie",
-            "CUDZOZIEMCY - Uzupełnienia / odciski"});
             this.OrderTypeSelector.Location = new System.Drawing.Point(1090, 646);
             this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
@@ -1196,13 +1174,6 @@
             // 
             this.CityChecker.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker.FormattingEnabled = true;
-            this.CityChecker.Items.AddRange(new object[] {
-            "https://rejestracjapoznan.poznan.uw.gov.pl/",
-            "https://rejestracjakalisz.poznan.uw.gov.pl/",
-            "https://rejestracjakonin.poznan.uw.gov.pl/",
-            "https://rejestracjaleszno.poznan.uw.gov.pl/",
-            "https://rejestracjapila.poznan.uw.gov.pl/",
-            "https://bezkolejki.eu/luw-gorzow"});
             this.CityChecker.Location = new System.Drawing.Point(1090, 697);
             this.CityChecker.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker.Name = "CityChecker";
@@ -1370,6 +1341,11 @@
         private System.Windows.Forms.NumericUpDown BrowserNumber4;
         private System.Windows.Forms.NumericUpDown BrowserNumber5;
         private System.Windows.Forms.Button ForceRollBrowserUp;
+        private System.Windows.Forms.CheckBox PreCheck1;
+        private System.Windows.Forms.CheckBox PreCheck2;
+        private System.Windows.Forms.CheckBox PreCheck3;
+        private System.Windows.Forms.CheckBox PreCheck4;
+        private System.Windows.Forms.CheckBox PreCheck5;
     }
 }
 

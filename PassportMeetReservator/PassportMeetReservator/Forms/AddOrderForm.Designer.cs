@@ -40,14 +40,15 @@
             // SurnameInput
             // 
             this.SurnameInput.Editable = true;
-            this.SurnameInput.InputLeft = 150;
-            this.SurnameInput.InputSize = new System.Drawing.Size(230, 22);
+            this.SurnameInput.InputLeft = 112;
+            this.SurnameInput.InputSize = new System.Drawing.Size(174, 20);
             this.SurnameInput.InputText = "";
             this.SurnameInput.LabelLeft = 0;
             this.SurnameInput.LabelText = "Surname:";
-            this.SurnameInput.Location = new System.Drawing.Point(13, 13);
+            this.SurnameInput.Location = new System.Drawing.Point(10, 11);
+            this.SurnameInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SurnameInput.Name = "SurnameInput";
-            this.SurnameInput.Size = new System.Drawing.Size(383, 23);
+            this.SurnameInput.Size = new System.Drawing.Size(287, 19);
             this.SurnameInput.TabIndex = 0;
             this.SurnameInput.Text = "namedInput1";
             this.SurnameInput.TopPosition = 0;
@@ -55,14 +56,15 @@
             // NameInput
             // 
             this.NameInput.Editable = true;
-            this.NameInput.InputLeft = 150;
-            this.NameInput.InputSize = new System.Drawing.Size(230, 22);
+            this.NameInput.InputLeft = 112;
+            this.NameInput.InputSize = new System.Drawing.Size(174, 20);
             this.NameInput.InputText = "";
             this.NameInput.LabelLeft = 0;
             this.NameInput.LabelText = "Name:";
-            this.NameInput.Location = new System.Drawing.Point(13, 42);
+            this.NameInput.Location = new System.Drawing.Point(10, 34);
+            this.NameInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.NameInput.Name = "NameInput";
-            this.NameInput.Size = new System.Drawing.Size(383, 23);
+            this.NameInput.Size = new System.Drawing.Size(287, 19);
             this.NameInput.TabIndex = 1;
             this.NameInput.Text = "namedInput1";
             this.NameInput.TopPosition = 0;
@@ -70,14 +72,15 @@
             // EmailInput
             // 
             this.EmailInput.Editable = true;
-            this.EmailInput.InputLeft = 150;
-            this.EmailInput.InputSize = new System.Drawing.Size(230, 22);
+            this.EmailInput.InputLeft = 112;
+            this.EmailInput.InputSize = new System.Drawing.Size(174, 20);
             this.EmailInput.InputText = "";
             this.EmailInput.LabelLeft = 0;
             this.EmailInput.LabelText = "Email:";
-            this.EmailInput.Location = new System.Drawing.Point(13, 71);
+            this.EmailInput.Location = new System.Drawing.Point(10, 58);
+            this.EmailInput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.EmailInput.Name = "EmailInput";
-            this.EmailInput.Size = new System.Drawing.Size(383, 23);
+            this.EmailInput.Size = new System.Drawing.Size(287, 19);
             this.EmailInput.TabIndex = 2;
             this.EmailInput.Text = "namedInput1";
             this.EmailInput.TopPosition = 0;
@@ -85,9 +88,10 @@
             // OrderTypeLabel
             // 
             this.OrderTypeLabel.AutoSize = true;
-            this.OrderTypeLabel.Location = new System.Drawing.Point(12, 103);
+            this.OrderTypeLabel.Location = new System.Drawing.Point(9, 84);
+            this.OrderTypeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OrderTypeLabel.Name = "OrderTypeLabel";
-            this.OrderTypeLabel.Size = new System.Drawing.Size(44, 17);
+            this.OrderTypeLabel.Size = new System.Drawing.Size(34, 13);
             this.OrderTypeLabel.TabIndex = 3;
             this.OrderTypeLabel.Text = "Type:";
             // 
@@ -106,16 +110,18 @@
             "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
                 "atusem pozytywna weryfikacja formalna)",
             "Obywatelstwo polskie"});
-            this.OrderTypeSelector.Location = new System.Drawing.Point(163, 100);
+            this.OrderTypeSelector.Location = new System.Drawing.Point(122, 81);
+            this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
-            this.OrderTypeSelector.Size = new System.Drawing.Size(233, 24);
+            this.OrderTypeSelector.Size = new System.Drawing.Size(176, 21);
             this.OrderTypeSelector.TabIndex = 4;
             // 
             // AddFirstButton
             // 
-            this.AddFirstButton.Location = new System.Drawing.Point(12, 131);
+            this.AddFirstButton.Location = new System.Drawing.Point(9, 106);
+            this.AddFirstButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AddFirstButton.Name = "AddFirstButton";
-            this.AddFirstButton.Size = new System.Drawing.Size(188, 23);
+            this.AddFirstButton.Size = new System.Drawing.Size(141, 19);
             this.AddFirstButton.TabIndex = 5;
             this.AddFirstButton.Text = "Add First";
             this.AddFirstButton.UseVisualStyleBackColor = true;
@@ -123,9 +129,10 @@
             // 
             // AddLastButton
             // 
-            this.AddLastButton.Location = new System.Drawing.Point(206, 131);
+            this.AddLastButton.Location = new System.Drawing.Point(154, 106);
+            this.AddLastButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.AddLastButton.Name = "AddLastButton";
-            this.AddLastButton.Size = new System.Drawing.Size(190, 23);
+            this.AddLastButton.Size = new System.Drawing.Size(142, 19);
             this.AddLastButton.TabIndex = 6;
             this.AddLastButton.Text = "Add Last";
             this.AddLastButton.UseVisualStyleBackColor = true;
@@ -133,9 +140,9 @@
             // 
             // AddOrderForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(408, 162);
+            this.ClientSize = new System.Drawing.Size(306, 132);
             this.Controls.Add(this.AddLastButton);
             this.Controls.Add(this.AddFirstButton);
             this.Controls.Add(this.OrderTypeSelector);
@@ -143,6 +150,7 @@
             this.Controls.Add(this.EmailInput);
             this.Controls.Add(this.NameInput);
             this.Controls.Add(this.SurnameInput);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "AddOrderForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AddOrderForm";

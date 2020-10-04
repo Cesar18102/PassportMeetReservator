@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Controls\WebViewExtensions.cs" />
     <Compile Include="Data\BootPeriod.cs" />
+    <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
     <Compile Include="Data\DateTimeEventArgs.cs" />
     <Compile Include="Data\DelayInfo.cs" />
     <Compile Include="Data\LogEventArgs.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Data\BootSchedule.cs" />
     <Compile Include="Data\BrowserPausedChangedEventArgs.cs" />
     <Compile Include="Data\OrderEventArgs.cs" />
+    <Compile Include="Data\Platforms\CityInfos.cs" />
     <Compile Include="Data\Profile.cs" />
     <Compile Include="Data\ReservationOrder.cs" />
     <Compile Include="Data\ReservedEventArgs.cs" />
@@ -172,6 +174,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ReservedListItemView.resx">
       <DependentUpon>ReservedListItemView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddOrderForm.resx">
+      <DependentUpon>AddOrderForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BootScheduleForm.resx">
       <DependentUpon>BootScheduleForm.cs</DependentUpon>

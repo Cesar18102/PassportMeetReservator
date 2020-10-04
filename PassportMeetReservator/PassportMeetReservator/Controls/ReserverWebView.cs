@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Net;
 using System.Drawing;
-
 using System.Threading;
 using System.Threading.Tasks;
 
 using CefSharp;
 using CefSharp.WinForms;
+
+using RestSharp;
 
 using PassportMeetReservator.Data;
 
@@ -30,8 +32,6 @@ namespace PassportMeetReservator.Controls
         private const string NEXT_STEP_BUTTON_TEXT = "Dalej";
 
         private const string CALENDAR_CLASS = "vc-container vc-reset vc-text-gray-900 vc-bg-white vc-border vc-border-gray-400 vc-rounded-lg";
-        private const string DATE_CLASS = "vc-day-content vc-focusable vc-font-medium vc-text-sm vc-cursor-pointer focus:vc-font-bold vc-rounded-full";
-        private const string INACTIVE_DATE_CLASS = "vc-text-gray-400";
 
         private const string TIME_SELECTOR_CLASS = "text-center form-control custom-select";
         private const string INPUT_CLASS = "property-input form-control";
@@ -51,8 +51,8 @@ namespace PassportMeetReservator.Controls
         private const string CONTINUE_RESERVATION_BUTTON_CLASS = "btn btn-success btn-lg btn-block";
         private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
 
-        private const string DATES_ABSENT_ID = "Dataiczas1";
-        private const string DATES_ABSENT_TEXT = "Brak dostępnych rezerwacji dla tej operacji";
+        private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
+        private const string STATUS_CIRCLE_DONE_STYLE = "rgb(87, 133, 226)";
 
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
@@ -115,6 +115,24 @@ namespace PassportMeetReservator.Controls
             }
         }
 
+        public bool PreCheck { get; set; }
+
+        private const string CHECK_DATE_API_ENDPOINT = "Slot/GetAvailableDaysForOperation/";
+        private RestClient ApiClient { get; set; } = new RestClient("https://rejestracjapoznan.poznan.uw.gov.pl/api");
+
+        private string initUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
+        public string InitUrl
+        {
+            get => initUrl;
+            set
+            {
+                initUrl = value;
+                ApiClient = new RestClient($"{initUrl.Trim('/')}/api/");
+
+                Update();
+            }
+        }
+
         public int BotNumber { get; set; }
 
         public int RealBrowserNumber { get; set; }
@@ -122,7 +140,7 @@ namespace PassportMeetReservator.Controls
         public int BrowsersCount { get; set; }
 
         public string Operation { get; set; }
-        public string InitUrl { get; set; } = "https://rejestracjapoznan.poznan.uw.gov.pl/";
+        public int OperationNumber { get; set; }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now;
@@ -188,14 +206,30 @@ namespace PassportMeetReservator.Controls
             {
                 await Task.Delay(DelayInfo.BrowserIterationDelay, Token);
 
+                if (Operation == null)
+                    continue;
+
                 if (Paused)
                     continue;
 
                 if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
                     continue;
 
-                if (await Iteration() && !Auto)
-                    await WaitForManualReaction();
+                if (PreCheck && !await CheckDates())
+                    continue;
+
+                if (await Iteration())
+                {
+                    if (!Auto || Order == null)
+                        await WaitForManualReaction();
+                    else
+                    {
+                        await FillForm();
+                        await Update();
+                    }
+                }
+                else
+                    await Update();
             }
         }
 
@@ -223,7 +257,7 @@ namespace PassportMeetReservator.Controls
             return $"{date.Year}-{month}-{day}";
         }
 
-        private async Task<bool> Iteration()
+        private async Task Update()
         {
             Request request = new Request()
             {
@@ -232,8 +266,10 @@ namespace PassportMeetReservator.Controls
             };
 
             this.GetMainFrame().LoadRequest(request);
-            //Load(InitUrl);
+        }
 
+        private async Task<bool> Iteration()
+        {
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
             string operation = Auto && Order != null ? Order.Operation : Operation;
@@ -248,6 +284,7 @@ namespace PassportMeetReservator.Controls
                 return false;
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
 
             if (DateTime.Now.Month != ReserveDateMin.Month)
             {
@@ -286,20 +323,23 @@ namespace PassportMeetReservator.Controls
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
             //CONFIRM SELECTED DATE
 
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);//double delay
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);//triple delay
+            for(int j = 0; j < 3; ++j) //triple delay
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
                 return false;
             //CHECK TIME RESERVED ERROR
 
+            JavascriptResponse jsStatusCircleStyle = await this.GetMainFrame().EvaluateScriptAsync(
+                $"document.getElementById('{STATUS_CIRCLE_DONE_ID}').children[0].style.backgroundColor"
+            ); 
+
+            if (jsStatusCircleStyle.Result.ToString() != STATUS_CIRCLE_DONE_STYLE)
+                return false;
+            //CURRENT STEP STATUS CHECK
+
             Selected = true;
             OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(selectedDate.Value));
-
-            if (!Auto || Order == null) //manual
-                return true;
-
-            await FillForm();
 
             return true;
         } 
@@ -335,6 +375,26 @@ namespace PassportMeetReservator.Controls
             }
         }
 
+        private async Task<bool> CheckDates()
+        {
+            RestRequest request = new RestRequest(CHECK_DATE_API_ENDPOINT + OperationNumber);
+            request.Method = Method.GET;
+
+            request.AddHeader("authority", InitUrl.Replace("https://", "").Trim('/'));
+            request.AddHeader("accept", "application/json, text/plain, */*");
+            request.AddHeader("authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55TmFtZSI6InV3cG96bmFuIiwiY29tcGFueUlkIjoiMSIsIm5iZiI6MTYwMTgwNzgyOSwiZXhwIjoyNTM0MDIyOTcyMDAsImlzcyI6IlFNU1dlYlJlc2VydmF0aW9uLkFQSSIsImF1ZCI6IlFNU1dlYlJlc2VydmF0aW9uLkNMSUVOVCJ9.IwDI0942FsfeN2Vm-0tFrg_3aKHU9dsouPpxRYl1OAw");
+            request.AddHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
+            request.AddHeader("sec-fetch-site", "same-origin");
+            request.AddHeader("sec-fetch-mode", "cors");
+            request.AddHeader("sec-fetch-dest", "empty");
+            request.AddHeader("referer", initUrl);
+            request.AddHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+
+            IRestResponse dates = await ApiClient.ExecuteAsync(request);
+
+            return dates.StatusCode != HttpStatusCode.OK || dates.Content != "[]";
+        }
+
         private async Task<DateTime?> ScanCalendar(int dayStart, int dayEnd, int month, int year)
         {
             for (int i = dayStart; i <= dayEnd; ++i)
@@ -360,6 +420,7 @@ namespace PassportMeetReservator.Controls
 
                 await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
                 await Task.Delay(DelayInfo.ActionResultDelay, Token);
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
 
                 bool timeFound = false;
                 for (int j = 0; j < TIME_WAIT_ITERATION_COUNT; ++j)

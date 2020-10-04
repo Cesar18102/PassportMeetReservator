@@ -12,6 +12,7 @@ using PassportMeetReservator.Data;
 using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
 using PassportMeetReservator.Telegram;
+using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator
 {
@@ -41,6 +42,12 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "Screens"
         );
 
+        private static CityPlatformInfo[] Platforms = new CityPlatformInfo[]
+        {
+            new PoznanInfo(), new KaliszuInfo(), new KoninInfo(),
+            new LesznieInfo(), new PileInfo()
+        };
+
         private const string URL_TO_SCREEN_FILENAME_TRASH_PREFIX = "https://rejestracjapoznan.poznan.uw.gov.pl/Info/";
 
         private const int BROWSERS_COUNT = 5;
@@ -53,8 +60,11 @@ namespace PassportMeetReservator
         private Button[] DoneButtons { get; set; }
 
         private CheckBox[] AutoCheckers { get; set; }
+        private CheckBox[] PreCheckCheckers { get; set; }
+
         private ComboBox[] OperationSelectors { get; set; }
         private ComboBox[] CitySelectors { get; set; }
+
         private NumericUpDown[] BrowserNumbers { get; set; }
 
         private DateTimePicker[] ReserveDatesMin { get; set; }
@@ -167,11 +177,18 @@ namespace PassportMeetReservator
                 ReserveDateMax4, ReserveDateMax5
             };
 
+            PreCheckCheckers = new CheckBox[BROWSERS_COUNT]
+            {
+                PreCheck1, PreCheck2, PreCheck3, 
+                PreCheck4, PreCheck5
+            };
+
             for (int i = 0; i < BROWSERS_COUNT; ++i)
             {
                 BrowserNumbers[i].Value = i;
                 Browsers[i].BrowserNumber = i;
                 Browsers[i].RealBrowserNumber = i;
+                Browsers[i].PreCheck = PreCheckCheckers[i].Checked;
                 Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
                 Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
                 Browsers[i].OnReservedManually += Browser_OnReservedManually;
@@ -189,7 +206,12 @@ namespace PassportMeetReservator
                 PausedChangeButtons[i].Click += BrowserContinue_Click;
                 ResetButtons[i].Click += ResetButton_Click;
                 DoneButtons[i].Click += DoneButton_Click;
+
+                CitySelectors[i].Items.AddRange(Platforms);
             }
+
+            CityChecker.Items.AddRange(Platforms);
+            CityChecker.SelectedIndex = 0;
         }
 
         private void Log(string text)
@@ -348,16 +370,24 @@ namespace PassportMeetReservator
                 return;
 
             Browsers[browser].Operation = (sender as ComboBox).SelectedItem.ToString();
+            Browsers[browser].OperationNumber = (sender as ComboBox).SelectedIndex + 1;
         }
 
         private void CityChecker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByInfoControl(CitySelectors, sender as ComboBox);
+            ComboBox cityChecker = sender as ComboBox;
+            int browser = FindBrowserNumberByInfoControl(CitySelectors, cityChecker);
 
             if (browser == -1)
                 return;
 
-            Browsers[browser].InitUrl = (sender as ComboBox).SelectedItem.ToString();
+            CityPlatformInfo selectedPlatform = cityChecker.SelectedItem as CityPlatformInfo;
+
+            Browsers[browser].InitUrl = selectedPlatform.BaseUrl;
+            Browsers[browser].Operation = null;
+
+            OperationSelectors[browser].Items.Clear();
+            OperationSelectors[browser].Items.AddRange(selectedPlatform.Operations);
         }
 
         private void ReserveDateMin_ValueChanged(object sender, EventArgs e)
@@ -510,6 +540,17 @@ namespace PassportMeetReservator
                 return;
 
             Browsers[browser].BrowserNumber = (int)browserNumber.Value;
+        }
+
+        private void PreCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox preCheck = sender as CheckBox;
+            int browser = FindBrowserNumberByInfoControl(PreCheckCheckers, preCheck);
+
+            if (browser == -1)
+                return;
+
+            Browsers[browser].PreCheck = preCheck.Checked;
         }
 
         private void PauseButton_Click(object sender, EventArgs e)
@@ -681,6 +722,9 @@ namespace PassportMeetReservator
         {
             foreach (ComboBox citySelector in CitySelectors)
                 citySelector.SelectedIndex = CityChecker.SelectedIndex;
+
+            OrderTypeSelector.Items.Clear();
+            OrderTypeSelector.Items.AddRange((CityChecker.SelectedItem as CityPlatformInfo).Operations);
         }
 
         private void ReserveDateMinPicker_ValueChanged(object sender, EventArgs e)
