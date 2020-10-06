@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PassportMeetReservator.Data
+namespace PassportMeetReservator.Data.CustomEventArgs
 {
     public class LogEventArgs : EventArgs
     {

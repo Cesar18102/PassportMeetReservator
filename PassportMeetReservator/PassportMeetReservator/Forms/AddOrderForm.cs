@@ -60,9 +60,11 @@ namespace PassportMeetReservator.Forms
                 return null;
             }
 
+            CityPlatformInfo platform = CitySelector.SelectedItem as CityPlatformInfo;
+
             ReservationOrder order = new ReservationOrder(
-                SurnameInput.InputText, NameInput.InputText, EmailInput.InputText, 
-                (CitySelector.SelectedItem as CityPlatformInfo).BaseUrl, 
+                SurnameInput.InputText, NameInput.InputText, EmailInput.InputText,
+                platform.Name, platform.BaseUrl,
                 OperationSelector.SelectedItem.ToString(), 
                 OperationSelector.SelectedIndex + 1
             );

@@ -1,4 +1,4 @@
-﻿namespace PassportMeetReservator.Data
+﻿namespace PassportMeetReservator.Data.CustomEventArgs
 {
     public class OrderEventArgs
     {

@@ -178,13 +178,14 @@
             this.Browser1.BotNumber = 0;
             this.Browser1.BrowserNumber = 0;
             this.Browser1.BrowsersCount = 0;
+            this.Browser1.Checker = null;
             this.Browser1.DelayInfo = null;
+            this.Browser1.InitChecker = null;
             this.Browser1.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser1.Location = new System.Drawing.Point(0, 0);
             this.Browser1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser1.Name = "Browser1";
             this.Browser1.Operation = null;
-            this.Browser1.OperationNumber = 0;
             this.Browser1.Order = null;
             this.Browser1.Paused = true;
             this.Browser1.RealBrowserNumber = 0;
@@ -201,13 +202,14 @@
             this.Browser2.BotNumber = 0;
             this.Browser2.BrowserNumber = 0;
             this.Browser2.BrowsersCount = 0;
+            this.Browser2.Checker = null;
             this.Browser2.DelayInfo = null;
+            this.Browser2.InitChecker = null;
             this.Browser2.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser2.Location = new System.Drawing.Point(0, 0);
             this.Browser2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser2.Name = "Browser2";
             this.Browser2.Operation = null;
-            this.Browser2.OperationNumber = 0;
             this.Browser2.Order = null;
             this.Browser2.Paused = true;
             this.Browser2.RealBrowserNumber = 0;
@@ -224,13 +226,14 @@
             this.Browser3.BotNumber = 0;
             this.Browser3.BrowserNumber = 0;
             this.Browser3.BrowsersCount = 0;
+            this.Browser3.Checker = null;
             this.Browser3.DelayInfo = null;
+            this.Browser3.InitChecker = null;
             this.Browser3.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser3.Location = new System.Drawing.Point(0, 0);
             this.Browser3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser3.Name = "Browser3";
             this.Browser3.Operation = null;
-            this.Browser3.OperationNumber = 0;
             this.Browser3.Order = null;
             this.Browser3.Paused = true;
             this.Browser3.RealBrowserNumber = 0;
@@ -247,13 +250,14 @@
             this.Browser4.BotNumber = 0;
             this.Browser4.BrowserNumber = 0;
             this.Browser4.BrowsersCount = 0;
+            this.Browser4.Checker = null;
             this.Browser4.DelayInfo = null;
+            this.Browser4.InitChecker = null;
             this.Browser4.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser4.Location = new System.Drawing.Point(0, 0);
             this.Browser4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser4.Name = "Browser4";
             this.Browser4.Operation = null;
-            this.Browser4.OperationNumber = 0;
             this.Browser4.Order = null;
             this.Browser4.Paused = true;
             this.Browser4.RealBrowserNumber = 0;
@@ -270,13 +274,14 @@
             this.Browser5.BotNumber = 0;
             this.Browser5.BrowserNumber = 0;
             this.Browser5.BrowsersCount = 0;
+            this.Browser5.Checker = null;
             this.Browser5.DelayInfo = null;
+            this.Browser5.InitChecker = null;
             this.Browser5.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser5.Location = new System.Drawing.Point(0, 0);
             this.Browser5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser5.Name = "Browser5";
             this.Browser5.Operation = null;
-            this.Browser5.OperationNumber = 0;
             this.Browser5.Order = null;
             this.Browser5.Paused = true;
             this.Browser5.RealBrowserNumber = 0;
@@ -289,6 +294,7 @@
             // OrdersInfo
             // 
             this.OrdersInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.OrdersInfo.HideSelection = false;
             this.OrdersInfo.Location = new System.Drawing.Point(0, 760);
             this.OrdersInfo.Margin = new System.Windows.Forms.Padding(2);
             this.OrdersInfo.Name = "OrdersInfo";

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net;
+using System.Linq;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,8 +10,7 @@ using CefSharp.WinForms;
 using RestSharp;
 
 using PassportMeetReservator.Data;
-using Newtonsoft.Json;
-using System.Linq;
+using PassportMeetReservator.Data.CustomEventArgs;
 
 namespace PassportMeetReservator.Controls
 {
@@ -120,7 +119,10 @@ namespace PassportMeetReservator.Controls
                     Url = order.CityUrl;
                 }
                 else
+                {
                     Url = InitUrl;
+                    Checker = initChecker;
+                }
 
                 if (OnOrderChanged != null)
                     Invoke(OnOrderChanged, this, new OrderEventArgs(order));
@@ -157,6 +159,38 @@ namespace PassportMeetReservator.Controls
             }
         }
 
+        private DateChecker initChecker;
+        public DateChecker InitChecker
+        {
+            get => initChecker;
+            set 
+            {
+                initChecker = value;
+
+                if (!Auto || Order == null)
+                    Checker = initChecker;
+            }
+        }
+
+        private DateChecker checker;
+        public DateChecker Checker
+        {
+            get => checker;
+            set
+            {
+                if (checker == value)
+                    return;
+
+                if (checker != null)
+                    checker.FollowersCount--;
+
+                checker = value;
+
+                if (checker != null)
+                    checker.FollowersCount++;
+            }
+        }
+
         public int BotNumber { get; set; }
 
         public int RealBrowserNumber { get; set; }
@@ -164,7 +198,6 @@ namespace PassportMeetReservator.Controls
         public int BrowsersCount { get; set; }
 
         public string Operation { get; set; }
-        public int OperationNumber { get; set; }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now.Date;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now.Date;
@@ -257,20 +290,20 @@ namespace PassportMeetReservator.Controls
                     continue;
                 }
 
-                DateTime[] dates = await CheckDates();
-                if (dates.Length == 0)
+                if (Checker.Dates.Length == 0)
                 {
-                    RaiseIterationSkipped("No dates found");
+                    RaiseIterationSkipped($"No dates found for operation {Checker.Operation}");
                     continue;
                 }
 
-                if (!dates.Any(date => date >= ReserveDateMin && date <= ReserveDateMax))
+                if (!Checker.Dates.Any(date => date >= ReserveDateMin && date <= ReserveDateMax))
                 {
                     RaiseIterationSkipped("Reservation period mismatch");
                     continue;
                 }
 
-                DateTime dateInBounds = dates.First(date => date >= ReserveDateMin && date <= ReserveDateMax);
+                DateTime dateInBounds = Checker.Dates.First(date => date >= ReserveDateMin && date <= ReserveDateMax);
+
                 if (await Iteration(dateInBounds))
                 {
                     if (!Auto || Order == null)
@@ -431,29 +464,6 @@ namespace PassportMeetReservator.Controls
 
                 await FillForm();
             }
-        }
-
-        private async Task<DateTime[]> CheckDates()
-        {
-            RestRequest request = new RestRequest(CHECK_DATE_API_ENDPOINT + OperationNumber);
-            request.Method = Method.GET;
-
-            request.AddHeader("authority", Url.Replace("https://", "").Trim('/'));
-            request.AddHeader("accept", "application/json, text/plain, */*");
-            request.AddHeader("authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55TmFtZSI6InV3cG96bmFuIiwiY29tcGFueUlkIjoiMSIsIm5iZiI6MTYwMTgwNzgyOSwiZXhwIjoyNTM0MDIyOTcyMDAsImlzcyI6IlFNU1dlYlJlc2VydmF0aW9uLkFQSSIsImF1ZCI6IlFNU1dlYlJlc2VydmF0aW9uLkNMSUVOVCJ9.IwDI0942FsfeN2Vm-0tFrg_3aKHU9dsouPpxRYl1OAw");
-            request.AddHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
-            request.AddHeader("sec-fetch-site", "same-origin");
-            request.AddHeader("sec-fetch-mode", "cors");
-            request.AddHeader("sec-fetch-dest", "empty");
-            request.AddHeader("referer", url);
-            request.AddHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
-
-            IRestResponse dates = await ApiClient.ExecuteAsync(request);
-
-            if (dates.StatusCode != HttpStatusCode.OK || dates.Content.Contains(GENERAL_ERROR_RESPONSE))
-                return new DateTime[] { };
-
-            return JsonConvert.DeserializeObject<DateTime[]>(dates.Content);
         }
 
         private async Task<DateTime?> ScanTime(DateTime date)

@@ -107,20 +107,22 @@
     </Compile>
     <Compile Include="Controls\WebViewExtensions.cs" />
     <Compile Include="Data\BootPeriod.cs" />
+    <Compile Include="Data\CustomEventArgs\DateUpdateEventArgs.cs" />
+    <Compile Include="Data\DateChecker.cs" />
     <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
-    <Compile Include="Data\DateTimeEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\DateTimeEventArgs.cs" />
     <Compile Include="Data\DelayInfo.cs" />
-    <Compile Include="Data\LogEventArgs.cs" />
-    <Compile Include="Data\NumberEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\LogEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\NumberEventArgs.cs" />
     <Compile Include="Data\BootSchedule.cs" />
-    <Compile Include="Data\BrowserPausedChangedEventArgs.cs" />
-    <Compile Include="Data\OrderEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\BrowserPausedChangedEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\OrderEventArgs.cs" />
     <Compile Include="Data\Platforms\CityInfos.cs" />
     <Compile Include="Data\Profile.cs" />
     <Compile Include="Data\ReservationOrder.cs" />
-    <Compile Include="Data\ReservedEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
-    <Compile Include="Data\UrlChangedEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\UrlChangedEventArgs.cs" />
     <Compile Include="Forms\AddOrderForm.cs">
       <SubType>Form</SubType>
     </Compile>
