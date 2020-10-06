@@ -40,7 +40,6 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.PreCheck1 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber1 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker1 = new System.Windows.Forms.ComboBox();
             this.Auto1 = new System.Windows.Forms.CheckBox();
@@ -52,7 +51,6 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.PreCheck2 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber2 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker2 = new System.Windows.Forms.ComboBox();
             this.Auto2 = new System.Windows.Forms.CheckBox();
@@ -64,7 +62,6 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.PreCheck3 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber3 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker3 = new System.Windows.Forms.ComboBox();
             this.Auto3 = new System.Windows.Forms.CheckBox();
@@ -76,7 +73,6 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.PreCheck4 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber4 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker4 = new System.Windows.Forms.ComboBox();
             this.Auto4 = new System.Windows.Forms.CheckBox();
@@ -88,7 +84,6 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
-            this.PreCheck5 = new System.Windows.Forms.CheckBox();
             this.BrowserNumber5 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker5 = new System.Windows.Forms.ComboBox();
             this.Auto5 = new System.Windows.Forms.CheckBox();
@@ -192,7 +187,6 @@
             this.Browser1.OperationNumber = 0;
             this.Browser1.Order = null;
             this.Browser1.Paused = true;
-            this.Browser1.PreCheck = false;
             this.Browser1.RealBrowserNumber = 0;
             this.Browser1.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser1.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -216,7 +210,6 @@
             this.Browser2.OperationNumber = 0;
             this.Browser2.Order = null;
             this.Browser2.Paused = true;
-            this.Browser2.PreCheck = false;
             this.Browser2.RealBrowserNumber = 0;
             this.Browser2.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser2.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -240,7 +233,6 @@
             this.Browser3.OperationNumber = 0;
             this.Browser3.Order = null;
             this.Browser3.Paused = true;
-            this.Browser3.PreCheck = false;
             this.Browser3.RealBrowserNumber = 0;
             this.Browser3.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser3.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -264,7 +256,6 @@
             this.Browser4.OperationNumber = 0;
             this.Browser4.Order = null;
             this.Browser4.Paused = true;
-            this.Browser4.PreCheck = false;
             this.Browser4.RealBrowserNumber = 0;
             this.Browser4.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser4.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -288,7 +279,6 @@
             this.Browser5.OperationNumber = 0;
             this.Browser5.Order = null;
             this.Browser5.Paused = true;
-            this.Browser5.PreCheck = false;
             this.Browser5.RealBrowserNumber = 0;
             this.Browser5.ReserveDateMax = new System.DateTime(((long)(0)));
             this.Browser5.ReserveDateMin = new System.DateTime(((long)(0)));
@@ -309,7 +299,6 @@
             // 
             // BrowserInfo1
             // 
-            this.BrowserInfo1.Controls.Add(this.PreCheck1);
             this.BrowserInfo1.Controls.Add(this.BrowserNumber1);
             this.BrowserInfo1.Controls.Add(this.CityChecker1);
             this.BrowserInfo1.Controls.Add(this.Auto1);
@@ -329,19 +318,6 @@
             this.BrowserInfo1.TabStop = false;
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
-            // 
-            // PreCheck1
-            // 
-            this.PreCheck1.AutoSize = true;
-            this.PreCheck1.Checked = true;
-            this.PreCheck1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PreCheck1.Location = new System.Drawing.Point(264, 40);
-            this.PreCheck1.Name = "PreCheck1";
-            this.PreCheck1.Size = new System.Drawing.Size(73, 17);
-            this.PreCheck1.TabIndex = 27;
-            this.PreCheck1.Text = "PreCheck";
-            this.PreCheck1.UseVisualStyleBackColor = true;
-            this.PreCheck1.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
             // 
             // BrowserNumber1
             // 
@@ -447,7 +423,6 @@
             // 
             // BrowserInfo2
             // 
-            this.BrowserInfo2.Controls.Add(this.PreCheck2);
             this.BrowserInfo2.Controls.Add(this.BrowserNumber2);
             this.BrowserInfo2.Controls.Add(this.CityChecker2);
             this.BrowserInfo2.Controls.Add(this.Auto2);
@@ -467,19 +442,6 @@
             this.BrowserInfo2.TabStop = false;
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
-            // 
-            // PreCheck2
-            // 
-            this.PreCheck2.AutoSize = true;
-            this.PreCheck2.Checked = true;
-            this.PreCheck2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PreCheck2.Location = new System.Drawing.Point(264, 39);
-            this.PreCheck2.Name = "PreCheck2";
-            this.PreCheck2.Size = new System.Drawing.Size(73, 17);
-            this.PreCheck2.TabIndex = 28;
-            this.PreCheck2.Text = "PreCheck";
-            this.PreCheck2.UseVisualStyleBackColor = true;
-            this.PreCheck2.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
             // 
             // BrowserNumber2
             // 
@@ -585,7 +547,6 @@
             // 
             // BrowserInfo3
             // 
-            this.BrowserInfo3.Controls.Add(this.PreCheck3);
             this.BrowserInfo3.Controls.Add(this.BrowserNumber3);
             this.BrowserInfo3.Controls.Add(this.CityChecker3);
             this.BrowserInfo3.Controls.Add(this.Auto3);
@@ -605,19 +566,6 @@
             this.BrowserInfo3.TabStop = false;
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
-            // 
-            // PreCheck3
-            // 
-            this.PreCheck3.AutoSize = true;
-            this.PreCheck3.Checked = true;
-            this.PreCheck3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PreCheck3.Location = new System.Drawing.Point(264, 40);
-            this.PreCheck3.Name = "PreCheck3";
-            this.PreCheck3.Size = new System.Drawing.Size(73, 17);
-            this.PreCheck3.TabIndex = 29;
-            this.PreCheck3.Text = "PreCheck";
-            this.PreCheck3.UseVisualStyleBackColor = true;
-            this.PreCheck3.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
             // 
             // BrowserNumber3
             // 
@@ -723,7 +671,6 @@
             // 
             // BrowserInfo4
             // 
-            this.BrowserInfo4.Controls.Add(this.PreCheck4);
             this.BrowserInfo4.Controls.Add(this.BrowserNumber4);
             this.BrowserInfo4.Controls.Add(this.CityChecker4);
             this.BrowserInfo4.Controls.Add(this.Auto4);
@@ -743,19 +690,6 @@
             this.BrowserInfo4.TabStop = false;
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
-            // 
-            // PreCheck4
-            // 
-            this.PreCheck4.AutoSize = true;
-            this.PreCheck4.Checked = true;
-            this.PreCheck4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PreCheck4.Location = new System.Drawing.Point(264, 41);
-            this.PreCheck4.Name = "PreCheck4";
-            this.PreCheck4.Size = new System.Drawing.Size(73, 17);
-            this.PreCheck4.TabIndex = 30;
-            this.PreCheck4.Text = "PreCheck";
-            this.PreCheck4.UseVisualStyleBackColor = true;
-            this.PreCheck4.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
             // 
             // BrowserNumber4
             // 
@@ -861,7 +795,6 @@
             // 
             // BrowserInfo5
             // 
-            this.BrowserInfo5.Controls.Add(this.PreCheck5);
             this.BrowserInfo5.Controls.Add(this.BrowserNumber5);
             this.BrowserInfo5.Controls.Add(this.CityChecker5);
             this.BrowserInfo5.Controls.Add(this.Auto5);
@@ -881,19 +814,6 @@
             this.BrowserInfo5.TabStop = false;
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
-            // 
-            // PreCheck5
-            // 
-            this.PreCheck5.AutoSize = true;
-            this.PreCheck5.Checked = true;
-            this.PreCheck5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PreCheck5.Location = new System.Drawing.Point(264, 39);
-            this.PreCheck5.Name = "PreCheck5";
-            this.PreCheck5.Size = new System.Drawing.Size(73, 17);
-            this.PreCheck5.TabIndex = 31;
-            this.PreCheck5.Text = "PreCheck";
-            this.PreCheck5.UseVisualStyleBackColor = true;
-            this.PreCheck5.CheckedChanged += new System.EventHandler(this.PreCheck_CheckedChanged);
             // 
             // BrowserNumber5
             // 
@@ -1183,7 +1103,7 @@
             // 
             // ForceRollBrowserUp
             // 
-            this.ForceRollBrowserUp.Location = new System.Drawing.Point(1636, 870);
+            this.ForceRollBrowserUp.Location = new System.Drawing.Point(1612, 870);
             this.ForceRollBrowserUp.Margin = new System.Windows.Forms.Padding(2);
             this.ForceRollBrowserUp.Name = "ForceRollBrowserUp";
             this.ForceRollBrowserUp.Size = new System.Drawing.Size(150, 34);
@@ -1341,11 +1261,6 @@
         private System.Windows.Forms.NumericUpDown BrowserNumber4;
         private System.Windows.Forms.NumericUpDown BrowserNumber5;
         private System.Windows.Forms.Button ForceRollBrowserUp;
-        private System.Windows.Forms.CheckBox PreCheck1;
-        private System.Windows.Forms.CheckBox PreCheck2;
-        private System.Windows.Forms.CheckBox PreCheck3;
-        private System.Windows.Forms.CheckBox PreCheck4;
-        private System.Windows.Forms.CheckBox PreCheck5;
     }
 }
 

@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 using PassportMeetReservator.Data;
+using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Forms
 {
@@ -10,9 +11,16 @@ namespace PassportMeetReservator.Forms
     {
         private List<ReservationOrder> Orders { get; set; }
 
-        public AddOrderForm(List<ReservationOrder> orders)
+        public AddOrderForm(CityPlatformInfo[] platforms, List<ReservationOrder> orders)
         {
             InitializeComponent();
+
+            CitySelector.Items.AddRange(platforms);
+            CitySelector.SelectedIndexChanged += (sender, e) =>
+            {
+                OperationSelector.Items.Clear();
+                OperationSelector.Items.AddRange(platforms[OperationSelector.SelectedIndex].Operations);
+            };
 
             Orders = orders;
         }
@@ -44,7 +52,7 @@ namespace PassportMeetReservator.Forms
             bool surnameInvalid = string.IsNullOrEmpty(SurnameInput.InputText);
             bool nameInvalid = string.IsNullOrEmpty(NameInput.InputText);
             bool emailInvalid = string.IsNullOrEmpty(EmailInput.InputText);
-            bool typeInvalid = OrderTypeSelector.SelectedIndex == -1;
+            bool typeInvalid = OperationSelector.SelectedIndex == -1;
 
             if (surnameInvalid || nameInvalid || emailInvalid || typeInvalid)
             {
@@ -53,8 +61,10 @@ namespace PassportMeetReservator.Forms
             }
 
             ReservationOrder order = new ReservationOrder(
-                SurnameInput.InputText, NameInput.InputText,
-                EmailInput.InputText, OrderTypeSelector.SelectedItem.ToString()
+                SurnameInput.InputText, NameInput.InputText, EmailInput.InputText, 
+                (CitySelector.SelectedItem as CityPlatformInfo).BaseUrl, 
+                OperationSelector.SelectedItem.ToString(), 
+                OperationSelector.SelectedIndex + 1
             );
 
             return order;

@@ -60,7 +60,6 @@ namespace PassportMeetReservator
         private Button[] DoneButtons { get; set; }
 
         private CheckBox[] AutoCheckers { get; set; }
-        private CheckBox[] PreCheckCheckers { get; set; }
 
         private ComboBox[] OperationSelectors { get; set; }
         private ComboBox[] CitySelectors { get; set; }
@@ -177,18 +176,11 @@ namespace PassportMeetReservator
                 ReserveDateMax4, ReserveDateMax5
             };
 
-            PreCheckCheckers = new CheckBox[BROWSERS_COUNT]
-            {
-                PreCheck1, PreCheck2, PreCheck3, 
-                PreCheck4, PreCheck5
-            };
-
             for (int i = 0; i < BROWSERS_COUNT; ++i)
             {
                 BrowserNumbers[i].Value = i;
                 Browsers[i].BrowserNumber = i;
                 Browsers[i].RealBrowserNumber = i;
-                Browsers[i].PreCheck = PreCheckCheckers[i].Checked;
                 Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
                 Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
                 Browsers[i].OnReservedManually += Browser_OnReservedManually;
@@ -196,6 +188,8 @@ namespace PassportMeetReservator
                 Browsers[i].OnDateTimeSelected += MainForm_OnDateTimeSelected;
                 Browsers[i].OnManualReactionWaiting += MainForm_OnManualReactionWaiting;
                 Browsers[i].OnOrderChanged += Browser_OnOrderChanged;
+                Browsers[i].OnIterationSkipped += Browser_OnIterationSkipped;
+                Browsers[i].OnIterationFailure += Browser_OnIterationFailure;
                 Browsers[i].DelayInfo = DelayInfo;
 
                 Browsers[i].Size = BrowserWrappers[i].Size;
@@ -214,9 +208,21 @@ namespace PassportMeetReservator
             CityChecker.SelectedIndex = 0;
         }
 
+        private void Browser_OnIterationFailure(object sender, LogEventArgs e)
+        {
+            Log($"Iteration failure at browser {e.BrowserNumber + 1}: {e.LogText}");
+        }
+
+        private void Browser_OnIterationSkipped(object sender, LogEventArgs e)
+        {
+            Log($"Iteration skipped at browser {e.BrowserNumber + 1}: {e.LogText}");
+        }
+
         private void Log(string text)
         {
             OrdersInfo.Text += $"{DateTime.Now.ToLongTimeString()}: {text}\n";
+            OrdersInfo.SelectionStart = OrdersInfo.Text.Length;
+            OrdersInfo.ScrollToCaret();
         }
 
         private int FindBrowserNumberByInfoControl(Control[] controls, Control control)
@@ -313,7 +319,7 @@ namespace PassportMeetReservator
 
             if (browser.Order == null)
             {
-                await Notifier.NotifyMessage($"Браузер #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber}) не має ордера (працює в ручному режимі)", LogChatId.Text);
+                await Notifier.NotifyMessage($"Браузер #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber + 1}) не має ордера (працює в ручному режимі)", LogChatId.Text);
                 Log($"Browser #{browser.RealBrowserNumber + 1} has no order assigned, so working in manual mode");
 
                 if (browser.Auto)
@@ -397,7 +403,7 @@ namespace PassportMeetReservator
             if (browser == -1)
                 return;
 
-            Browsers[browser].ReserveDateMin = (sender as DateTimePicker).Value;
+            Browsers[browser].ReserveDateMin = (sender as DateTimePicker).Value.Date;
         }
 
         private void ReserveDateMax_ValueChanged(object sender, EventArgs e)
@@ -407,7 +413,7 @@ namespace PassportMeetReservator
             if (browser == -1)
                 return;
 
-            Browsers[browser].ReserveDateMax = (sender as DateTimePicker).Value;
+            Browsers[browser].ReserveDateMax = (sender as DateTimePicker).Value.Date;
         }
 
         private void BrowserContinue_Click(object sender, EventArgs e)
@@ -436,8 +442,8 @@ namespace PassportMeetReservator
             {
                 HandleBusyChange();
 
-                Browsers[e.BrowserNumber].ReserveDateMin = ReserveDatesMin[e.BrowserNumber].Value;
-                Browsers[e.BrowserNumber].ReserveDateMax = ReserveDatesMax[e.BrowserNumber].Value;
+                Browsers[e.BrowserNumber].ReserveDateMin = ReserveDatesMin[e.BrowserNumber].Value.Date;
+                Browsers[e.BrowserNumber].ReserveDateMax = ReserveDatesMax[e.BrowserNumber].Value.Date;
 
                 PausedChangeButtons[e.BrowserNumber].Text = "Pause";
                 PausedChangeButtons[e.BrowserNumber].Click -= BrowserContinue_Click;
@@ -542,17 +548,6 @@ namespace PassportMeetReservator
             Browsers[browser].BrowserNumber = (int)browserNumber.Value;
         }
 
-        private void PreCheck_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBox preCheck = sender as CheckBox;
-            int browser = FindBrowserNumberByInfoControl(PreCheckCheckers, preCheck);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].PreCheck = preCheck.Checked;
-        }
-
         private void PauseButton_Click(object sender, EventArgs e)
         {
             SetPausedToAllBrowsers(true);
@@ -599,7 +594,7 @@ namespace PassportMeetReservator
 
         private void AddOrderButton_Click(object sender, EventArgs e)
         {
-            AddOrderForm addOrderForm = new AddOrderForm(Orders);
+            AddOrderForm addOrderForm = new AddOrderForm(Platforms, Orders);
             addOrderForm.ShowDialog();
 
             SaveData(ORDERS_FILE_PATH, Orders);
