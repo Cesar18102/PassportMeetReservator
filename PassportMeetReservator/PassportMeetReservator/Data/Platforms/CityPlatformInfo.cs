@@ -4,7 +4,7 @@
     {
         public string Name { get; protected set; }
         public string BaseUrl { get; protected set; }
-        public string[] Operations { get; protected set; }
+        public OperationInfo[] Operations { get; protected set; }
 
         public CityPlatformInfo(string name, string baseUrl)
         {

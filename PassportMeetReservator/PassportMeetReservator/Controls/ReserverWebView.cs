@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.WinForms;
 
-using RestSharp;
-
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
+using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Controls
 {
@@ -58,8 +57,6 @@ namespace PassportMeetReservator.Controls
         private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
         private const string STATUS_CIRCLE_DONE_STYLE = "rgb(87, 133, 226)";
 
-        private const string GENERAL_ERROR_RESPONSE = "General error.";
-
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
         private CancellationTokenSource TokenSource { get; set; }
@@ -79,6 +76,11 @@ namespace PassportMeetReservator.Controls
 
                     if (OnPausedChanged != null)
                         Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(RealBrowserNumber, paused));
+
+                    if (paused)
+                        Checker.PausedFollowersCount++;
+                    else
+                        Checker.PausedFollowersCount--;
                 }
             }
         }
@@ -129,9 +131,6 @@ namespace PassportMeetReservator.Controls
             }
         }
 
-        private const string CHECK_DATE_API_ENDPOINT = "Slot/GetAvailableDaysForOperation/";
-        private RestClient ApiClient { get; set; } = new RestClient("https://rejestracjapoznan.poznan.uw.gov.pl/api");
-
         private string initUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
         public string InitUrl
         {
@@ -153,7 +152,6 @@ namespace PassportMeetReservator.Controls
                     return;
 
                 url = value;
-                ApiClient = new RestClient($"{url.Trim('/')}/api/");
 
                 UpdateBrowser();
             }
@@ -182,12 +180,22 @@ namespace PassportMeetReservator.Controls
                     return;
 
                 if (checker != null)
+                {
                     checker.FollowersCount--;
+
+                    if (Paused)
+                        checker.PausedFollowersCount--;
+                }
 
                 checker = value;
 
                 if (checker != null)
+                {
                     checker.FollowersCount++;
+
+                    if (Paused)
+                        checker.PausedFollowersCount++;
+                }
             }
         }
 
@@ -197,7 +205,7 @@ namespace PassportMeetReservator.Controls
         public int BrowserNumber { get; set; }
         public int BrowsersCount { get; set; }
 
-        public string Operation { get; set; }
+        public OperationInfo Operation { get; set; }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now.Date;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now.Date;
@@ -358,8 +366,8 @@ namespace PassportMeetReservator.Controls
         {
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
-            string operation = Auto && Order != null ? Order.Operation : Operation;
-            if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, operation, SITE_FALL_WAIT_ATTEMPTS))
+            OperationInfo operation = Auto && Order != null ? Order.Operation : Operation;
+            if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, operation.Name, SITE_FALL_WAIT_ATTEMPTS))
             {
                 RaiseIteraionFailure("Opreration button not found");
                 return false;

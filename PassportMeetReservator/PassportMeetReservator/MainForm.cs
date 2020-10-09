@@ -51,9 +51,7 @@ namespace PassportMeetReservator
         };
 
         private const string CHECK_DATES_API_AUTH_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55TmFtZSI6InV3cG96bmFuIiwiY29tcGFueUlkIjoiMSIsIm5iZiI6MTYwMTgwNzgyOSwiZXhwIjoyNTM0MDIyOTcyMDAsImlzcyI6IlFNU1dlYlJlc2VydmF0aW9uLkFQSSIsImF1ZCI6IlFNU1dlYlJlc2VydmF0aW9uLkNMSUVOVCJ9.IwDI0942FsfeN2Vm-0tFrg_3aKHU9dsouPpxRYl1OAw";
-        private static Dictionary<string, DateChecker[]> DateCheckers = DateChecker.CreateFromPlatformInfos(
-            Platforms, CHECK_DATES_API_AUTH_TOKEN
-        );
+        private Dictionary<string, DateChecker[]> DateCheckers { get; set; }
 
         private const string URL_TO_SCREEN_FILENAME_TRASH_PREFIX = "https://rejestracjapoznan.poznan.uw.gov.pl/Info/";
 
@@ -88,7 +86,6 @@ namespace PassportMeetReservator
         private Panel ZoomedBrowserWrapper { get; set; }
         private ReserverWebView ZoomedBrowser { get; set; }
 
-        private ConcurrentBag<string> LogCache = new ConcurrentBag<string>();
         private TelegramNotifier Notifier { get; set; } = new TelegramNotifier();
 
         public MainForm()
@@ -108,7 +105,20 @@ namespace PassportMeetReservator
             Profile = LoadData<Profile>(PROFILE_FILE_PATH);
             LogChatId.Text = Profile?.TelegramChatId;
 
+            DateCheckers = DateChecker.CreateFromPlatformInfos(
+                Platforms, CHECK_DATES_API_AUTH_TOKEN,
+                Checker_OnRequestError, Checker_OnRequestOk,
+                DelayInfo
+            );
+
             StartReserving();
+        }
+
+        private void ApplyToDateCheckers(Action<DateChecker> action)
+        {
+            foreach (DateChecker[] checkers in DateCheckers.Values)
+                foreach (DateChecker checker in checkers)
+                    action(checker);
         }
 
         private void InitBrowsers()
@@ -214,6 +224,20 @@ namespace PassportMeetReservator
 
             CityChecker.Items.AddRange(Platforms);
             CityChecker.SelectedIndex = 0;
+        }
+
+        private async void Checker_OnRequestError(object sender, DateCheckerErrorEventArgs e)
+        {
+            DateChecker checker = sender as DateChecker;
+            Log($"Date check error at checker {checker.City} : {checker.Operation}; Code: {e.ErrorCode}; Check your VPN and internet connection!");
+
+            await Notifier.NotifyMessage("Check your VPN and internet connection!", LogChatId.Text);
+        }
+
+        private void Checker_OnRequestOk(object sender, DateCheckerOkEventArgs e)
+        {
+            DateChecker checker = sender as DateChecker;
+            Log($"Date check ok at checker {checker.City} : {checker.Operation}; Content: {e.Content}");
         }
 
         private void Browser_OnIterationFailure(object sender, LogEventArgs e)
@@ -341,7 +365,7 @@ namespace PassportMeetReservator
 
         private DateChecker FindDateCheckerByOrder(ReservationOrder order)
         {
-            return DateCheckers[order.City][order.OperationNumber - 1];
+            return DateCheckers[order.City][order.Operation.Position];
         }
 
         private void PutOrderToBrowser(ReserverWebView browser)
@@ -395,9 +419,10 @@ namespace PassportMeetReservator
                 return;
 
             string selectedCity = (CitySelectors[browser].SelectedItem as CityPlatformInfo).Name;
+            OperationInfo selectedOperation = operationSelector.SelectedItem as OperationInfo; ;
 
-            Browsers[browser].Operation = operationSelector.SelectedItem.ToString();
-            Browsers[browser].InitChecker = DateCheckers[selectedCity][operationSelector.SelectedIndex];
+            Browsers[browser].Operation = selectedOperation;
+            Browsers[browser].InitChecker = DateCheckers[selectedCity][selectedOperation.Position];
         }
 
         private void CityChecker_SelectedIndexChanged(object sender, EventArgs e)
@@ -651,6 +676,8 @@ namespace PassportMeetReservator
                 browser.Paused = false;
             }
 
+            ApplyToDateCheckers(checker => checker.Schedule = Schedule);
+
             Log("All browsers started scheduled");
         }
 
@@ -658,6 +685,8 @@ namespace PassportMeetReservator
         {
             foreach (ReserverWebView browser in Browsers)
                 browser.Schedule = null;
+
+            ApplyToDateCheckers(checker => checker.Schedule = null);
 
             Log("Schedule detached. Manual control");
         }

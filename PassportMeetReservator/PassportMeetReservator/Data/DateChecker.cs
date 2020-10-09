@@ -9,11 +9,15 @@ using Newtonsoft.Json;
 using RestSharp;
 
 using PassportMeetReservator.Data.Platforms;
+using PassportMeetReservator.Data.CustomEventArgs;
 
 namespace PassportMeetReservator.Data
 {
     public class DateChecker
     {
+        public event EventHandler<DateCheckerErrorEventArgs> OnRequestError;
+        public event EventHandler<DateCheckerOkEventArgs> OnRequestOK;
+
         private const string GENERAL_ERROR_RESPONSE = "General error.";
         private const string CHECK_DATE_API_ENDPOINT = "Slot/GetAvailableDaysForOperation/";
         private RestClient ApiClient { get; set; } = new RestClient("https://rejestracjapoznan.poznan.uw.gov.pl/api");
@@ -21,59 +25,83 @@ namespace PassportMeetReservator.Data
         public DateTime[] Dates { get; private set; } = new DateTime[] { };
 
         public string Token { get; private set; }
+
+        public string City { get; private set; }
         public string CityUrl { get; private set; }
 
-        public string Operation { get; private set; }
-        public int OperationNumber { get; private set; }
+        public OperationInfo Operation { get; private set; }
 
         public int FollowersCount { get; set; }
-        public int UpdateInterval { get; set; } = 300;
+        public int PausedFollowersCount { get; set; }
 
-        public DateChecker(string cityUrl, string operation, int operationNumber, string token)
+        private DelayInfo DelayInfo { get; set; }
+        public BootSchedule Schedule { get; set; }
+
+        public DateChecker(string city, string cityUrl, OperationInfo operation, string token, DelayInfo delayInfo)
         {
+            City = city;
             CityUrl = cityUrl;
             Operation = operation;
-            OperationNumber = operationNumber;
             Token = token;
+            DelayInfo = delayInfo;
 
             Init();
         }
 
-        public static Dictionary<string, DateChecker[]> CreateFromPlatformInfos(CityPlatformInfo[] platforms, string token)
-        {
+        public static Dictionary<string, DateChecker[]> CreateFromPlatformInfos(
+            CityPlatformInfo[] platforms, string token, 
+            EventHandler<DateCheckerErrorEventArgs> onRequestErrorHandler,
+            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler,
+            DelayInfo delayInfo
+        ) {
             return platforms.ToDictionary(
                 platform => platform.Name,
-                platform => CreateFromPlatformInfo(platform, token)
+                platform => CreateFromPlatformInfo(platform, token, onRequestErrorHandler, onRequestOkHandler, delayInfo)
             );
         }
 
-        public static DateChecker[] CreateFromPlatformInfo(CityPlatformInfo platform, string token)
-        {
-            return platform.Operations.Select(
-                (operation, operationNumber) => new DateChecker(platform.BaseUrl, operation, operationNumber + 1, token)
-            ).ToArray();
+        public static DateChecker[] CreateFromPlatformInfo(
+            CityPlatformInfo platform, string token, 
+            EventHandler<DateCheckerErrorEventArgs> onRequestErrorHandler,
+            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler,
+            DelayInfo delayInfo
+        ) {
+            DateChecker[] checkers = new DateChecker[platform.Operations.Length];
+
+            for(int i = 0; i < platform.Operations.Length; ++i)
+            {
+                checkers[i] = new DateChecker(platform.Name, platform.BaseUrl, platform.Operations[i], token, delayInfo);
+                checkers[i].OnRequestError += onRequestErrorHandler;
+                checkers[i].OnRequestOK += onRequestOkHandler;
+            }
+
+            return checkers;
         }
 
         public async void Init()
         {
             while(true)
             {
-                await Task.Delay(UpdateInterval);
+                await Task.Delay(DelayInfo.DateCheckDelay);
 
                 if (FollowersCount == 0)
                     continue;
 
-                DateTime[] temp = await GetDates();
+                if (PausedFollowersCount == FollowersCount)
+                    continue;
 
-                lock (this)
-                    Dates = temp;
+                if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
+                    continue;
+
+                Dates = await GetDates();
             }
         }
 
         public async Task<DateTime[]> GetDates()
         {
-            RestRequest request = new RestRequest(CHECK_DATE_API_ENDPOINT + OperationNumber);
+            RestRequest request = new RestRequest(CHECK_DATE_API_ENDPOINT + Operation.Number);
             request.Method = Method.GET;
+            request.Timeout = 1000;
 
             request.AddHeader("authority", CityUrl.Replace("https://", "").Trim('/'));
             request.AddHeader("accept", "application/json, text/plain, */*");
@@ -87,7 +115,15 @@ namespace PassportMeetReservator.Data
 
             IRestResponse dates = await ApiClient.ExecuteAsync(request);
 
-            if (dates.StatusCode != HttpStatusCode.OK || dates.Content.Contains(GENERAL_ERROR_RESPONSE))
+            if (dates.StatusCode != HttpStatusCode.OK)
+            {
+                OnRequestError?.Invoke(this, new DateCheckerErrorEventArgs((int)dates.StatusCode));
+                return new DateTime[] { };
+            }
+
+            OnRequestOK?.Invoke(this, new DateCheckerOkEventArgs(dates.Content));
+
+            if(dates.Content.Contains(GENERAL_ERROR_RESPONSE))
                 return new DateTime[] { };
 
             return JsonConvert.DeserializeObject<DateTime[]>(dates.Content);

@@ -4,15 +4,15 @@
     {
         public PoznanInfo() : base("Poznan", "https://rejestracjapoznan.poznan.uw.gov.pl/")
         {
-            Operations = new string[]
+            Operations = new OperationInfo[]
             {
-                "PASZPORTY - Składanie wniosków o paszport",
-                "PASZPORTY - Odbiór paszportu",
-                "CUDZOZIEMCY - Odbiór karty pobytu",
-                "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / wymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-                "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonych w delegaturach)",
-                "CUDZOZIEMCY - Uzyskanie stempla(pieczątki) w paszporcie(wyłącznie wnioski ze statusem pozytywna weryfikacja formalna)",
-                "Obywatelstwo polskie"
+                new OperationInfo("PASZPORTY - Składanie wniosków o paszport", 1, 0),
+                new OperationInfo("PASZPORTY - Odbiór paszportu", 2, 1),
+                new OperationInfo("CUDZOZIEMCY - Odbiór karty pobytu", 7, 2),
+                new OperationInfo("CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / wymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka", 8, 3),
+                new OperationInfo("CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonych w delegaturach)", 9, 4),
+                new OperationInfo("CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze statusem pozytywna weryfikacja formalna)", 10, 5),
+                new OperationInfo("Obywatelstwo polskie", 12, 6)
             };
         }
     }
@@ -21,12 +21,12 @@
     {
         public SubPoznanaInfo(string name, string baseUrl) : base(name, baseUrl)
         {
-            Operations = new string[]
+            Operations = new OperationInfo[]
             {
-                "PASZPORTY - Składanie wniosków o paszport",
-                "PASZPORTY - Odbiór paszportu",
-                "CUDZOZIEMCY - Odbiór karty pobytu",
-                "CUDZOZIEMCY - Uzupełnienia / odciski"
+                new OperationInfo("PASZPORTY - Składanie wniosków o paszport", 1, 0),
+                new OperationInfo("PASZPORTY - Odbiór paszportu", 2, 1),
+                new OperationInfo("CUDZOZIEMCY - Odbiór karty pobytu", 5, 2),
+                new OperationInfo("CUDZOZIEMCY - Uzupełnienia / odciski", 7, 3)
             };
         }
     }

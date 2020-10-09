@@ -107,6 +107,8 @@
     </Compile>
     <Compile Include="Controls\WebViewExtensions.cs" />
     <Compile Include="Data\BootPeriod.cs" />
+    <Compile Include="Data\CustomEventArgs\DateCheckerErrorEventArgs.cs" />
+    <Compile Include="Data\CustomEventArgs\DateCheckerOkEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\DateUpdateEventArgs.cs" />
     <Compile Include="Data\DateChecker.cs" />
     <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="Data\CustomEventArgs\BrowserPausedChangedEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\OrderEventArgs.cs" />
     <Compile Include="Data\Platforms\CityInfos.cs" />
+    <Compile Include="Data\Platforms\OperationInfo.cs" />
     <Compile Include="Data\Profile.cs" />
     <Compile Include="Data\ReservationOrder.cs" />
     <Compile Include="Data\CustomEventArgs\ReservedEventArgs.cs" />

@@ -19,6 +19,8 @@ namespace PassportMeetReservator.Forms
             NameInput.InputText = Order.Name;
             EmailInput.InputText = Order.Email;
             OrderTypeSelector.SelectedItem = Order.Operation;
+
+            throw new NotImplementedException();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -26,7 +28,7 @@ namespace PassportMeetReservator.Forms
             Order.Surname = SurnameInput.InputText;
             Order.Name = NameInput.InputText;
             Order.Email = EmailInput.InputText;
-            Order.Operation = OrderTypeSelector.SelectedItem.ToString();
+            /*Order.Operation = OrderTypeSelector.SelectedItem.ToString();*/
 
             this.Close();
         }

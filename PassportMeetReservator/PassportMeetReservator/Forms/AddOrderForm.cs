@@ -19,7 +19,7 @@ namespace PassportMeetReservator.Forms
             CitySelector.SelectedIndexChanged += (sender, e) =>
             {
                 OperationSelector.Items.Clear();
-                OperationSelector.Items.AddRange(platforms[OperationSelector.SelectedIndex].Operations);
+                OperationSelector.Items.AddRange(platforms[CitySelector.SelectedIndex].Operations);
             };
 
             Orders = orders;
@@ -65,8 +65,7 @@ namespace PassportMeetReservator.Forms
             ReservationOrder order = new ReservationOrder(
                 SurnameInput.InputText, NameInput.InputText, EmailInput.InputText,
                 platform.Name, platform.BaseUrl,
-                OperationSelector.SelectedItem.ToString(), 
-                OperationSelector.SelectedIndex + 1
+                OperationSelector.SelectedItem as OperationInfo
             );
 
             return order;

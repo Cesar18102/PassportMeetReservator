@@ -133,17 +133,6 @@
             // 
             this.CitySelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CitySelector.FormattingEnabled = true;
-            this.CitySelector.Items.AddRange(new object[] {
-            "PASZPORTY - Składanie wniosków o paszport",
-            "PASZPORTY - Odbiór paszportu",
-            "CUDZOZIEMCY - Odbiór karty pobytu",
-            "CUDZOZIEMCY - Złożenie wniosku: pobyt czasowy / stały / rezydenta UE, wydanie / w" +
-                "ymiana karty pobytu, świadczenie pieniężne dla posiadaczy Karty Polaka",
-            "CUDZOZIEMCY - Złożenie odcisków palców (do wniosków przesłanych pocztą / złożonyc" +
-                "h w delegaturach)",
-            "CUDZOZIEMCY - Uzyskanie stempla (pieczątki) w paszporcie (wyłącznie wnioski ze st" +
-                "atusem pozytywna weryfikacja formalna)",
-            "Obywatelstwo polskie"});
             this.CitySelector.Location = new System.Drawing.Point(121, 81);
             this.CitySelector.Margin = new System.Windows.Forms.Padding(2);
             this.CitySelector.Name = "CitySelector";

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Data
 {
@@ -16,10 +17,9 @@ namespace PassportMeetReservator.Data
         public string City { get; set; }
         public string CityUrl { get; set; }
 
-        public string Operation { get; set; }
-        public int OperationNumber { get; set; }
+        public OperationInfo Operation { get; set; }
 
-        public ReservationOrder(string surname, string name, string email, string city, string cityUrl, string operation, int operationNumber)
+        public ReservationOrder(string surname, string name, string email, string city, string cityUrl, OperationInfo operation)
         {
             Surname = surname;
             Name = name;
@@ -29,7 +29,6 @@ namespace PassportMeetReservator.Data
             CityUrl = cityUrl;
 
             Operation = operation;
-            OperationNumber = operationNumber;
         }
     }
 }

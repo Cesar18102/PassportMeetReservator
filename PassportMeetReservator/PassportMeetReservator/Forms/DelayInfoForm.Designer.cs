@@ -43,6 +43,8 @@
             this.ReserveRefreshDelayLabel = new System.Windows.Forms.Label();
             this.PostInputDelay = new System.Windows.Forms.NumericUpDown();
             this.PostInputDelayLabel = new System.Windows.Forms.Label();
+            this.DateCheckDelay = new System.Windows.Forms.NumericUpDown();
+            this.DateCheckDelayLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.OrderLoadingDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BrowserIterationDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ActionResultDelay)).BeginInit();
@@ -50,6 +52,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DiscreteWaitDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ManualReactionWaitDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PostInputDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DateCheckDelay)).BeginInit();
             this.SuspendLayout();
             // 
             // OrderLoadingDelayLabel
@@ -147,7 +150,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(12, 194);
+            this.SaveButton.Location = new System.Drawing.Point(12, 220);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(276, 23);
             this.SaveButton.TabIndex = 6;
@@ -279,11 +282,44 @@
             this.PostInputDelayLabel.TabIndex = 13;
             this.PostInputDelayLabel.Text = "Post Input Delay:";
             // 
+            // DateCheckDelay
+            // 
+            this.DateCheckDelay.Location = new System.Drawing.Point(176, 194);
+            this.DateCheckDelay.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.DateCheckDelay.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.DateCheckDelay.Name = "DateCheckDelay";
+            this.DateCheckDelay.Size = new System.Drawing.Size(112, 20);
+            this.DateCheckDelay.TabIndex = 16;
+            this.DateCheckDelay.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // DateCheckDelayLabel
+            // 
+            this.DateCheckDelayLabel.AutoSize = true;
+            this.DateCheckDelayLabel.Location = new System.Drawing.Point(12, 196);
+            this.DateCheckDelayLabel.Name = "DateCheckDelayLabel";
+            this.DateCheckDelayLabel.Size = new System.Drawing.Size(97, 13);
+            this.DateCheckDelayLabel.TabIndex = 15;
+            this.DateCheckDelayLabel.Text = "Date Check Delay:";
+            // 
             // DelayInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 226);
+            this.ClientSize = new System.Drawing.Size(300, 255);
+            this.Controls.Add(this.DateCheckDelay);
+            this.Controls.Add(this.DateCheckDelayLabel);
             this.Controls.Add(this.PostInputDelay);
             this.Controls.Add(this.PostInputDelayLabel);
             this.Controls.Add(this.ManualReactionWaitDelay);
@@ -309,6 +345,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DiscreteWaitDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ManualReactionWaitDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PostInputDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DateCheckDelay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,5 +368,7 @@
         private System.Windows.Forms.Label ReserveRefreshDelayLabel;
         private System.Windows.Forms.NumericUpDown PostInputDelay;
         private System.Windows.Forms.Label PostInputDelayLabel;
+        private System.Windows.Forms.NumericUpDown DateCheckDelay;
+        private System.Windows.Forms.Label DateCheckDelayLabel;
     }
 }
