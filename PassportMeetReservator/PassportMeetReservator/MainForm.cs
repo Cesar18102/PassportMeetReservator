@@ -226,12 +226,12 @@ namespace PassportMeetReservator
             CityChecker.SelectedIndex = 0;
         }
 
-        private async void Checker_OnRequestError(object sender, DateCheckerErrorEventArgs e)
+        private void Checker_OnRequestError(object sender, DateCheckerErrorEventArgs e)
         {
             DateChecker checker = sender as DateChecker;
             Log($"Date check error at checker {checker.City} : {checker.Operation}; Code: {e.ErrorCode}; Check your VPN and internet connection!");
 
-            await Notifier.NotifyMessage("Check your VPN and internet connection!", LogChatId.Text);
+            //await Notifier.NotifyMessage("Check your VPN and internet connection!", LogChatId.Text);
         }
 
         private void Checker_OnRequestOk(object sender, DateCheckerOkEventArgs e)
