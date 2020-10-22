@@ -33,6 +33,7 @@
             this.ToTime = new System.Windows.Forms.DateTimePicker();
             this.ToLabel = new System.Windows.Forms.Label();
             this.DeleteButton = new System.Windows.Forms.Button();
+            this.SplitButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // FromLabel
@@ -49,7 +50,7 @@
             // 
             this.FromTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
             this.FromTime.Location = new System.Drawing.Point(40, 2);
-            this.FromTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.FromTime.Margin = new System.Windows.Forms.Padding(2);
             this.FromTime.Name = "FromTime";
             this.FromTime.Size = new System.Drawing.Size(79, 20);
             this.FromTime.TabIndex = 1;
@@ -59,7 +60,7 @@
             // 
             this.ToTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
             this.ToTime.Location = new System.Drawing.Point(182, 2);
-            this.ToTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ToTime.Margin = new System.Windows.Forms.Padding(2);
             this.ToTime.Name = "ToTime";
             this.ToTime.Size = new System.Drawing.Size(79, 20);
             this.ToTime.TabIndex = 3;
@@ -77,25 +78,35 @@
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Location = new System.Drawing.Point(294, 1);
+            this.DeleteButton.Location = new System.Drawing.Point(397, 1);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(75, 23);
             this.DeleteButton.TabIndex = 4;
             this.DeleteButton.Text = "DELETE";
             this.DeleteButton.UseVisualStyleBackColor = true;
             // 
+            // SplitButton
+            // 
+            this.SplitButton.Location = new System.Drawing.Point(316, 1);
+            this.SplitButton.Name = "SplitButton";
+            this.SplitButton.Size = new System.Drawing.Size(75, 23);
+            this.SplitButton.TabIndex = 5;
+            this.SplitButton.Text = "SPLIT";
+            this.SplitButton.UseVisualStyleBackColor = true;
+            // 
             // BootPeriodView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.SplitButton);
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.ToTime);
             this.Controls.Add(this.ToLabel);
             this.Controls.Add(this.FromTime);
             this.Controls.Add(this.FromLabel);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "BootPeriodView";
-            this.Size = new System.Drawing.Size(372, 24);
+            this.Size = new System.Drawing.Size(477, 24);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -108,5 +119,6 @@
         private System.Windows.Forms.DateTimePicker ToTime;
         private System.Windows.Forms.Label ToLabel;
         private System.Windows.Forms.Button DeleteButton;
+        private System.Windows.Forms.Button SplitButton;
     }
 }

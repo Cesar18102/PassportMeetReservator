@@ -45,7 +45,7 @@
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Location = new System.Drawing.Point(461, 3);
+            this.DeleteButton.Location = new System.Drawing.Point(461, 2);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(75, 24);
             this.DeleteButton.TabIndex = 1;
@@ -55,7 +55,7 @@
             // 
             // EditButton
             // 
-            this.EditButton.Location = new System.Drawing.Point(380, 3);
+            this.EditButton.Location = new System.Drawing.Point(380, 2);
             this.EditButton.Name = "EditButton";
             this.EditButton.Size = new System.Drawing.Size(75, 24);
             this.EditButton.TabIndex = 2;
@@ -65,7 +65,7 @@
             // 
             // UpButton
             // 
-            this.UpButton.Location = new System.Drawing.Point(351, 3);
+            this.UpButton.Location = new System.Drawing.Point(351, 2);
             this.UpButton.Name = "UpButton";
             this.UpButton.Size = new System.Drawing.Size(23, 23);
             this.UpButton.TabIndex = 3;
@@ -75,7 +75,7 @@
             // 
             // DownButton
             // 
-            this.DownButton.Location = new System.Drawing.Point(322, 3);
+            this.DownButton.Location = new System.Drawing.Point(322, 2);
             this.DownButton.Name = "DownButton";
             this.DownButton.Size = new System.Drawing.Size(23, 23);
             this.DownButton.TabIndex = 4;
@@ -93,7 +93,7 @@
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.InfoLabel);
             this.Name = "OrderListItemView";
-            this.Size = new System.Drawing.Size(539, 30);
+            this.Size = new System.Drawing.Size(539, 80);
             this.ResumeLayout(false);
             this.PerformLayout();
 

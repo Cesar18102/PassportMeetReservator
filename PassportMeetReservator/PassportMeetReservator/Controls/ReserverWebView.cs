@@ -445,6 +445,9 @@ namespace PassportMeetReservator.Controls
 
         private async Task FillForm()
         {
+            if (Order == null)
+                return;
+
             await WaitForView(INPUT_CLASS, SITE_FALL_WAIT_ATTEMPTS);
             await Task.Delay(DelayInfo.ActionResultDelay);
 
@@ -600,13 +603,17 @@ namespace PassportMeetReservator.Controls
             JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
-                    $"let found = Array.prototype.filter.call(views, view => view.textContent === '{text}');" +
-                    "if(found.length != 0)" +
-                        "found[0].click();" +
-                    "found.length != 0;" +
+                    $"let found = false;" +
+                    "for(let view of views) {" +
+                        $"if(view.textContent.indexOf('{text}') != -1)" + " {" +
+                            "view.click();" +
+                            "found = true;" +
+                            "break;" +
+                         "}" +
+                    "}" +
+                    "found;" +
                 "}"
             );
-            //return true;
             return (bool)result.Result;
         }
 

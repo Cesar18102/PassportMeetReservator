@@ -23,10 +23,12 @@ namespace PassportMeetReservator.Controls
             Number = number;
             Order = order;
 
-            InfoLabel.Text = $"{Number + 1}) {Order.Surname} {Order.Name}; {Order.Email}; ";
+            InfoLabel.Text = $"{Number + 1}) {Order.Surname} {Order.Name};\n" +
+                             $"{Order.Email}; {Order.City};\n" +
+                             $"{Order.Operation.Name};";
 
             if (Order.Done)
-                InfoLabel.Text += "DONE";
+                InfoLabel.Text += "\nDONE";
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)

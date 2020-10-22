@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 using PassportMeetReservator.Data;
+using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Forms
 {
@@ -9,18 +11,26 @@ namespace PassportMeetReservator.Forms
     {
         private ReservationOrder Order { get; set; }
 
-        public EditOrderForm(ReservationOrder order)
+        public EditOrderForm(CityPlatformInfo[] platforms, ReservationOrder order)
         {
             Order = order;
 
             InitializeComponent();
 
+            CitySelector.Items.AddRange(platforms);
+            CitySelector.SelectedIndexChanged += (sender, e) =>
+            {
+                OperationSelector.Items.Clear();
+                OperationSelector.Items.AddRange(platforms[CitySelector.SelectedIndex].Operations);
+            };
+
             SurnameInput.InputText = Order.Surname;
             NameInput.InputText = Order.Name;
             EmailInput.InputText = Order.Email;
-            OrderTypeSelector.SelectedItem = Order.Operation;
+            CitySelector.SelectedIndex = CitySelector.Items.Cast<CityPlatformInfo>().ToList().FindIndex(platform => platform.Name == Order.City);
 
-            throw new NotImplementedException();
+            if (Order.Operation != null)
+                OperationSelector.SelectedIndex = Order.Operation.Position;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -28,7 +38,13 @@ namespace PassportMeetReservator.Forms
             Order.Surname = SurnameInput.InputText;
             Order.Name = NameInput.InputText;
             Order.Email = EmailInput.InputText;
-            /*Order.Operation = OrderTypeSelector.SelectedItem.ToString();*/
+
+            CityPlatformInfo selectedCity = CitySelector.SelectedItem as CityPlatformInfo;
+
+            Order.City = selectedCity.Name;
+            Order.CityUrl = selectedCity.BaseUrl;
+
+            Order.Operation = OperationSelector.SelectedItem as OperationInfo;
 
             this.Close();
         }

@@ -8,6 +8,7 @@ namespace PassportMeetReservator.Controls
 {
     public partial class BootPeriodView : UserControl
     {
+        public event EventHandler<NumberEventArgs> OnPeriodSplitted;
         public event EventHandler<NumberEventArgs> OnPeriodDeleted;
 
         private int Number { get; set; }
@@ -24,6 +25,10 @@ namespace PassportMeetReservator.Controls
             ToTime.Value = DateTime.Now.Date + Period.TimeEnd;
 
             DeleteButton.Click += (sender, e) => OnPeriodDeleted?.Invoke(
+                this, new NumberEventArgs(Number)
+            );
+
+            SplitButton.Click += (sender, e) => OnPeriodSplitted?.Invoke(
                 this, new NumberEventArgs(Number)
             );
         }

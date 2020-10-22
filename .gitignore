@@ -4,3 +4,9 @@
 /PassportMeetReservator/PassportMeetReservator/bin
 /PassportMeetReservator/PassportMeetReservator/obj
 
+/Server/.vs
+/Server/packages
+
+/Server/Server/bin
+/Server/Server/obj
+

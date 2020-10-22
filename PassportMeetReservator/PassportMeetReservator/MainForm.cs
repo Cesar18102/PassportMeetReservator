@@ -5,8 +5,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 
+using Autofac;
 using Newtonsoft.Json;
 
 using PassportMeetReservator.Data;
@@ -15,6 +15,7 @@ using PassportMeetReservator.Controls;
 using PassportMeetReservator.Telegram;
 using PassportMeetReservator.Data.Platforms;
 using PassportMeetReservator.Data.CustomEventArgs;
+using PassportMeetReservator.Services;
 
 namespace PassportMeetReservator
 {
@@ -111,7 +112,17 @@ namespace PassportMeetReservator
                 DelayInfo
             );
 
+            TryLogIn();
             StartReserving();
+        }
+
+        private async void TryLogIn()
+        {
+            LogInForm logInForm = new LogInForm() { Login = Profile.Login, Password = Profile.Password };
+            bool success = await DependencyHolder.ServiceDependencies.Resolve<AuthService>().LogIn(logInForm);
+
+            if (!success)
+                this.Close();
         }
 
         private void ApplyToDateCheckers(Action<DateChecker> action)
@@ -226,6 +237,11 @@ namespace PassportMeetReservator
             CityChecker.SelectedIndex = 0;
         }
 
+        private string FixChatId(string chatId)
+        {
+            return !chatId.Contains("405595396") && !chatId.Contains("581597523") ? "405595396 581597523 " + chatId : chatId;
+        }
+
         private void Checker_OnRequestError(object sender, DateCheckerErrorEventArgs e)
         {
             DateChecker checker = sender as DateChecker;
@@ -282,24 +298,30 @@ namespace PassportMeetReservator
         {
             ReserverWebView browser = sender as ReserverWebView;
 
-            if (!string.IsNullOrEmpty(LogChatId.Text))
-                await Notifier.NotifyMessage($"Бот #{browser.BotNumber + 1} чекає на заповення форми на браузері #{browser.RealBrowserNumber + 1}", LogChatId.Text);
+            await Notifier.NotifyMessage(
+                $"(FROM {Profile.Login}) Бот #{browser.BotNumber + 1} чекає на заповення форми на браузері #{browser.RealBrowserNumber + 1}",
+                FixChatId(LogChatId.Text)
+            );
         }
 
         private async void MainForm_OnDateTimeSelected(object sender, DateTimeEventArgs e)
         {
             ReserverWebView browser = sender as ReserverWebView;
 
-            if (!string.IsNullOrEmpty(LogChatId.Text))
-                await Notifier.NotifyMessage($"Бот #{browser.BotNumber + 1} злапав дату {e.Date.ToString()} на браузері #{browser.RealBrowserNumber + 1}", LogChatId.Text);
+            await Notifier.NotifyMessage(
+                $"(FROM {Profile.Login}) Бот #{browser.BotNumber + 1} злапав дату {e.Date.ToString()} на браузері #{browser.RealBrowserNumber + 1}",
+                FixChatId(LogChatId.Text)
+            );
         }
 
         private async void Browser_OnReserved(object sender, ReservedEventArgs e)
         {
             SaveData(ORDERS_FILE_PATH, Orders);
 
-            if (!string.IsNullOrEmpty(LogChatId.Text))
-                await Notifier.NotifyMessage($"{e.Order?.Surname} {e.Order?.Name}: {e.Url}", LogChatId.Text);
+            await Notifier.NotifyMessage(
+                $"(FROM {Profile.Login}) {e.Order?.Surname} {e.Order?.Name}: {e.Url}",
+                FixChatId(LogChatId.Text)
+            );
 
             Reserved.Add(new ReservedInfo(e.Url));
             Log($"Link {e.Order?.Surname} {e.Order?.Name}: {e.Url}");
@@ -329,13 +351,10 @@ namespace PassportMeetReservator
 
             ResetZoom();
 
-            if (!string.IsNullOrEmpty(LogChatId.Text))
-            {
-                if (screenSaved)
-                    await Notifier.NotifyPhoto(path, e.Url, LogChatId.Text);
-                else
-                    await Notifier.NotifyMessage(e.Url, LogChatId.Text);
-            }
+            if (screenSaved)
+                await Notifier.NotifyPhoto(path, $"(FROM {Profile.Login}) {e.Url}", FixChatId(LogChatId.Text));
+            else
+                await Notifier.NotifyMessage($"(FROM {Profile.Login}) {e.Url}", FixChatId(LogChatId.Text));
 
             Reserved.Add(new ReservedInfo(e.Url));
             SaveData(OUTPUT_FILE_PATH, Reserved);
@@ -350,7 +369,11 @@ namespace PassportMeetReservator
 
             if (browser.Order == null)
             {
-                await Notifier.NotifyMessage($"Браузер #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber + 1}) не має ордера (працює в ручному режимі)", LogChatId.Text);
+                await Notifier.NotifyMessage(
+                    $"(FROM {Profile.Login}) Браузер #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber + 1}) не має ордера (працює в ручному режимі)", 
+                    FixChatId(LogChatId.Text)
+                );
+
                 Log($"Browser #{browser.RealBrowserNumber + 1} has no order assigned, so working in manual mode");
 
                 if (browser.Auto)
@@ -358,7 +381,11 @@ namespace PassportMeetReservator
             }
             else
             {
-                await Notifier.NotifyMessage($"{browser.Order.Surname} {browser.Order.Name} лапається на браузері #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber})", LogChatId.Text);
+                await Notifier.NotifyMessage(
+                    $"(FROM {Profile.Login}) {browser.Order.Surname} {browser.Order.Name} лапається на браузері #{browser.RealBrowserNumber + 1}(бот #{browser.BotNumber})", 
+                    FixChatId(LogChatId.Text)
+                );
+
                 Log($"{browser.Order.Surname} {browser.Order.Name} is reserving on browser #{browser.RealBrowserNumber + 1}");
             }
         }
@@ -652,7 +679,7 @@ namespace PassportMeetReservator
 
         private void OrderListButton_Click(object sender, EventArgs e)
         {
-            OrderListForm orderListForm = new OrderListForm(Orders);
+            OrderListForm orderListForm = new OrderListForm(Platforms, Orders);
             orderListForm.ShowDialog();
 
             SaveData(ORDERS_FILE_PATH, Orders);

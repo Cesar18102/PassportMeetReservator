@@ -111,6 +111,9 @@
     <Compile Include="Data\CustomEventArgs\DateCheckerOkEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\DateUpdateEventArgs.cs" />
     <Compile Include="Data\DateChecker.cs" />
+    <Compile Include="Data\Dto\DateCheckDto.cs" />
+    <Compile Include="Data\LogInDto.cs" />
+    <Compile Include="Data\LogInForm.cs" />
     <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
     <Compile Include="Data\CustomEventArgs\DateTimeEventArgs.cs" />
     <Compile Include="Data\DelayInfo.cs" />
@@ -126,11 +129,18 @@
     <Compile Include="Data\CustomEventArgs\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\CustomEventArgs\UrlChangedEventArgs.cs" />
+    <Compile Include="DependencyHolder.cs" />
     <Compile Include="Forms\AddOrderForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\AddOrderForm.Designer.cs">
       <DependentUpon>AddOrderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BootPeriodSplitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BootPeriodSplitForm.Designer.cs">
+      <DependentUpon>BootPeriodSplitForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\BootScheduleForm.cs">
       <SubType>Form</SubType>
@@ -170,6 +180,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AuthService.cs" />
+    <Compile Include="Services\HashingService.cs" />
+    <Compile Include="Services\SaltService.cs" />
     <Compile Include="Telegram\TelegramNotifier.cs" />
     <EmbeddedResource Include="Controls\BootPeriodView.resx">
       <DependentUpon>BootPeriodView.cs</DependentUpon>
@@ -182,6 +195,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddOrderForm.resx">
       <DependentUpon>AddOrderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BootPeriodSplitForm.resx">
+      <DependentUpon>BootPeriodSplitForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BootScheduleForm.resx">
       <DependentUpon>BootScheduleForm.cs</DependentUpon>

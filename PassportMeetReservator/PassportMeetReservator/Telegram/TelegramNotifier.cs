@@ -24,7 +24,10 @@ namespace PassportMeetReservator.Telegram
 
         private string[] GetChatIds(string chatId)
         {
-            return chatId.Split(',', '.', ' ');
+            return chatId.Split(
+                new char[] { ',', '.', ' ' }, 
+                StringSplitOptions.RemoveEmptyEntries
+            );
         }
 
         public virtual async Task NotifyPhoto(string path, string caption, string chatId)

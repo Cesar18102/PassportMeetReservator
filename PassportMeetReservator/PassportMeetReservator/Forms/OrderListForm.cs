@@ -3,22 +3,26 @@ using System.Collections.Generic;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Controls;
+using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Forms
 {
     public partial class OrderListForm : Form
     {
         private List<ReservationOrder> Orders { get; set; }
+        private CityPlatformInfo[] Platforms { get; set; }
 
-        public OrderListForm(List<ReservationOrder> orders)
+        public OrderListForm(CityPlatformInfo[] platforms, List<ReservationOrder> orders)
         {
             InitializeComponent();
 
             Orders = orders;
+            Platforms = platforms;
+
             InitList();
         }
 
-        private const int ROW_HEIGHT = 30;
+        private const int ROW_HEIGHT = 80;
 
         public void InitList()
         {
@@ -37,7 +41,7 @@ namespace PassportMeetReservator.Forms
 
                 orderInfoView.OnOrderEdited += (sender, e) =>
                 {
-                    EditOrderForm editForm = new EditOrderForm(Orders[e.Number]);
+                    EditOrderForm editForm = new EditOrderForm(Platforms, Orders[e.Number]);
                     editForm.ShowDialog();
                     InitList();
                 };

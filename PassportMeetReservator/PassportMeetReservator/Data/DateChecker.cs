@@ -10,6 +10,7 @@ using RestSharp;
 
 using PassportMeetReservator.Data.Platforms;
 using PassportMeetReservator.Data.CustomEventArgs;
+using PassportMeetReservator.Data.Dto;
 
 namespace PassportMeetReservator.Data
 {
@@ -121,12 +122,17 @@ namespace PassportMeetReservator.Data
                 return new DateTime[] { };
             }
 
-            OnRequestOK?.Invoke(this, new DateCheckerOkEventArgs(dates.Content));
-
-            if(dates.Content.Contains(GENERAL_ERROR_RESPONSE))
+            if (dates.Content.Contains(GENERAL_ERROR_RESPONSE))
+            {
+                OnRequestError?.Invoke(this, new DateCheckerErrorEventArgs((int)dates.StatusCode));
                 return new DateTime[] { };
+            }
 
-            return JsonConvert.DeserializeObject<DateTime[]>(dates.Content);
+            DateCheckDto dateCheckDto = JsonConvert.DeserializeObject<DateCheckDto>(dates.Content);
+            string datesString = JsonConvert.SerializeObject(dateCheckDto.AvailableDates);
+
+            OnRequestOK?.Invoke(this, new DateCheckerOkEventArgs(datesString));
+            return dateCheckDto.AvailableDates;
         }
     }
 }
