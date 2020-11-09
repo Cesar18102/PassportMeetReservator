@@ -11,23 +11,36 @@ namespace PassportMeetReservator.Forms
     {
         private ReservationOrder Order { get; set; }
 
-        public EditOrderForm(CityPlatformInfo[] platforms, ReservationOrder order)
+        public EditOrderForm(PlatformApiInfo[] platforms, ReservationOrder order)
         {
             Order = order;
 
             InitializeComponent();
 
-            CitySelector.Items.AddRange(platforms);
+            PlatformSelector.Items.AddRange(platforms);
+            PlatformSelector.SelectedIndexChanged += (sender, e) =>
+            {
+                CitySelector.Items.Clear();
+                CitySelector.Items.AddRange((PlatformSelector.SelectedItem as PlatformApiInfo).CityPlatforms);
+            };
+
             CitySelector.SelectedIndexChanged += (sender, e) =>
             {
                 OperationSelector.Items.Clear();
-                OperationSelector.Items.AddRange(platforms[CitySelector.SelectedIndex].Operations);
+                OperationSelector.Items.AddRange((CitySelector.SelectedItem as CityPlatformInfo).Operations);
             };
 
             SurnameInput.InputText = Order.Surname;
             NameInput.InputText = Order.Name;
             EmailInput.InputText = Order.Email;
-            CitySelector.SelectedIndex = CitySelector.Items.Cast<CityPlatformInfo>().ToList().FindIndex(platform => platform.Name == Order.City);
+
+            PlatformSelector.SelectedIndex = PlatformSelector.Items.Cast<PlatformApiInfo>().ToList().FindIndex(
+                platform => platform.Name == Order.Platform
+            );
+
+            CitySelector.SelectedIndex = CitySelector.Items.Cast<CityPlatformInfo>().ToList().FindIndex(
+                city => city.Name == Order.City
+            );
 
             if (Order.Operation != null)
                 OperationSelector.SelectedIndex = Order.Operation.Position;
@@ -39,8 +52,10 @@ namespace PassportMeetReservator.Forms
             Order.Name = NameInput.InputText;
             Order.Email = EmailInput.InputText;
 
+            PlatformApiInfo selectedPlatform = PlatformSelector.SelectedItem as PlatformApiInfo;
             CityPlatformInfo selectedCity = CitySelector.SelectedItem as CityPlatformInfo;
 
+            Order.Platform = selectedPlatform.Name;
             Order.City = selectedCity.Name;
             Order.CityUrl = selectedCity.BaseUrl;
 

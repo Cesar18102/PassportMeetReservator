@@ -1,16 +1,16 @@
 ﻿namespace PassportMeetReservator.Data.Platforms
 {
-    public class CityPlatformInfo
+    public abstract class CityPlatformInfo
     {
-        public string Name { get; protected set; }
-        public string BaseUrl { get; protected set; }
-        public OperationInfo[] Operations { get; protected set; }
+        public abstract string Name { get; }
 
-        public CityPlatformInfo(string name, string baseUrl)
-        {
-            Name = name;
-            BaseUrl = baseUrl;
-        }
+        public abstract string BaseUrl { get; }
+
+        public abstract string Authority { get; }
+
+        public abstract string Referer { get; }
+
+        public abstract OperationInfo[] Operations { get; protected set; }
 
         public override string ToString()
         {

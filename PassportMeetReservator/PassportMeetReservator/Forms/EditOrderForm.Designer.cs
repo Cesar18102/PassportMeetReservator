@@ -36,6 +36,8 @@
             this.CityLabel = new System.Windows.Forms.Label();
             this.OperationSelector = new System.Windows.Forms.ComboBox();
             this.OperationLabel = new System.Windows.Forms.Label();
+            this.PlatformSelector = new System.Windows.Forms.ComboBox();
+            this.PlatformLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // EmailInput
@@ -88,7 +90,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(12, 132);
+            this.SaveButton.Location = new System.Drawing.Point(12, 157);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(726, 23);
             this.SaveButton.TabIndex = 12;
@@ -100,7 +102,7 @@
             // 
             this.CitySelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CitySelector.FormattingEnabled = true;
-            this.CitySelector.Location = new System.Drawing.Point(123, 81);
+            this.CitySelector.Location = new System.Drawing.Point(123, 106);
             this.CitySelector.Margin = new System.Windows.Forms.Padding(2);
             this.CitySelector.Name = "CitySelector";
             this.CitySelector.Size = new System.Drawing.Size(614, 21);
@@ -109,7 +111,7 @@
             // CityLabel
             // 
             this.CityLabel.AutoSize = true;
-            this.CityLabel.Location = new System.Drawing.Point(9, 84);
+            this.CityLabel.Location = new System.Drawing.Point(9, 109);
             this.CityLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.CityLabel.Name = "CityLabel";
             this.CityLabel.Size = new System.Drawing.Size(27, 13);
@@ -120,7 +122,7 @@
             // 
             this.OperationSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OperationSelector.FormattingEnabled = true;
-            this.OperationSelector.Location = new System.Drawing.Point(123, 106);
+            this.OperationSelector.Location = new System.Drawing.Point(123, 131);
             this.OperationSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OperationSelector.Name = "OperationSelector";
             this.OperationSelector.Size = new System.Drawing.Size(614, 21);
@@ -129,18 +131,40 @@
             // OperationLabel
             // 
             this.OperationLabel.AutoSize = true;
-            this.OperationLabel.Location = new System.Drawing.Point(10, 109);
+            this.OperationLabel.Location = new System.Drawing.Point(10, 134);
             this.OperationLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OperationLabel.Name = "OperationLabel";
             this.OperationLabel.Size = new System.Drawing.Size(56, 13);
             this.OperationLabel.TabIndex = 13;
             this.OperationLabel.Text = "Operation:";
             // 
+            // PlatformSelector
+            // 
+            this.PlatformSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector.FormattingEnabled = true;
+            this.PlatformSelector.Location = new System.Drawing.Point(123, 81);
+            this.PlatformSelector.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector.Name = "PlatformSelector";
+            this.PlatformSelector.Size = new System.Drawing.Size(614, 21);
+            this.PlatformSelector.TabIndex = 18;
+            // 
+            // PlatformLabel
+            // 
+            this.PlatformLabel.AutoSize = true;
+            this.PlatformLabel.Location = new System.Drawing.Point(9, 84);
+            this.PlatformLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.PlatformLabel.Name = "PlatformLabel";
+            this.PlatformLabel.Size = new System.Drawing.Size(48, 13);
+            this.PlatformLabel.TabIndex = 17;
+            this.PlatformLabel.Text = "Platform:";
+            // 
             // EditOrderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(747, 162);
+            this.ClientSize = new System.Drawing.Size(747, 186);
+            this.Controls.Add(this.PlatformSelector);
+            this.Controls.Add(this.PlatformLabel);
             this.Controls.Add(this.CitySelector);
             this.Controls.Add(this.CityLabel);
             this.Controls.Add(this.OperationSelector);
@@ -166,5 +190,7 @@
         private System.Windows.Forms.Label CityLabel;
         private System.Windows.Forms.ComboBox OperationSelector;
         private System.Windows.Forms.Label OperationLabel;
+        private System.Windows.Forms.ComboBox PlatformSelector;
+        private System.Windows.Forms.Label PlatformLabel;
     }
 }

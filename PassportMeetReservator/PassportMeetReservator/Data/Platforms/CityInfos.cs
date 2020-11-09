@@ -1,9 +1,15 @@
 ﻿namespace PassportMeetReservator.Data.Platforms
-{
+{ 
     public class PoznanInfo : CityPlatformInfo
     {
-        public PoznanInfo() : base("Poznan", "https://rejestracjapoznan.poznan.uw.gov.pl/")
-        {
+        public override string Name => "Poznan";
+        public override string BaseUrl => "https://rejestracjapoznan.poznan.uw.gov.pl/";
+        public override string Authority => "rejestracjapoznan.poznan.uw.gov.pl";
+        public override string Referer => "https://rejestracjapoznan.poznan.uw.gov.pl/";
+        public override OperationInfo[] Operations { get; protected set; }
+
+        public PoznanInfo()
+        { 
             Operations = new OperationInfo[]
             {
                 new OperationInfo("PASZPORTY - Składanie wniosków o paszport", 1, 0),
@@ -17,9 +23,11 @@
         }
     }
 
-    public class SubPoznanaInfo : CityPlatformInfo
+    public abstract class SubPoznanaInfo : CityPlatformInfo
     {
-        public SubPoznanaInfo(string name, string baseUrl) : base(name, baseUrl)
+        public override OperationInfo[] Operations { get; protected set; }
+
+        public SubPoznanaInfo()
         {
             Operations = new OperationInfo[]
             {
@@ -33,21 +41,50 @@
 
     public class KaliszuInfo : SubPoznanaInfo
     {
-        public KaliszuInfo() : base("Kaliszu", "https://rejestracjakalisz.poznan.uw.gov.pl/") { }
+        public override string Name => "Kaliszu";
+        public override string BaseUrl => "https://rejestracjakalisz.poznan.uw.gov.pl/";
+        public override string Authority => "rejestracjakalisz.poznan.uw.gov.pl";
+        public override string Referer => "https://rejestracjakalisz.poznan.uw.gov.pl/";
     }
 
     public class KoninInfo : SubPoznanaInfo
     {
-        public KoninInfo() : base("Konin", "https://rejestracjakonin.poznan.uw.gov.pl/") { }
+        public override string Name => "Konin";
+        public override string BaseUrl => "https://rejestracjakonin.poznan.uw.gov.pl/";
+        public override string Authority => "rejestracjakonin.poznan.uw.gov.pl";
+        public override string Referer => "https://rejestracjakonin.poznan.uw.gov.pl/";
     }
 
     public class LesznieInfo : SubPoznanaInfo
     {
-        public LesznieInfo() : base("Lesznie", "https://rejestracjaleszno.poznan.uw.gov.pl/") { }
+        public override string Name => "Lesznie";
+        public override string BaseUrl => "https://rejestracjaleszno.poznan.uw.gov.pl/";
+        public override string Authority => "rejestracjaleszno.poznan.uw.gov.pl";
+        public override string Referer => "https://rejestracjaleszno.poznan.uw.gov.pl/";
     }
 
     public class PileInfo : SubPoznanaInfo
     {
-        public PileInfo() : base("Pile", "https://rejestracjapila.poznan.uw.gov.pl/") { }
+        public override string Name => "Pile";
+        public override string BaseUrl => "https://rejestracjapila.poznan.uw.gov.pl/";
+        public override string Authority => "rejestracjapila.poznan.uw.gov.pl";
+        public override string Referer => "https://rejestracjapila.poznan.uw.gov.pl/";
+    }
+
+    public class BezkolejkiInfo : CityPlatformInfo
+    {
+        public override string Name => "Bezkolejki";
+        public override string BaseUrl => "https://bezkolejki.eu/suw/";
+        public override string Authority => "bezkolejki.eu";
+        public override string Referer => "https://bezkolejki.eu/suw/";
+        public override OperationInfo[] Operations { get; protected set; }
+
+        public BezkolejkiInfo()
+        {
+            Operations = new OperationInfo[]
+            {
+                new OperationInfo("Paszporty - Złożenie wniosku paszportowego", 79, 0)
+            };
+        }
     }
 }

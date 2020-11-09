@@ -19,18 +19,13 @@ namespace PassportMeetReservator.Data
         public event EventHandler<DateCheckerErrorEventArgs> OnRequestError;
         public event EventHandler<DateCheckerOkEventArgs> OnRequestOK;
 
-        private const string GENERAL_ERROR_RESPONSE = "General error.";
-        private const string CHECK_DATE_API_ENDPOINT = "Slot/GetAvailableDaysForOperation/";
-        private RestClient ApiClient { get; set; } = new RestClient("https://rejestracjapoznan.poznan.uw.gov.pl/api");
+        private RestClient ApiClient { get; set; }
 
         public DateTime[] Dates { get; private set; } = new DateTime[] { };
 
-        public string Token { get; private set; }
-
-        public string City { get; private set; }
-        public string CityUrl { get; private set; }
-
-        public OperationInfo Operation { get; private set; }
+        public PlatformApiInfo PlatformInfo { get; private set; }
+        public CityPlatformInfo CityInfo { get; private set; }
+        public OperationInfo OperationInfo { get; private set; }
 
         public int FollowersCount { get; set; }
         public int PausedFollowersCount { get; set; }
@@ -38,40 +33,58 @@ namespace PassportMeetReservator.Data
         private DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
 
-        public DateChecker(string city, string cityUrl, OperationInfo operation, string token, DelayInfo delayInfo)
+        public DateChecker(PlatformApiInfo platformInfo, CityPlatformInfo cityInfo, OperationInfo operationInfo, DelayInfo delayInfo)
         {
-            City = city;
-            CityUrl = cityUrl;
-            Operation = operation;
-            Token = token;
+            PlatformInfo = platformInfo;
+            CityInfo = cityInfo;
+            OperationInfo = operationInfo;
             DelayInfo = delayInfo;
+            
+            ApiClient = new RestClient(PlatformInfo.ApiUrl);
 
             Init();
         }
 
-        public static Dictionary<string, DateChecker[]> CreateFromPlatformInfos(
-            CityPlatformInfo[] platforms, string token, 
+        public static Dictionary<string, Dictionary<string, DateChecker[]>> CreateFromPlatformInfos(
+            PlatformApiInfo[] platforms, DelayInfo delayInfo,
             EventHandler<DateCheckerErrorEventArgs> onRequestErrorHandler,
-            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler,
-            DelayInfo delayInfo
+            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler
         ) {
             return platforms.ToDictionary(
                 platform => platform.Name,
-                platform => CreateFromPlatformInfo(platform, token, onRequestErrorHandler, onRequestOkHandler, delayInfo)
+                platform => CreateFromPlatformInfo(
+                    platform, delayInfo,
+                    onRequestErrorHandler, 
+                    onRequestOkHandler
+                )
             );
         }
 
-        public static DateChecker[] CreateFromPlatformInfo(
-            CityPlatformInfo platform, string token, 
+        public static Dictionary<string, DateChecker[]> CreateFromPlatformInfo(
+            PlatformApiInfo platform, DelayInfo delayInfo,
             EventHandler<DateCheckerErrorEventArgs> onRequestErrorHandler,
-            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler,
-            DelayInfo delayInfo
+            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler
         ) {
-            DateChecker[] checkers = new DateChecker[platform.Operations.Length];
+            return platform.CityPlatforms.ToDictionary(
+                city => city.Name,
+                city => CreateFromCityPlatformInfo(
+                    platform, city, delayInfo,
+                    onRequestErrorHandler,
+                    onRequestOkHandler
+                )
+            );
+        }
 
-            for(int i = 0; i < platform.Operations.Length; ++i)
+        public static DateChecker[] CreateFromCityPlatformInfo(
+            PlatformApiInfo apiInfo, CityPlatformInfo cityInfo, DelayInfo delayInfo,
+            EventHandler<DateCheckerErrorEventArgs> onRequestErrorHandler,
+            EventHandler<DateCheckerOkEventArgs> onRequestOkHandler
+        ) {
+            DateChecker[] checkers = new DateChecker[cityInfo.Operations.Length];
+
+            for (int i = 0; i < cityInfo.Operations.Length; ++i)
             {
-                checkers[i] = new DateChecker(platform.Name, platform.BaseUrl, platform.Operations[i], token, delayInfo);
+                checkers[i] = new DateChecker(apiInfo, cityInfo, cityInfo.Operations[i], delayInfo);
                 checkers[i].OnRequestError += onRequestErrorHandler;
                 checkers[i].OnRequestOK += onRequestOkHandler;
             }
@@ -94,24 +107,25 @@ namespace PassportMeetReservator.Data
                 if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
                     continue;
 
-                Dates = await GetDates();
+                try { Dates = await GetDates(); }
+                catch { }
             }
         }
 
         public async Task<DateTime[]> GetDates()
         {
-            RestRequest request = new RestRequest(CHECK_DATE_API_ENDPOINT + Operation.Number);
+            RestRequest request = new RestRequest($"{PlatformInfo.GetAvailableDatesApiMethod}/{OperationInfo.Number}");
             request.Method = Method.GET;
             request.Timeout = 1000;
 
-            request.AddHeader("authority", CityUrl.Replace("https://", "").Trim('/'));
+            request.AddHeader("authority", CityInfo.Authority);
             request.AddHeader("accept", "application/json, text/plain, */*");
-            request.AddHeader("authorization", Token);
+            request.AddHeader("authorization", PlatformInfo.Token);
             request.AddHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
             request.AddHeader("sec-fetch-site", "same-origin");
             request.AddHeader("sec-fetch-mode", "cors");
             request.AddHeader("sec-fetch-dest", "empty");
-            request.AddHeader("referer", CityUrl);
+            request.AddHeader("referer", CityInfo.Referer);
             request.AddHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
 
             IRestResponse dates = await ApiClient.ExecuteAsync(request);
@@ -119,13 +133,13 @@ namespace PassportMeetReservator.Data
             if (dates.StatusCode != HttpStatusCode.OK)
             {
                 OnRequestError?.Invoke(this, new DateCheckerErrorEventArgs((int)dates.StatusCode));
-                return new DateTime[] { };
+                throw new Exception();
             }
 
-            if (dates.Content.Contains(GENERAL_ERROR_RESPONSE))
+            if (dates.Content.Contains(PlatformInfo.GeneralErrorMessage))
             {
                 OnRequestError?.Invoke(this, new DateCheckerErrorEventArgs((int)dates.StatusCode));
-                return new DateTime[] { };
+                throw new Exception();
             }
 
             DateCheckDto dateCheckDto = JsonConvert.DeserializeObject<DateCheckDto>(dates.Content);

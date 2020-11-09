@@ -45,7 +45,7 @@ namespace PassportMeetReservator.Controls
         private const string ACCEPT_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
         private const string ACCEPT_BUTTON_TEXT = "Rezerwuję";
 
-        private const string NEXT_MONTH_BUTTON_CLASS = "vc-flex vc-justify-center vc-items-center vc-cursor-pointer vc-select-none vc-pointer-events-auto vc-text-gray-600 vc-rounded vc-border-2 vc-border-transparent hover:vc-opacity-50 hover:vc-bg-gray-300 focus:vc-border-gray-300";
+        private const string NEXT_MONTH_BUTTON_CLASS = "vc-svg-icon";
         private const int NEXT_MONTH_BUTTON_NUM = 1;
 
         private const string FAILED_RESERVE_TIME_CLASS = "alert alert-danger";
@@ -55,7 +55,6 @@ namespace PassportMeetReservator.Controls
         private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
 
         private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
-        private const string STATUS_CIRCLE_DONE_STYLE = "rgb(87, 133, 226)";
 
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
@@ -76,6 +75,9 @@ namespace PassportMeetReservator.Controls
 
                     if (OnPausedChanged != null)
                         Invoke(OnPausedChanged, this, new BrowserPausedChangedEventArgs(RealBrowserNumber, paused));
+
+                    if (Checker == null)
+                        return;
 
                     if (paused)
                         Checker.PausedFollowersCount++;
@@ -122,8 +124,8 @@ namespace PassportMeetReservator.Controls
                 }
                 else
                 {
-                    Url = InitUrl;
                     Checker = initChecker;
+                    Url = InitUrl;
                 }
 
                 if (OnOrderChanged != null)
@@ -154,6 +156,7 @@ namespace PassportMeetReservator.Controls
                 url = value;
 
                 UpdateBrowser();
+                Reset();
             }
         }
 
@@ -200,12 +203,9 @@ namespace PassportMeetReservator.Controls
         }
 
         public int BotNumber { get; set; }
-
         public int RealBrowserNumber { get; set; }
         public int BrowserNumber { get; set; }
         public int BrowsersCount { get; set; }
-
-        public OperationInfo Operation { get; set; }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now.Date;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now.Date;
@@ -231,7 +231,7 @@ namespace PassportMeetReservator.Controls
 
         public void Reset()
         {
-            TokenSource.Cancel();
+            TokenSource?.Cancel();
         }
 
         public void ResetScroll()
@@ -286,7 +286,7 @@ namespace PassportMeetReservator.Controls
                 if (Paused)
                     continue;
 
-                if (Operation == null && Order == null)
+                if (Checker == null && Order == null)
                 {
                     RaiseIterationSkipped("No operation set");
                     continue;
@@ -300,7 +300,7 @@ namespace PassportMeetReservator.Controls
 
                 if (Checker.Dates.Length == 0)
                 {
-                    RaiseIterationSkipped($"No dates found for operation {Checker.Operation}");
+                    RaiseIterationSkipped($"No dates found for operation {Checker.OperationInfo}");
                     continue;
                 }
 
@@ -353,6 +353,9 @@ namespace PassportMeetReservator.Controls
 
         private void UpdateBrowser()
         {
+            if (url == null)
+                return;
+
             Request request = new Request()
             {
                 Url = Url,
@@ -366,8 +369,7 @@ namespace PassportMeetReservator.Controls
         {
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
-            OperationInfo operation = Auto && Order != null ? Order.Operation : Operation;
-            if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, operation.Name, SITE_FALL_WAIT_ATTEMPTS))
+            if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
             {
                 RaiseIteraionFailure("Opreration button not found");
                 return false;
@@ -389,22 +391,15 @@ namespace PassportMeetReservator.Controls
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
             await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
 
-            while (DateTime.Now.Month != ReserveDateMin.Month)
-            {
-                await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
-                await Task.Delay(DelayInfo.ActionResultDelay, Token);
-            }
-            //PUSH CALENDAR FIRST TIME IF NEEDED
-
-            DateTime currentScanDate = ReserveDateMin;
+            DateTime currentScanDate = DateTime.Now;
             while (currentScanDate.Month != date.Month)
             {
                 currentScanDate = currentScanDate.AddMonths(1);
 
-                await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "");
+                await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
                 await Task.Delay(DelayInfo.ActionResultDelay, Token);
-                //PUSH CALENDAR IF NO ACTIVE DATES FOUND
             }
+            //PUSH CALENDAR FIRST TIME IF NEEDED
 
             DateTime? selectedDate = await ScanTime(date);
             if (!selectedDate.HasValue)
@@ -430,7 +425,7 @@ namespace PassportMeetReservator.Controls
                 $"document.getElementById('{STATUS_CIRCLE_DONE_ID}').children[0].style.backgroundColor"
             );
 
-            if (jsStatusCircleStyle.Result.ToString() != STATUS_CIRCLE_DONE_STYLE)
+            if (jsStatusCircleStyle.Result.ToString() != Checker.PlatformInfo.CssInfo.StepCircleColor)
             {
                 RaiseIteraionFailure("Step circle check failed");
                 return false;
@@ -539,6 +534,7 @@ namespace PassportMeetReservator.Controls
             this.AddressChanged -= ReserverWebView_UrlChanged;
 
             Order = null;
+            Selected = false;
         }
 
         private async Task<bool> SetTextToViewOfClassWithNumber(string className, int number, string text)
@@ -617,20 +613,21 @@ namespace PassportMeetReservator.Controls
             return (bool)result.Result;
         }
 
-        private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
+        private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
         {
             while (!await TryClickViewOfClassWithNumber(className, number, forbiddenClass))
                 Token.ThrowIfCancellationRequested();
         }
 
-        private async Task <bool> TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass)
+        private async Task<bool> TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
         {
+            string parentText = parent ? ".parentNode" : "";
             JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
                     $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
                     $"if(found.length > {number})" +
-                        $"found[{number}].click();" +
+                        $"found[{number}]{parentText}.click();" +
                     $"found.length > {number};" +
                 "}"
             );

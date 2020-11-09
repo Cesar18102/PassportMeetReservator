@@ -114,6 +114,7 @@
     <Compile Include="Data\Dto\DateCheckDto.cs" />
     <Compile Include="Data\LogInDto.cs" />
     <Compile Include="Data\LogInForm.cs" />
+    <Compile Include="Data\Platforms\PlatformApiInfo.cs" />
     <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
     <Compile Include="Data\CustomEventArgs\DateTimeEventArgs.cs" />
     <Compile Include="Data\DelayInfo.cs" />
@@ -124,6 +125,8 @@
     <Compile Include="Data\CustomEventArgs\OrderEventArgs.cs" />
     <Compile Include="Data\Platforms\CityInfos.cs" />
     <Compile Include="Data\Platforms\OperationInfo.cs" />
+    <Compile Include="Data\Platforms\PlatformCssInfo.cs" />
+    <Compile Include="Data\Platforms\PlatformInfos.cs" />
     <Compile Include="Data\Profile.cs" />
     <Compile Include="Data\ReservationOrder.cs" />
     <Compile Include="Data\CustomEventArgs\ReservedEventArgs.cs" />

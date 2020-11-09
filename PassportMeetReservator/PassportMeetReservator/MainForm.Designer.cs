@@ -40,6 +40,7 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PlatformSelector1 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber1 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker1 = new System.Windows.Forms.ComboBox();
             this.Auto1 = new System.Windows.Forms.CheckBox();
@@ -51,6 +52,7 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PlatformSelector2 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber2 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker2 = new System.Windows.Forms.ComboBox();
             this.Auto2 = new System.Windows.Forms.CheckBox();
@@ -62,6 +64,7 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PlatformSelector3 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber3 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker3 = new System.Windows.Forms.ComboBox();
             this.Auto3 = new System.Windows.Forms.CheckBox();
@@ -73,6 +76,7 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PlatformSelector4 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber4 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker4 = new System.Windows.Forms.ComboBox();
             this.Auto4 = new System.Windows.Forms.CheckBox();
@@ -84,6 +88,7 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.PlatformSelector5 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber5 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker5 = new System.Windows.Forms.ComboBox();
             this.Auto5 = new System.Windows.Forms.CheckBox();
@@ -113,6 +118,7 @@
             this.ResetAllButton = new System.Windows.Forms.Button();
             this.CityChecker = new System.Windows.Forms.ComboBox();
             this.ForceRollBrowserUp = new System.Windows.Forms.Button();
+            this.PlatformSelector = new System.Windows.Forms.ComboBox();
             this.BrowserInfo1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrowserNumber1)).BeginInit();
             this.BrowserInfo2.SuspendLayout();
@@ -185,7 +191,6 @@
             this.Browser1.Location = new System.Drawing.Point(0, 0);
             this.Browser1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser1.Name = "Browser1";
-            this.Browser1.Operation = null;
             this.Browser1.Order = null;
             this.Browser1.Paused = true;
             this.Browser1.RealBrowserNumber = 0;
@@ -209,7 +214,6 @@
             this.Browser2.Location = new System.Drawing.Point(0, 0);
             this.Browser2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser2.Name = "Browser2";
-            this.Browser2.Operation = null;
             this.Browser2.Order = null;
             this.Browser2.Paused = true;
             this.Browser2.RealBrowserNumber = 0;
@@ -233,7 +237,6 @@
             this.Browser3.Location = new System.Drawing.Point(0, 0);
             this.Browser3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser3.Name = "Browser3";
-            this.Browser3.Operation = null;
             this.Browser3.Order = null;
             this.Browser3.Paused = true;
             this.Browser3.RealBrowserNumber = 0;
@@ -257,7 +260,6 @@
             this.Browser4.Location = new System.Drawing.Point(0, 0);
             this.Browser4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser4.Name = "Browser4";
-            this.Browser4.Operation = null;
             this.Browser4.Order = null;
             this.Browser4.Paused = true;
             this.Browser4.RealBrowserNumber = 0;
@@ -281,7 +283,6 @@
             this.Browser5.Location = new System.Drawing.Point(0, 0);
             this.Browser5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser5.Name = "Browser5";
-            this.Browser5.Operation = null;
             this.Browser5.Order = null;
             this.Browser5.Paused = true;
             this.Browser5.RealBrowserNumber = 0;
@@ -305,6 +306,7 @@
             // 
             // BrowserInfo1
             // 
+            this.BrowserInfo1.Controls.Add(this.PlatformSelector1);
             this.BrowserInfo1.Controls.Add(this.BrowserNumber1);
             this.BrowserInfo1.Controls.Add(this.CityChecker1);
             this.BrowserInfo1.Controls.Add(this.Auto1);
@@ -325,6 +327,17 @@
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
             // 
+            // PlatformSelector1
+            // 
+            this.PlatformSelector1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector1.FormattingEnabled = true;
+            this.PlatformSelector1.Location = new System.Drawing.Point(8, 59);
+            this.PlatformSelector1.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector1.Name = "PlatformSelector1";
+            this.PlatformSelector1.Size = new System.Drawing.Size(237, 21);
+            this.PlatformSelector1.TabIndex = 27;
+            this.PlatformSelector1.SelectedIndexChanged += new System.EventHandler(this.PlatformSelector_SelectedIndexChanged);
+            // 
             // BrowserNumber1
             // 
             this.BrowserNumber1.Location = new System.Drawing.Point(264, 62);
@@ -337,7 +350,7 @@
             // 
             this.CityChecker1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker1.FormattingEnabled = true;
-            this.CityChecker1.Location = new System.Drawing.Point(7, 135);
+            this.CityChecker1.Location = new System.Drawing.Point(7, 84);
             this.CityChecker1.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker1.Name = "CityChecker1";
             this.CityChecker1.Size = new System.Drawing.Size(237, 21);
@@ -358,7 +371,7 @@
             // ReserveDateMax1
             // 
             this.ReserveDateMax1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMax1.Location = new System.Drawing.Point(131, 87);
+            this.ReserveDateMax1.Location = new System.Drawing.Point(131, 135);
             this.ReserveDateMax1.Name = "ReserveDateMax1";
             this.ReserveDateMax1.Size = new System.Drawing.Size(114, 20);
             this.ReserveDateMax1.TabIndex = 23;
@@ -367,7 +380,7 @@
             // ReserveDateMin1
             // 
             this.ReserveDateMin1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMin1.Location = new System.Drawing.Point(7, 87);
+            this.ReserveDateMin1.Location = new System.Drawing.Point(7, 135);
             this.ReserveDateMin1.Name = "ReserveDateMin1";
             this.ReserveDateMin1.Size = new System.Drawing.Size(120, 20);
             this.ReserveDateMin1.TabIndex = 22;
@@ -377,7 +390,7 @@
             // 
             this.OrderTypeSelector1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector1.FormattingEnabled = true;
-            this.OrderTypeSelector1.Location = new System.Drawing.Point(7, 61);
+            this.OrderTypeSelector1.Location = new System.Drawing.Point(7, 109);
             this.OrderTypeSelector1.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector1.Name = "OrderTypeSelector1";
             this.OrderTypeSelector1.Size = new System.Drawing.Size(237, 21);
@@ -419,7 +432,7 @@
             this.UrlInput1.InputText = "";
             this.UrlInput1.LabelLeft = 0;
             this.UrlInput1.LabelText = "URL:";
-            this.UrlInput1.Location = new System.Drawing.Point(4, 112);
+            this.UrlInput1.Location = new System.Drawing.Point(4, 160);
             this.UrlInput1.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput1.Name = "UrlInput1";
             this.UrlInput1.Size = new System.Drawing.Size(240, 19);
@@ -429,6 +442,7 @@
             // 
             // BrowserInfo2
             // 
+            this.BrowserInfo2.Controls.Add(this.PlatformSelector2);
             this.BrowserInfo2.Controls.Add(this.BrowserNumber2);
             this.BrowserInfo2.Controls.Add(this.CityChecker2);
             this.BrowserInfo2.Controls.Add(this.Auto2);
@@ -449,6 +463,17 @@
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
             // 
+            // PlatformSelector2
+            // 
+            this.PlatformSelector2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector2.FormattingEnabled = true;
+            this.PlatformSelector2.Location = new System.Drawing.Point(7, 59);
+            this.PlatformSelector2.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector2.Name = "PlatformSelector2";
+            this.PlatformSelector2.Size = new System.Drawing.Size(237, 21);
+            this.PlatformSelector2.TabIndex = 28;
+            this.PlatformSelector2.SelectedIndexChanged += new System.EventHandler(this.PlatformSelector_SelectedIndexChanged);
+            // 
             // BrowserNumber2
             // 
             this.BrowserNumber2.Location = new System.Drawing.Point(264, 63);
@@ -461,7 +486,7 @@
             // 
             this.CityChecker2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker2.FormattingEnabled = true;
-            this.CityChecker2.Location = new System.Drawing.Point(6, 135);
+            this.CityChecker2.Location = new System.Drawing.Point(7, 84);
             this.CityChecker2.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker2.Name = "CityChecker2";
             this.CityChecker2.Size = new System.Drawing.Size(237, 21);
@@ -482,7 +507,7 @@
             // ReserveDateMax2
             // 
             this.ReserveDateMax2.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMax2.Location = new System.Drawing.Point(130, 88);
+            this.ReserveDateMax2.Location = new System.Drawing.Point(130, 135);
             this.ReserveDateMax2.Name = "ReserveDateMax2";
             this.ReserveDateMax2.Size = new System.Drawing.Size(114, 20);
             this.ReserveDateMax2.TabIndex = 24;
@@ -491,7 +516,7 @@
             // ReserveDateMin2
             // 
             this.ReserveDateMin2.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMin2.Location = new System.Drawing.Point(6, 88);
+            this.ReserveDateMin2.Location = new System.Drawing.Point(6, 135);
             this.ReserveDateMin2.Name = "ReserveDateMin2";
             this.ReserveDateMin2.Size = new System.Drawing.Size(119, 20);
             this.ReserveDateMin2.TabIndex = 23;
@@ -501,7 +526,7 @@
             // 
             this.OrderTypeSelector2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector2.FormattingEnabled = true;
-            this.OrderTypeSelector2.Location = new System.Drawing.Point(6, 62);
+            this.OrderTypeSelector2.Location = new System.Drawing.Point(6, 109);
             this.OrderTypeSelector2.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector2.Name = "OrderTypeSelector2";
             this.OrderTypeSelector2.Size = new System.Drawing.Size(237, 21);
@@ -543,7 +568,7 @@
             this.UrlInput2.InputText = "";
             this.UrlInput2.LabelLeft = 0;
             this.UrlInput2.LabelText = "URL:";
-            this.UrlInput2.Location = new System.Drawing.Point(6, 112);
+            this.UrlInput2.Location = new System.Drawing.Point(6, 159);
             this.UrlInput2.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput2.Name = "UrlInput2";
             this.UrlInput2.Size = new System.Drawing.Size(237, 19);
@@ -553,6 +578,7 @@
             // 
             // BrowserInfo3
             // 
+            this.BrowserInfo3.Controls.Add(this.PlatformSelector3);
             this.BrowserInfo3.Controls.Add(this.BrowserNumber3);
             this.BrowserInfo3.Controls.Add(this.CityChecker3);
             this.BrowserInfo3.Controls.Add(this.Auto3);
@@ -573,6 +599,17 @@
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
             // 
+            // PlatformSelector3
+            // 
+            this.PlatformSelector3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector3.FormattingEnabled = true;
+            this.PlatformSelector3.Location = new System.Drawing.Point(8, 59);
+            this.PlatformSelector3.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector3.Name = "PlatformSelector3";
+            this.PlatformSelector3.Size = new System.Drawing.Size(237, 21);
+            this.PlatformSelector3.TabIndex = 29;
+            this.PlatformSelector3.SelectedIndexChanged += new System.EventHandler(this.PlatformSelector_SelectedIndexChanged);
+            // 
             // BrowserNumber3
             // 
             this.BrowserNumber3.Location = new System.Drawing.Point(264, 63);
@@ -585,7 +622,7 @@
             // 
             this.CityChecker3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker3.FormattingEnabled = true;
-            this.CityChecker3.Location = new System.Drawing.Point(8, 135);
+            this.CityChecker3.Location = new System.Drawing.Point(8, 84);
             this.CityChecker3.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker3.Name = "CityChecker3";
             this.CityChecker3.Size = new System.Drawing.Size(237, 21);
@@ -606,7 +643,7 @@
             // ReserveDateMax3
             // 
             this.ReserveDateMax3.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMax3.Location = new System.Drawing.Point(136, 88);
+            this.ReserveDateMax3.Location = new System.Drawing.Point(136, 135);
             this.ReserveDateMax3.Name = "ReserveDateMax3";
             this.ReserveDateMax3.Size = new System.Drawing.Size(110, 20);
             this.ReserveDateMax3.TabIndex = 25;
@@ -615,7 +652,7 @@
             // ReserveDateMin3
             // 
             this.ReserveDateMin3.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMin3.Location = new System.Drawing.Point(8, 88);
+            this.ReserveDateMin3.Location = new System.Drawing.Point(8, 135);
             this.ReserveDateMin3.Name = "ReserveDateMin3";
             this.ReserveDateMin3.Size = new System.Drawing.Size(122, 20);
             this.ReserveDateMin3.TabIndex = 24;
@@ -625,7 +662,7 @@
             // 
             this.OrderTypeSelector3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector3.FormattingEnabled = true;
-            this.OrderTypeSelector3.Location = new System.Drawing.Point(8, 62);
+            this.OrderTypeSelector3.Location = new System.Drawing.Point(8, 109);
             this.OrderTypeSelector3.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector3.Name = "OrderTypeSelector3";
             this.OrderTypeSelector3.Size = new System.Drawing.Size(237, 21);
@@ -667,7 +704,7 @@
             this.UrlInput3.InputText = "";
             this.UrlInput3.LabelLeft = 0;
             this.UrlInput3.LabelText = "URL:";
-            this.UrlInput3.Location = new System.Drawing.Point(8, 112);
+            this.UrlInput3.Location = new System.Drawing.Point(8, 159);
             this.UrlInput3.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput3.Name = "UrlInput3";
             this.UrlInput3.Size = new System.Drawing.Size(237, 19);
@@ -677,6 +714,7 @@
             // 
             // BrowserInfo4
             // 
+            this.BrowserInfo4.Controls.Add(this.PlatformSelector4);
             this.BrowserInfo4.Controls.Add(this.BrowserNumber4);
             this.BrowserInfo4.Controls.Add(this.CityChecker4);
             this.BrowserInfo4.Controls.Add(this.Auto4);
@@ -697,6 +735,17 @@
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
             // 
+            // PlatformSelector4
+            // 
+            this.PlatformSelector4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector4.FormattingEnabled = true;
+            this.PlatformSelector4.Location = new System.Drawing.Point(5, 59);
+            this.PlatformSelector4.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector4.Name = "PlatformSelector4";
+            this.PlatformSelector4.Size = new System.Drawing.Size(237, 21);
+            this.PlatformSelector4.TabIndex = 30;
+            this.PlatformSelector4.SelectedIndexChanged += new System.EventHandler(this.PlatformSelector_SelectedIndexChanged);
+            // 
             // BrowserNumber4
             // 
             this.BrowserNumber4.Location = new System.Drawing.Point(264, 63);
@@ -709,7 +758,7 @@
             // 
             this.CityChecker4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker4.FormattingEnabled = true;
-            this.CityChecker4.Location = new System.Drawing.Point(5, 135);
+            this.CityChecker4.Location = new System.Drawing.Point(5, 84);
             this.CityChecker4.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker4.Name = "CityChecker4";
             this.CityChecker4.Size = new System.Drawing.Size(237, 21);
@@ -730,7 +779,7 @@
             // ReserveDateMax4
             // 
             this.ReserveDateMax4.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMax4.Location = new System.Drawing.Point(131, 87);
+            this.ReserveDateMax4.Location = new System.Drawing.Point(131, 135);
             this.ReserveDateMax4.Name = "ReserveDateMax4";
             this.ReserveDateMax4.Size = new System.Drawing.Size(112, 20);
             this.ReserveDateMax4.TabIndex = 25;
@@ -739,7 +788,7 @@
             // ReserveDateMin4
             // 
             this.ReserveDateMin4.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMin4.Location = new System.Drawing.Point(5, 88);
+            this.ReserveDateMin4.Location = new System.Drawing.Point(5, 136);
             this.ReserveDateMin4.Name = "ReserveDateMin4";
             this.ReserveDateMin4.Size = new System.Drawing.Size(121, 20);
             this.ReserveDateMin4.TabIndex = 24;
@@ -749,7 +798,7 @@
             // 
             this.OrderTypeSelector4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector4.FormattingEnabled = true;
-            this.OrderTypeSelector4.Location = new System.Drawing.Point(5, 62);
+            this.OrderTypeSelector4.Location = new System.Drawing.Point(5, 109);
             this.OrderTypeSelector4.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector4.Name = "OrderTypeSelector4";
             this.OrderTypeSelector4.Size = new System.Drawing.Size(237, 21);
@@ -791,7 +840,7 @@
             this.UrlInput4.InputText = "";
             this.UrlInput4.LabelLeft = 0;
             this.UrlInput4.LabelText = "URL:";
-            this.UrlInput4.Location = new System.Drawing.Point(5, 112);
+            this.UrlInput4.Location = new System.Drawing.Point(5, 160);
             this.UrlInput4.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput4.Name = "UrlInput4";
             this.UrlInput4.Size = new System.Drawing.Size(237, 19);
@@ -801,6 +850,7 @@
             // 
             // BrowserInfo5
             // 
+            this.BrowserInfo5.Controls.Add(this.PlatformSelector5);
             this.BrowserInfo5.Controls.Add(this.BrowserNumber5);
             this.BrowserInfo5.Controls.Add(this.CityChecker5);
             this.BrowserInfo5.Controls.Add(this.Auto5);
@@ -821,6 +871,17 @@
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
             // 
+            // PlatformSelector5
+            // 
+            this.PlatformSelector5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector5.FormattingEnabled = true;
+            this.PlatformSelector5.Location = new System.Drawing.Point(5, 59);
+            this.PlatformSelector5.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector5.Name = "PlatformSelector5";
+            this.PlatformSelector5.Size = new System.Drawing.Size(237, 21);
+            this.PlatformSelector5.TabIndex = 31;
+            this.PlatformSelector5.SelectedIndexChanged += new System.EventHandler(this.PlatformSelector_SelectedIndexChanged);
+            // 
             // BrowserNumber5
             // 
             this.BrowserNumber5.Location = new System.Drawing.Point(264, 62);
@@ -833,7 +894,7 @@
             // 
             this.CityChecker5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker5.FormattingEnabled = true;
-            this.CityChecker5.Location = new System.Drawing.Point(5, 135);
+            this.CityChecker5.Location = new System.Drawing.Point(5, 84);
             this.CityChecker5.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker5.Name = "CityChecker5";
             this.CityChecker5.Size = new System.Drawing.Size(237, 21);
@@ -854,7 +915,7 @@
             // ReserveDateMax5
             // 
             this.ReserveDateMax5.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMax5.Location = new System.Drawing.Point(137, 88);
+            this.ReserveDateMax5.Location = new System.Drawing.Point(137, 135);
             this.ReserveDateMax5.Name = "ReserveDateMax5";
             this.ReserveDateMax5.Size = new System.Drawing.Size(105, 20);
             this.ReserveDateMax5.TabIndex = 25;
@@ -863,7 +924,7 @@
             // ReserveDateMin5
             // 
             this.ReserveDateMin5.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMin5.Location = new System.Drawing.Point(5, 88);
+            this.ReserveDateMin5.Location = new System.Drawing.Point(5, 135);
             this.ReserveDateMin5.Name = "ReserveDateMin5";
             this.ReserveDateMin5.Size = new System.Drawing.Size(126, 20);
             this.ReserveDateMin5.TabIndex = 24;
@@ -873,7 +934,7 @@
             // 
             this.OrderTypeSelector5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector5.FormattingEnabled = true;
-            this.OrderTypeSelector5.Location = new System.Drawing.Point(5, 62);
+            this.OrderTypeSelector5.Location = new System.Drawing.Point(5, 109);
             this.OrderTypeSelector5.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector5.Name = "OrderTypeSelector5";
             this.OrderTypeSelector5.Size = new System.Drawing.Size(237, 21);
@@ -915,7 +976,7 @@
             this.UrlInput5.InputText = "";
             this.UrlInput5.LabelLeft = 0;
             this.UrlInput5.LabelText = "URL:";
-            this.UrlInput5.Location = new System.Drawing.Point(5, 112);
+            this.UrlInput5.Location = new System.Drawing.Point(5, 159);
             this.UrlInput5.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput5.Name = "UrlInput5";
             this.UrlInput5.Size = new System.Drawing.Size(237, 19);
@@ -991,10 +1052,10 @@
             // 
             // DelaySettings
             // 
-            this.DelaySettings.Location = new System.Drawing.Point(914, 722);
+            this.DelaySettings.Location = new System.Drawing.Point(645, 698);
             this.DelaySettings.Margin = new System.Windows.Forms.Padding(2);
             this.DelaySettings.Name = "DelaySettings";
-            this.DelaySettings.Size = new System.Drawing.Size(305, 34);
+            this.DelaySettings.Size = new System.Drawing.Size(207, 34);
             this.DelaySettings.TabIndex = 19;
             this.DelaySettings.Text = "Delay Settings";
             this.DelaySettings.UseVisualStyleBackColor = true;
@@ -1020,7 +1081,7 @@
             // ReserveDateMinPicker
             // 
             this.ReserveDateMinPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMinPicker.Location = new System.Drawing.Point(914, 672);
+            this.ReserveDateMinPicker.Location = new System.Drawing.Point(914, 735);
             this.ReserveDateMinPicker.Name = "ReserveDateMinPicker";
             this.ReserveDateMinPicker.Size = new System.Drawing.Size(148, 20);
             this.ReserveDateMinPicker.TabIndex = 26;
@@ -1030,17 +1091,17 @@
             // 
             this.OrderTypeSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OrderTypeSelector.FormattingEnabled = true;
-            this.OrderTypeSelector.Location = new System.Drawing.Point(914, 646);
+            this.OrderTypeSelector.Location = new System.Drawing.Point(914, 699);
             this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
             this.OrderTypeSelector.Size = new System.Drawing.Size(305, 21);
             this.OrderTypeSelector.TabIndex = 25;
-            this.OrderTypeSelector.SelectedIndexChanged += new System.EventHandler(this.OrderTypeSelector_SelectedIndexChanged_1);
+            this.OrderTypeSelector.SelectedIndexChanged += new System.EventHandler(this.CommonOrderTypeSelector_SelectedIndexChanged);
             // 
             // ReserveDateMaxPicker
             // 
             this.ReserveDateMaxPicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1071, 672);
+            this.ReserveDateMaxPicker.Location = new System.Drawing.Point(1071, 735);
             this.ReserveDateMaxPicker.Name = "ReserveDateMaxPicker";
             this.ReserveDateMaxPicker.Size = new System.Drawing.Size(148, 20);
             this.ReserveDateMaxPicker.TabIndex = 27;
@@ -1100,12 +1161,12 @@
             // 
             this.CityChecker.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CityChecker.FormattingEnabled = true;
-            this.CityChecker.Location = new System.Drawing.Point(914, 697);
+            this.CityChecker.Location = new System.Drawing.Point(914, 674);
             this.CityChecker.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker.Name = "CityChecker";
             this.CityChecker.Size = new System.Drawing.Size(305, 21);
             this.CityChecker.TabIndex = 33;
-            this.CityChecker.SelectedIndexChanged += new System.EventHandler(this.CityChecker_SelectedIndexChanged_1);
+            this.CityChecker.SelectedIndexChanged += new System.EventHandler(this.CommonCityChecker_SelectedIndexChanged);
             // 
             // ForceRollBrowserUp
             // 
@@ -1118,11 +1179,23 @@
             this.ForceRollBrowserUp.UseVisualStyleBackColor = true;
             this.ForceRollBrowserUp.Click += new System.EventHandler(this.ForceRollBrowserUp_Click);
             // 
+            // PlatformSelector
+            // 
+            this.PlatformSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.PlatformSelector.FormattingEnabled = true;
+            this.PlatformSelector.Location = new System.Drawing.Point(914, 649);
+            this.PlatformSelector.Margin = new System.Windows.Forms.Padding(2);
+            this.PlatformSelector.Name = "PlatformSelector";
+            this.PlatformSelector.Size = new System.Drawing.Size(305, 21);
+            this.PlatformSelector.TabIndex = 35;
+            this.PlatformSelector.SelectedIndexChanged += new System.EventHandler(this.CommonPlatformSelector_SelectedIndexChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1786, 904);
+            this.Controls.Add(this.PlatformSelector);
             this.Controls.Add(this.ForceRollBrowserUp);
             this.Controls.Add(this.CityChecker);
             this.Controls.Add(this.ResetAllButton);
@@ -1267,6 +1340,12 @@
         private System.Windows.Forms.NumericUpDown BrowserNumber4;
         private System.Windows.Forms.NumericUpDown BrowserNumber5;
         private System.Windows.Forms.Button ForceRollBrowserUp;
+        private System.Windows.Forms.ComboBox PlatformSelector1;
+        private System.Windows.Forms.ComboBox PlatformSelector2;
+        private System.Windows.Forms.ComboBox PlatformSelector3;
+        private System.Windows.Forms.ComboBox PlatformSelector4;
+        private System.Windows.Forms.ComboBox PlatformSelector5;
+        private System.Windows.Forms.ComboBox PlatformSelector;
     }
 }
 

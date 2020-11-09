@@ -11,15 +11,21 @@ namespace PassportMeetReservator.Forms
     {
         private List<ReservationOrder> Orders { get; set; }
 
-        public AddOrderForm(CityPlatformInfo[] platforms, List<ReservationOrder> orders)
+        public AddOrderForm(PlatformApiInfo[] platforms, List<ReservationOrder> orders)
         {
             InitializeComponent();
 
-            CitySelector.Items.AddRange(platforms);
+            PlatformSelector.Items.AddRange(platforms);
+            PlatformSelector.SelectedIndexChanged += (sender, e) =>
+            {
+                CitySelector.Items.Clear();
+                CitySelector.Items.AddRange((PlatformSelector.SelectedItem as PlatformApiInfo).CityPlatforms);
+            };
+
             CitySelector.SelectedIndexChanged += (sender, e) =>
             {
                 OperationSelector.Items.Clear();
-                OperationSelector.Items.AddRange(platforms[CitySelector.SelectedIndex].Operations);
+                OperationSelector.Items.AddRange((CitySelector.SelectedItem as CityPlatformInfo).Operations);
             };
 
             Orders = orders;
@@ -60,12 +66,13 @@ namespace PassportMeetReservator.Forms
                 return null;
             }
 
-            CityPlatformInfo platform = CitySelector.SelectedItem as CityPlatformInfo;
+            PlatformApiInfo platform = PlatformSelector.SelectedItem as PlatformApiInfo;
+            CityPlatformInfo city = CitySelector.SelectedItem as CityPlatformInfo;
+            OperationInfo operation = OperationSelector.SelectedItem as OperationInfo;
 
             ReservationOrder order = new ReservationOrder(
                 SurnameInput.InputText, NameInput.InputText, EmailInput.InputText,
-                platform.Name, platform.BaseUrl,
-                OperationSelector.SelectedItem as OperationInfo
+                platform.Name, city.Name, city.BaseUrl, operation
             );
 
             return order;

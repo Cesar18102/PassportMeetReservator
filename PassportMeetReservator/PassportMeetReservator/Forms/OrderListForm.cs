@@ -10,9 +10,9 @@ namespace PassportMeetReservator.Forms
     public partial class OrderListForm : Form
     {
         private List<ReservationOrder> Orders { get; set; }
-        private CityPlatformInfo[] Platforms { get; set; }
+        private PlatformApiInfo[] Platforms { get; set; }
 
-        public OrderListForm(CityPlatformInfo[] platforms, List<ReservationOrder> orders)
+        public OrderListForm(PlatformApiInfo[] platforms, List<ReservationOrder> orders)
         {
             InitializeComponent();
 
