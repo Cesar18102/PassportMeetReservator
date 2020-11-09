@@ -20,6 +20,8 @@ namespace PassportMeetReservator.Forms
             PlatformSelector.Items.AddRange(platforms);
             PlatformSelector.SelectedIndexChanged += (sender, e) =>
             {
+                OperationSelector.Items.Clear();
+
                 CitySelector.Items.Clear();
                 CitySelector.Items.AddRange((PlatformSelector.SelectedItem as PlatformApiInfo).CityPlatforms);
             };

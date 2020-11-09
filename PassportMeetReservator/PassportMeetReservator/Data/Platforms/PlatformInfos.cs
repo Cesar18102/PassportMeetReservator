@@ -8,7 +8,6 @@
         public override string GetAvailableDatesApiMethod => "Slot/GetAvailableDaysForOperation";
         public override string GeneralErrorMessage => "General error.";
         public override CityPlatformInfo[] CityPlatforms { get; protected set; }
-        public override PlatformCssInfo CssInfo { get; protected set; }
 
         public PoznanPlatformInfo() 
         {
@@ -17,12 +16,6 @@
                 new PoznanInfo(), new KaliszuInfo(), new KoninInfo(),
                 new LesznieInfo(), new PileInfo()
             };
-
-            CssInfo = new PoznanPlatformCssInfo();
-        }
-        protected class PoznanPlatformCssInfo : PlatformCssInfo
-        {
-            public override string StepCircleColor => "rgb(87, 133, 226)";
         }
     }
 
@@ -34,21 +27,13 @@
         public override string GetAvailableDatesApiMethod => "Slot/GetAvailableDaysForOperation";
         public override string GeneralErrorMessage => "General error.";
         public override CityPlatformInfo[] CityPlatforms { get; protected set; }
-        public override PlatformCssInfo CssInfo { get; protected set; }
 
         public BezkolejkiPlatformInfo()
         {
             CityPlatforms = new CityPlatformInfo[]
             {
-                new BezkolejkiInfo()
+                new KatowiceInfo(), new GorzowInfo()
             };
-
-            CssInfo = new BezkolejkiPlatformCssInfo();
-        }
-
-        protected class BezkolejkiPlatformCssInfo : PlatformCssInfo
-        {
-            public override string StepCircleColor => "rgb(208, 69, 69)";
         }
     }
 }

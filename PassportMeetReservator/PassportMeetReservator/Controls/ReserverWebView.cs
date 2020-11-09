@@ -425,7 +425,7 @@ namespace PassportMeetReservator.Controls
                 $"document.getElementById('{STATUS_CIRCLE_DONE_ID}').children[0].style.backgroundColor"
             );
 
-            if (jsStatusCircleStyle.Result.ToString() != Checker.PlatformInfo.CssInfo.StepCircleColor)
+            if (jsStatusCircleStyle.Result.ToString() != Checker.CityInfo.CssInfo.StepCircleColor)
             {
                 RaiseIteraionFailure("Step circle check failed");
                 return false;

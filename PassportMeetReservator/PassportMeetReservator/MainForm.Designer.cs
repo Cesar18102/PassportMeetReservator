@@ -1052,10 +1052,10 @@
             // 
             // DelaySettings
             // 
-            this.DelaySettings.Location = new System.Drawing.Point(645, 698);
+            this.DelaySettings.Location = new System.Drawing.Point(1238, 724);
             this.DelaySettings.Margin = new System.Windows.Forms.Padding(2);
             this.DelaySettings.Name = "DelaySettings";
-            this.DelaySettings.Size = new System.Drawing.Size(207, 34);
+            this.DelaySettings.Size = new System.Drawing.Size(183, 34);
             this.DelaySettings.TabIndex = 19;
             this.DelaySettings.Text = "Delay Settings";
             this.DelaySettings.UseVisualStyleBackColor = true;
@@ -1094,7 +1094,7 @@
             this.OrderTypeSelector.Location = new System.Drawing.Point(914, 699);
             this.OrderTypeSelector.Margin = new System.Windows.Forms.Padding(2);
             this.OrderTypeSelector.Name = "OrderTypeSelector";
-            this.OrderTypeSelector.Size = new System.Drawing.Size(305, 21);
+            this.OrderTypeSelector.Size = new System.Drawing.Size(507, 21);
             this.OrderTypeSelector.TabIndex = 25;
             this.OrderTypeSelector.SelectedIndexChanged += new System.EventHandler(this.CommonOrderTypeSelector_SelectedIndexChanged);
             // 
@@ -1164,7 +1164,7 @@
             this.CityChecker.Location = new System.Drawing.Point(914, 674);
             this.CityChecker.Margin = new System.Windows.Forms.Padding(2);
             this.CityChecker.Name = "CityChecker";
-            this.CityChecker.Size = new System.Drawing.Size(305, 21);
+            this.CityChecker.Size = new System.Drawing.Size(507, 21);
             this.CityChecker.TabIndex = 33;
             this.CityChecker.SelectedIndexChanged += new System.EventHandler(this.CommonCityChecker_SelectedIndexChanged);
             // 
@@ -1186,7 +1186,7 @@
             this.PlatformSelector.Location = new System.Drawing.Point(914, 649);
             this.PlatformSelector.Margin = new System.Windows.Forms.Padding(2);
             this.PlatformSelector.Name = "PlatformSelector";
-            this.PlatformSelector.Size = new System.Drawing.Size(305, 21);
+            this.PlatformSelector.Size = new System.Drawing.Size(507, 21);
             this.PlatformSelector.TabIndex = 35;
             this.PlatformSelector.SelectedIndexChanged += new System.EventHandler(this.CommonPlatformSelector_SelectedIndexChanged);
             // 

@@ -8,7 +8,6 @@
         public abstract string GetAvailableDatesApiMethod { get; }
         public abstract string GeneralErrorMessage { get; }
         public abstract CityPlatformInfo[] CityPlatforms { get; protected set; }
-        public abstract PlatformCssInfo CssInfo { get; protected set; }
 
         public override string ToString()
         {
