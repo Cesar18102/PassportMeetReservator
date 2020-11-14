@@ -27,6 +27,9 @@ namespace PassportMeetReservator.Forms
         {
             double periodTotal = (Period.TimeEnd - Period.TimeStart).TotalMilliseconds;
 
+            if (periodTotal < 0)
+                periodTotal += 86400000;
+
             int splittedCount = (int)CountSelector.Value;
             int splittedDuration = (int)DurationSelector.Value * 1000;
             int splittedTotal = splittedCount * splittedDuration;

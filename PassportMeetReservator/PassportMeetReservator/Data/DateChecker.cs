@@ -40,7 +40,7 @@ namespace PassportMeetReservator.Data
             OperationInfo = operationInfo;
             DelayInfo = delayInfo;
             
-            ApiClient = new RestClient(PlatformInfo.ApiUrl);
+            ApiClient = new RestClient(CityInfo.AltApiUrl ?? PlatformInfo.ApiUrl);
 
             Init();
         }
@@ -142,11 +142,22 @@ namespace PassportMeetReservator.Data
                 throw new Exception();
             }
 
-            DateCheckDto dateCheckDto = JsonConvert.DeserializeObject<DateCheckDto>(dates.Content);
-            string datesString = JsonConvert.SerializeObject(dateCheckDto.AvailableDates);
+            DateTime[] availableDates = null;
 
+            try
+            {
+                DateCheckDto dateCheckDto = JsonConvert.DeserializeObject<DateCheckDto>(dates.Content);
+                availableDates = dateCheckDto.AvailableDates;
+            }
+            catch
+            {
+                availableDates = JsonConvert.DeserializeObject<DateTime[]>(dates.Content);
+            }
+
+            string datesString = JsonConvert.SerializeObject(availableDates);
             OnRequestOK?.Invoke(this, new DateCheckerOkEventArgs(datesString));
-            return dateCheckDto.AvailableDates;
+
+            return availableDates;
         }
     }
 }

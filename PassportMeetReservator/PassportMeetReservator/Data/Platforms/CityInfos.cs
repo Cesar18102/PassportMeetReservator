@@ -11,6 +11,7 @@
         public override string BaseUrl => "https://rejestracjapoznan.poznan.uw.gov.pl/";
         public override string Authority => "rejestracjapoznan.poznan.uw.gov.pl";
         public override string Referer => "https://rejestracjapoznan.poznan.uw.gov.pl/";
+        public override string AltApiUrl => "https://rejestracjapoznan.poznan.uw.gov.pl/api/";
         public override OperationInfo[] Operations { get; protected set; }
         public override PlatformCssInfo CssInfo { get; protected set; }
 
@@ -56,6 +57,7 @@
         public override string BaseUrl => "https://rejestracjakalisz.poznan.uw.gov.pl/";
         public override string Authority => "rejestracjakalisz.poznan.uw.gov.pl";
         public override string Referer => "https://rejestracjakalisz.poznan.uw.gov.pl/";
+        public override string AltApiUrl => "https://rejestracjakalisz.poznan.uw.gov.pl/api/";
     }
 
     public class KoninInfo : SubPoznanaInfo
@@ -64,6 +66,7 @@
         public override string BaseUrl => "https://rejestracjakonin.poznan.uw.gov.pl/";
         public override string Authority => "rejestracjakonin.poznan.uw.gov.pl";
         public override string Referer => "https://rejestracjakonin.poznan.uw.gov.pl/";
+        public override string AltApiUrl => "https://rejestracjakonin.poznan.uw.gov.pl/api/";
     }
 
     public class LesznieInfo : SubPoznanaInfo
@@ -72,6 +75,7 @@
         public override string BaseUrl => "https://rejestracjaleszno.poznan.uw.gov.pl/";
         public override string Authority => "rejestracjaleszno.poznan.uw.gov.pl";
         public override string Referer => "https://rejestracjaleszno.poznan.uw.gov.pl/";
+        public override string AltApiUrl => "https://rejestracjaleszno.poznan.uw.gov.pl/api/";
     }
 
     public class PileInfo : SubPoznanaInfo
@@ -80,6 +84,7 @@
         public override string BaseUrl => "https://rejestracjapila.poznan.uw.gov.pl/";
         public override string Authority => "rejestracjapila.poznan.uw.gov.pl";
         public override string Referer => "https://rejestracjapila.poznan.uw.gov.pl/";
+        public override string AltApiUrl => "https://rejestracjapila.poznan.uw.gov.pl/api/";
     }
 
     public class KatowiceInfo : CityPlatformInfo
@@ -88,8 +93,10 @@
         public override string BaseUrl => "https://bezkolejki.eu/suw/";
         public override string Authority => "bezkolejki.eu";
         public override string Referer => "https://bezkolejki.eu/suw/";
+        public override string AltApiUrl => null;
         public override OperationInfo[] Operations { get; protected set; }
         public override PlatformCssInfo CssInfo { get; protected set; }
+
 
         public KatowiceInfo()
         {
@@ -124,6 +131,7 @@
         public override string BaseUrl => "https://bezkolejki.eu/luw-gorzow";
         public override string Authority => "bezkolejki.eu";
         public override string Referer => "https://bezkolejki.eu/luw-gorzow";
+        public override string AltApiUrl => null;
         public override OperationInfo[] Operations { get; protected set; }
         public override PlatformCssInfo CssInfo { get; protected set; }
 
