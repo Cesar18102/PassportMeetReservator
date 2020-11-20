@@ -55,6 +55,8 @@ namespace PassportMeetReservator.Controls
         private const string CONTINUE_RESERVATION_BUTTON_CLASS = "btn btn-success btn-lg btn-block";
         private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
 
+        private const string LOADER_CLASS = "vld-overlay is-active is-full-page";
+
         private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
 
         private const string URL_CHANGE_SUCCESS_PATH = "Info";
@@ -207,7 +209,9 @@ namespace PassportMeetReservator.Controls
 
         public void Reset()
         {
-            TokenSource?.Cancel();
+            try { TokenSource?.Cancel(); }
+            catch { TokenSource = null; }
+
             UpdateBrowser();
         }
 
@@ -344,13 +348,16 @@ namespace PassportMeetReservator.Controls
 
         private async Task<bool> Iteration(DateTime date)
         {
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            await WaitForSpinner();
+            //await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
             if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
             {
                 RaiseIteraionFailure("Opreration button not found");
                 return false;
             }
+
+            await WaitForSpinner();
 
             if (!await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
             {
@@ -385,12 +392,14 @@ namespace PassportMeetReservator.Controls
                 return false;
             }
 
+            await WaitForSpinner();
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
             //CONFIRM SELECTED DATE
 
-            for(int j = 0; j < 3; ++j) //triple delay
-                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            /*for(int j = 0; j < 3; ++j) //triple delay
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);*/
 
+            await WaitForSpinner();
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
             {
                 RaiseIteraionFailure("Already reserved error");
@@ -415,13 +424,57 @@ namespace PassportMeetReservator.Controls
             return true;
         } 
 
+        private async Task<DateTime?> ScanTime(DateTime date)
+        {
+            string formattedDate = date.GetFormattedDate();
+
+            bool dayFound = false;
+            for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
+            {
+                dayFound = await TryFindView($"vc-day id-{formattedDate}");
+
+                if (dayFound)
+                    break;
+
+                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
+            } //WAIT FOR DAY FOR SEVERAL TIMES - WAIT FOR LOADING
+
+            if (!dayFound)
+                return null;
+
+            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click()");
+
+            await WaitForSpinner();
+            await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
+            //await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            //await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
+
+            bool timeFound = false;
+            for (int j = 0; j < TIME_WAIT_ITERATION_COUNT; ++j)
+            {
+                JavascriptResponse jsTimesCount = await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options.length");
+                timeFound = jsTimesCount.Success && jsTimesCount.Result != null && (int)jsTimesCount.Result != 0;
+
+                if (timeFound)
+                    break;
+
+                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
+            } //WAIT FOR TIME FOR SEVERAL TIMES - WAIT FOR LOADING
+
+            if (timeFound && await SelectByValue(TIME_SELECTOR_CLASS, date.GetFormattedTime()))
+                return date;
+
+            return null;
+        }
+
         private async Task FillForm()
         {
             if (Order == null)
                 return;
 
+            await WaitForSpinner();
             await WaitForView(INPUT_CLASS, SITE_FALL_WAIT_ATTEMPTS);
-            await Task.Delay(DelayInfo.ActionResultDelay);
+            //await Task.Delay(DelayInfo.ActionResultDelay);
 
             while (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname)) ;
             while (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name)) ;
@@ -447,48 +500,6 @@ namespace PassportMeetReservator.Controls
 
                 await FillForm();
             }
-        }
-
-        private async Task<DateTime?> ScanTime(DateTime date)
-        {
-            string formattedDate = date.GetFormattedDate();
-
-            bool dayFound = false;
-            for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
-            {
-                dayFound = await TryFindView($"vc-day id-{formattedDate}");
-
-                if (dayFound)
-                    break;
-
-                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
-            } //WAIT FOR DAY FOR SEVERAL TIMES - WAIT FOR LOADING
-
-            if (!dayFound)
-                return null;
-
-            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click()");
-
-            await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
-
-            bool timeFound = false;
-            for (int j = 0; j < TIME_WAIT_ITERATION_COUNT; ++j)
-            {
-                JavascriptResponse jsTimesCount = await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options.length");
-                timeFound = jsTimesCount.Success && jsTimesCount.Result != null && (int)jsTimesCount.Result != 0;
-
-                if (timeFound)
-                    break;
-
-                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
-            } //WAIT FOR TIME FOR SEVERAL TIMES - WAIT FOR LOADING
-
-            if (timeFound && await SelectByValue(TIME_SELECTOR_CLASS, date.GetFormattedTime()))
-                return date;
-
-            return null;
         }
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
@@ -615,7 +626,10 @@ namespace PassportMeetReservator.Controls
         private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
         {
             while (!await TryClickViewOfClassWithNumber(className, number, forbiddenClass))
+            {
                 Token.ThrowIfCancellationRequested();
+                await Task.Delay(DelayInfo.DiscreteWaitDelay);
+            }
         }
 
         private async Task<bool> TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
@@ -642,6 +656,7 @@ namespace PassportMeetReservator.Controls
                     return true;
 
                 Token.ThrowIfCancellationRequested();
+                await Task.Delay(DelayInfo.DiscreteWaitDelay);
             }
 
             return false;
@@ -683,6 +698,27 @@ namespace PassportMeetReservator.Controls
             );
 
             return (int)result.Result;
+        }
+
+        private async Task WaitForSpinner()
+        {
+            while (await CheckSpinnerVisible())
+            {
+                Token.ThrowIfCancellationRequested();
+                await Task.Delay(DelayInfo.DiscreteWaitDelay);
+            }
+        }
+
+        private async Task<bool> CheckSpinnerVisible()
+        {
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
+                "{" +
+                    $"let views = document.getElementsByClassName('{LOADER_CLASS}');" +
+                    $"views.length == 1 && views[0].style.display != 'none'" + 
+                "}"
+            );
+
+            return (bool)result.Result;
         }
 
         private static class BrowserUtil

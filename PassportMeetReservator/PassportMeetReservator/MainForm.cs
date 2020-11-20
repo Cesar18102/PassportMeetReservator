@@ -309,6 +309,8 @@ namespace PassportMeetReservator
                 $"(FROM {Profile.Login}) Бот #{browser.BotNumber + 1} чекає на заповення форми на браузері #{browser.RealBrowserNumber + 1}",
                 FixChatId(LogChatId.Text)
             );
+
+            Log($"Waiting for manual reaction at browser #{browser.RealBrowserNumber + 1}");
         }
 
         private async void MainForm_OnDateTimeSelected(object sender, DateTimeEventArgs e)
@@ -319,6 +321,8 @@ namespace PassportMeetReservator
                 $"(FROM {Profile.Login}) Бот #{browser.BotNumber + 1} злапав дату {e.Date.ToString()} на браузері #{browser.RealBrowserNumber + 1}",
                 FixChatId(LogChatId.Text)
             );
+
+            Log($"Browser #{browser.RealBrowserNumber + 1} has selected a dateTime ({e.Date.ToString()})");
         }
 
         private async void Browser_OnReserved(object sender, ReservedEventArgs e)
