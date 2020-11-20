@@ -112,6 +112,7 @@
     <Compile Include="Data\CustomEventArgs\DateUpdateEventArgs.cs" />
     <Compile Include="Data\DateChecker.cs" />
     <Compile Include="Data\Dto\DateCheckDto.cs" />
+    <Compile Include="Data\Dto\TimeCheckDto.cs" />
     <Compile Include="Data\LogInDto.cs" />
     <Compile Include="Data\LogInForm.cs" />
     <Compile Include="Data\Platforms\PlatformApiInfo.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\CustomEventArgs\UrlChangedEventArgs.cs" />
     <Compile Include="DependencyHolder.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Forms\AddOrderForm.cs">
       <SubType>Form</SubType>
     </Compile>

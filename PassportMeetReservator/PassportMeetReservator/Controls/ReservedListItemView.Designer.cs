@@ -45,7 +45,7 @@
             // CopyInfoButton
             // 
             this.CopyInfoButton.Location = new System.Drawing.Point(271, 2);
-            this.CopyInfoButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CopyInfoButton.Margin = new System.Windows.Forms.Padding(2);
             this.CopyInfoButton.Name = "CopyInfoButton";
             this.CopyInfoButton.Size = new System.Drawing.Size(61, 20);
             this.CopyInfoButton.TabIndex = 1;
@@ -69,7 +69,7 @@
             this.Controls.Add(this.ForgetButton);
             this.Controls.Add(this.CopyInfoButton);
             this.Controls.Add(this.InfoLabel);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "ReservedListItemView";
             this.Size = new System.Drawing.Size(402, 24);
             this.ResumeLayout(false);

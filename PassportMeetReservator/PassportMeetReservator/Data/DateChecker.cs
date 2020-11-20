@@ -11,6 +11,7 @@ using RestSharp;
 using PassportMeetReservator.Data.Platforms;
 using PassportMeetReservator.Data.CustomEventArgs;
 using PassportMeetReservator.Data.Dto;
+using PassportMeetReservator.Extensions;
 
 namespace PassportMeetReservator.Data
 {
@@ -18,10 +19,11 @@ namespace PassportMeetReservator.Data
     {
         public event EventHandler<DateCheckerErrorEventArgs> OnRequestError;
         public event EventHandler<DateCheckerOkEventArgs> OnRequestOK;
+        public event EventHandler<EventArgs> OnDatesFound;
 
         private RestClient ApiClient { get; set; }
 
-        public DateTime[] Dates { get; private set; } = new DateTime[] { };
+        public Dictionary<DateTime, DateTime[]> Slots { get; private set; } = new Dictionary<DateTime, DateTime[]>();
 
         public PlatformApiInfo PlatformInfo { get; private set; }
         public CityPlatformInfo CityInfo { get; private set; }
@@ -107,26 +109,29 @@ namespace PassportMeetReservator.Data
                 if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
                     continue;
 
-                try { Dates = await GetDates(); }
+                try
+                {
+                    DateTime start = DateTime.Now;
+
+                    DateTime[] dates = await GetDates();
+
+                    Slots.Clear();
+                    foreach (DateTime date in dates)
+                        Slots.Add(date, await GetTimesForDate(date));
+
+                    TimeSpan time = DateTime.Now - start;
+
+                    if(dates != null && dates.Length != 0 && Slots.Any(slot => slot.Value != null && slot.Value.Length != 0))
+                        OnDatesFound?.Invoke(this, new EventArgs());
+                }
                 catch { }
             }
         }
 
-        public async Task<DateTime[]> GetDates()
+        protected async Task<DateTime[]> GetDates()
         {
             RestRequest request = new RestRequest($"{PlatformInfo.GetAvailableDatesApiMethod}/{OperationInfo.Number}");
-            request.Method = Method.GET;
-            request.Timeout = 1000;
-
-            request.AddHeader("authority", CityInfo.Authority);
-            request.AddHeader("accept", "application/json, text/plain, */*");
-            request.AddHeader("authorization", PlatformInfo.Token);
-            request.AddHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
-            request.AddHeader("sec-fetch-site", "same-origin");
-            request.AddHeader("sec-fetch-mode", "cors");
-            request.AddHeader("sec-fetch-dest", "empty");
-            request.AddHeader("referer", CityInfo.Referer);
-            request.AddHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+            ConfigureRequest(request);
 
             IRestResponse dates = await ApiClient.ExecuteAsync(request);
 
@@ -158,6 +163,53 @@ namespace PassportMeetReservator.Data
             OnRequestOK?.Invoke(this, new DateCheckerOkEventArgs(datesString));
 
             return availableDates;
+        }
+
+        protected async Task<DateTime[]> GetTimesForDate(DateTime date)
+        {
+            RestRequest request = new RestRequest($"{PlatformInfo.GetAvailableSlotsForDateApiMethod}/{OperationInfo.Number}/{date.GetFormattedDate()}");
+            ConfigureRequest(request);
+
+            IRestResponse slots = await ApiClient.ExecuteAsync(request);
+
+            if (slots.StatusCode != HttpStatusCode.OK)
+                throw new Exception();
+
+            if (slots.Content.Contains(PlatformInfo.GeneralErrorMessage))
+                throw new Exception();
+
+            DateTime[] availableTimes = null;
+
+            try
+            {
+                TimeCheckDto[] timeCheckDtos = JsonConvert.DeserializeObject<TimeCheckDto[]>(slots.Content);
+                availableTimes = timeCheckDtos.Select(timeCheckDto => timeCheckDto.DateTime).ToArray();
+            }
+            catch
+            {
+                availableTimes = JsonConvert.DeserializeObject<DateTime[]>(slots.Content);
+            }
+
+            string timesString = JsonConvert.SerializeObject(availableTimes);
+            OnRequestOK?.Invoke(this, new DateCheckerOkEventArgs(timesString));
+
+            return availableTimes;
+        }
+
+        protected void ConfigureRequest(RestRequest request)
+        {
+            request.Method = Method.GET;
+            request.Timeout = 1000;
+
+            request.AddHeader("authority", CityInfo.Authority);
+            request.AddHeader("accept", "application/json, text/plain, */*");
+            request.AddHeader("authorization", PlatformInfo.Token);
+            request.AddHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
+            request.AddHeader("sec-fetch-site", "same-origin");
+            request.AddHeader("sec-fetch-mode", "cors");
+            request.AddHeader("sec-fetch-dest", "empty");
+            request.AddHeader("referer", CityInfo.Referer);
+            request.AddHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
         }
     }
 }

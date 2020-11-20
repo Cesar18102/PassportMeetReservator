@@ -75,6 +75,9 @@ namespace PassportMeetReservator
         private DateTimePicker[] ReserveDatesMin { get; set; }
         private DateTimePicker[] ReserveDatesMax { get; set; }
 
+        private DateTimePicker[] ReserveTimesMin { get; set; }
+        private DateTimePicker[] ReserveTimesMax { get; set; }
+
         private List<ReservationOrder> Orders { get; set; }
         private List<ReservedInfo> Reserved { get; set; }
         private BootSchedule Schedule { get; set; }
@@ -113,7 +116,6 @@ namespace PassportMeetReservator
             );
 
             TryLogIn();
-            StartReserving();
         }
 
         private async void TryLogIn()
@@ -212,10 +214,21 @@ namespace PassportMeetReservator
                 ReserveDateMax4, ReserveDateMax5
             };
 
+            ReserveTimesMin = new DateTimePicker[BROWSERS_COUNT]
+            {
+                ReserveTimeMin1, ReserveTimeMin2, ReserveTimeMin3,
+                ReserveTimeMin4, ReserveTimeMin5
+            };
+
+            ReserveTimesMax = new DateTimePicker[BROWSERS_COUNT]
+            {
+                ReserveTimeMax1, ReserveTimeMax2, ReserveTimeMax3,
+                ReserveTimeMax4, ReserveTimeMax5
+            };
+
             for (int i = 0; i < BROWSERS_COUNT; ++i)
             {
                 BrowserNumbers[i].Value = i;
-                Browsers[i].BrowserNumber = i;
                 Browsers[i].RealBrowserNumber = i;
                 Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
                 Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
@@ -229,7 +242,6 @@ namespace PassportMeetReservator
                 Browsers[i].DelayInfo = DelayInfo;
 
                 Browsers[i].Size = BrowserWrappers[i].Size;
-                Browsers[i].BrowsersCount = BROWSERS_COUNT;
 
                 BrowserWrappers[i].Controls.Add(Browsers[i]);
 
@@ -253,8 +265,6 @@ namespace PassportMeetReservator
         {
             DateChecker checker = sender as DateChecker;
             Log($"Date check error at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Code: {e.ErrorCode}; Check your VPN and internet connection!");
-
-            //await Notifier.NotifyMessage("Check your VPN and internet connection!", LogChatId.Text);
         }
 
         private void Checker_OnRequestOk(object sender, DateCheckerOkEventArgs e)
@@ -289,16 +299,6 @@ namespace PassportMeetReservator
                     return i;
 
             return -1;
-        }
-
-        private void HandlePausedChangeButtonClick(bool paused, Button sender)
-        {
-            int browser = FindBrowserNumberByInfoControl(PausedChangeButtons, sender);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].Paused = paused;
         }
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
@@ -426,24 +426,28 @@ namespace PassportMeetReservator
             }
         }
 
+        private void HandlePausedChangeButtonClick(bool paused, Button sender)
+        {
+            FindBrowserAndExecute(
+                PausedChangeButtons, sender,
+                browser => browser.Paused = paused
+            );
+        }
+
         private void DoneButton_Click(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByInfoControl(DoneButtons, sender as Button);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].Done();
+            FindBrowserAndExecute(
+                DoneButtons, sender as Button,
+                browser => browser.Done()
+            );
         }
 
         private void ResetButton_Click(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByInfoControl(ResetButtons, sender as Button);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].Reset();
+            FindBrowserAndExecute(
+                ResetButtons, sender as Button,
+                browser => browser.Reset()
+            );
         }
 
         private void OrderTypeSelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -470,8 +474,6 @@ namespace PassportMeetReservator
                 return;
 
             CityPlatformInfo selectedPlatform = cityChecker.SelectedItem as CityPlatformInfo;
-
-            Browsers[browser].InitUrl = selectedPlatform.BaseUrl;
             Browsers[browser].InitChecker = null;
 
             OperationSelectors[browser].Items.Clear();
@@ -487,8 +489,6 @@ namespace PassportMeetReservator
                 return;
 
             PlatformApiInfo selectedPlatform = platformChecker.SelectedItem as PlatformApiInfo;
-
-            Browsers[browser].InitUrl = null;
             Browsers[browser].InitChecker = null;
 
             OperationSelectors[browser].Items.Clear();
@@ -499,22 +499,44 @@ namespace PassportMeetReservator
 
         private void ReserveDateMin_ValueChanged(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByInfoControl(ReserveDatesMin, sender as DateTimePicker);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].ReserveDateMin = (sender as DateTimePicker).Value.Date;
+            FindBrowserAndExecute(
+                ReserveDatesMin, sender as DateTimePicker,
+                browser => browser.ReserveDateMin = (sender as DateTimePicker).Value.Date
+            );
         }
 
         private void ReserveDateMax_ValueChanged(object sender, EventArgs e)
         {
-            int browser = FindBrowserNumberByInfoControl(ReserveDatesMax, sender as DateTimePicker);
+            FindBrowserAndExecute(
+                ReserveDatesMax, sender as DateTimePicker,
+                browser => browser.ReserveDateMax = (sender as DateTimePicker).Value.Date
+            );
+        }
+
+        private void ReserveTimeMin_ValueChanged(object sender, EventArgs e)
+        {
+            FindBrowserAndExecute(
+                ReserveTimesMin, sender as DateTimePicker,
+                browser => browser.ReserveTimePeriod.TimeStart = (sender as DateTimePicker).Value.TimeOfDay
+            );
+        }
+
+        private void ReserveTimeMax_ValueChanged(object sender, EventArgs e)
+        {
+            FindBrowserAndExecute(
+                ReserveTimesMax, sender as DateTimePicker,
+                browser => browser.ReserveTimePeriod.TimeEnd = (sender as DateTimePicker).Value.TimeOfDay
+            );
+        }
+
+        private void FindBrowserAndExecute<T>(T[] controls, T sender, Action<ReserverWebView> action) where T : Control
+        {
+            int browser = FindBrowserNumberByInfoControl(controls, sender);
 
             if (browser == -1)
                 return;
 
-            Browsers[browser].ReserveDateMax = (sender as DateTimePicker).Value.Date;
+            action(Browsers[browser]);
         }
 
         private void BrowserContinue_Click(object sender, EventArgs e)
@@ -582,30 +604,6 @@ namespace PassportMeetReservator
                 strw.Write(JsonConvert.SerializeObject(data));
         }
 
-        private async void StartReserving()
-        {
-            while(true)
-            {
-                await Task.Delay(DelayInfo.OrderLoadingIterationDelay);
-                ReserveIteration();
-            }
-        }
-
-        private void ReserveIteration()
-        {
-            ReserverWebView browser = GetFirstFreeBrowser();
-
-            if (browser == null)
-                return;
-
-            browser.Start();
-        }
-
-        private ReserverWebView GetFirstFreeBrowser()
-        {
-            return Browsers.FirstOrDefault(browser => !browser.IsBusy);
-        }
-
         private void HandleBusyChange()
         {
             bool changesAllowed = Browsers.All(browser => !browser.IsBusy || browser.Paused);
@@ -636,17 +634,6 @@ namespace PassportMeetReservator
 
             if(checker.Checked)
                 PutOrderToBrowser(Browsers[browser]);
-        }
-
-        private void BrowserNumber_ValueChanged(object sender, EventArgs e)
-        {
-            NumericUpDown browserNumber = sender as NumericUpDown;
-            int browser = FindBrowserNumberByInfoControl(BrowserNumbers, browserNumber);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].BrowserNumber = (int)browserNumber.Value;
         }
 
         private void PauseButton_Click(object sender, EventArgs e)

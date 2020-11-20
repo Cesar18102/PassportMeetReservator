@@ -40,6 +40,8 @@
             this.Browser5 = new PassportMeetReservator.Controls.ReserverWebView();
             this.OrdersInfo = new System.Windows.Forms.RichTextBox();
             this.BrowserInfo1 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.ReserveTimeMax1 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveTimeMin1 = new System.Windows.Forms.DateTimePicker();
             this.PlatformSelector1 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber1 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker1 = new System.Windows.Forms.ComboBox();
@@ -52,6 +54,8 @@
             this.PauseChangeButton1 = new System.Windows.Forms.Button();
             this.UrlInput1 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo2 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.ReserveTimeMax2 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveTimeMin2 = new System.Windows.Forms.DateTimePicker();
             this.PlatformSelector2 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber2 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker2 = new System.Windows.Forms.ComboBox();
@@ -64,6 +68,8 @@
             this.PauseChangeButton2 = new System.Windows.Forms.Button();
             this.UrlInput2 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo3 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.ReserveTimeMax3 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveTimeMin3 = new System.Windows.Forms.DateTimePicker();
             this.PlatformSelector3 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber3 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker3 = new System.Windows.Forms.ComboBox();
@@ -76,6 +82,8 @@
             this.PauseChangeButton3 = new System.Windows.Forms.Button();
             this.UrlInput3 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo4 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.ReserveTimeMax4 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveTimeMin4 = new System.Windows.Forms.DateTimePicker();
             this.PlatformSelector4 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber4 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker4 = new System.Windows.Forms.ComboBox();
@@ -88,6 +96,8 @@
             this.PauseChangeButton4 = new System.Windows.Forms.Button();
             this.UrlInput4 = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo5 = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.ReserveTimeMax5 = new System.Windows.Forms.DateTimePicker();
+            this.ReserveTimeMin5 = new System.Windows.Forms.DateTimePicker();
             this.PlatformSelector5 = new System.Windows.Forms.ComboBox();
             this.BrowserNumber5 = new System.Windows.Forms.NumericUpDown();
             this.CityChecker5 = new System.Windows.Forms.ComboBox();
@@ -135,46 +145,46 @@
             // BrowserPanel1
             // 
             this.BrowserPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel1.Location = new System.Drawing.Point(9, 201);
+            this.BrowserPanel1.Location = new System.Drawing.Point(9, 226);
             this.BrowserPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel1.Name = "BrowserPanel1";
-            this.BrowserPanel1.Size = new System.Drawing.Size(350, 441);
+            this.BrowserPanel1.Size = new System.Drawing.Size(350, 416);
             this.BrowserPanel1.TabIndex = 0;
             // 
             // BrowserPanel2
             // 
             this.BrowserPanel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel2.Location = new System.Drawing.Point(363, 201);
+            this.BrowserPanel2.Location = new System.Drawing.Point(363, 226);
             this.BrowserPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel2.Name = "BrowserPanel2";
-            this.BrowserPanel2.Size = new System.Drawing.Size(350, 441);
+            this.BrowserPanel2.Size = new System.Drawing.Size(350, 416);
             this.BrowserPanel2.TabIndex = 1;
             // 
             // BrowserPanel4
             // 
             this.BrowserPanel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel4.Location = new System.Drawing.Point(1071, 201);
+            this.BrowserPanel4.Location = new System.Drawing.Point(1071, 226);
             this.BrowserPanel4.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel4.Name = "BrowserPanel4";
-            this.BrowserPanel4.Size = new System.Drawing.Size(350, 441);
+            this.BrowserPanel4.Size = new System.Drawing.Size(350, 416);
             this.BrowserPanel4.TabIndex = 3;
             // 
             // BrowserPanel3
             // 
             this.BrowserPanel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel3.Location = new System.Drawing.Point(717, 201);
+            this.BrowserPanel3.Location = new System.Drawing.Point(717, 226);
             this.BrowserPanel3.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel3.Name = "BrowserPanel3";
-            this.BrowserPanel3.Size = new System.Drawing.Size(350, 441);
+            this.BrowserPanel3.Size = new System.Drawing.Size(350, 416);
             this.BrowserPanel3.TabIndex = 2;
             // 
             // BrowserPanel5
             // 
             this.BrowserPanel5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BrowserPanel5.Location = new System.Drawing.Point(1425, 201);
+            this.BrowserPanel5.Location = new System.Drawing.Point(1425, 226);
             this.BrowserPanel5.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel5.Name = "BrowserPanel5";
-            this.BrowserPanel5.Size = new System.Drawing.Size(350, 441);
+            this.BrowserPanel5.Size = new System.Drawing.Size(350, 416);
             this.BrowserPanel5.TabIndex = 3;
             // 
             // Browser1
@@ -182,12 +192,9 @@
             this.Browser1.ActivateBrowserOnCreation = false;
             this.Browser1.Auto = false;
             this.Browser1.BotNumber = 0;
-            this.Browser1.BrowserNumber = 0;
-            this.Browser1.BrowsersCount = 0;
             this.Browser1.Checker = null;
             this.Browser1.DelayInfo = null;
             this.Browser1.InitChecker = null;
-            this.Browser1.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser1.Location = new System.Drawing.Point(0, 0);
             this.Browser1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser1.Name = "Browser1";
@@ -205,12 +212,9 @@
             this.Browser2.ActivateBrowserOnCreation = false;
             this.Browser2.Auto = false;
             this.Browser2.BotNumber = 0;
-            this.Browser2.BrowserNumber = 0;
-            this.Browser2.BrowsersCount = 0;
             this.Browser2.Checker = null;
             this.Browser2.DelayInfo = null;
             this.Browser2.InitChecker = null;
-            this.Browser2.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser2.Location = new System.Drawing.Point(0, 0);
             this.Browser2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser2.Name = "Browser2";
@@ -228,12 +232,9 @@
             this.Browser3.ActivateBrowserOnCreation = false;
             this.Browser3.Auto = false;
             this.Browser3.BotNumber = 0;
-            this.Browser3.BrowserNumber = 0;
-            this.Browser3.BrowsersCount = 0;
             this.Browser3.Checker = null;
             this.Browser3.DelayInfo = null;
             this.Browser3.InitChecker = null;
-            this.Browser3.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser3.Location = new System.Drawing.Point(0, 0);
             this.Browser3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser3.Name = "Browser3";
@@ -251,12 +252,9 @@
             this.Browser4.ActivateBrowserOnCreation = false;
             this.Browser4.Auto = false;
             this.Browser4.BotNumber = 0;
-            this.Browser4.BrowserNumber = 0;
-            this.Browser4.BrowsersCount = 0;
             this.Browser4.Checker = null;
             this.Browser4.DelayInfo = null;
             this.Browser4.InitChecker = null;
-            this.Browser4.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser4.Location = new System.Drawing.Point(0, 0);
             this.Browser4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser4.Name = "Browser4";
@@ -274,12 +272,9 @@
             this.Browser5.ActivateBrowserOnCreation = false;
             this.Browser5.Auto = false;
             this.Browser5.BotNumber = 0;
-            this.Browser5.BrowserNumber = 0;
-            this.Browser5.BrowsersCount = 0;
             this.Browser5.Checker = null;
             this.Browser5.DelayInfo = null;
             this.Browser5.InitChecker = null;
-            this.Browser5.InitUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
             this.Browser5.Location = new System.Drawing.Point(0, 0);
             this.Browser5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Browser5.Name = "Browser5";
@@ -306,6 +301,8 @@
             // 
             // BrowserInfo1
             // 
+            this.BrowserInfo1.Controls.Add(this.ReserveTimeMax1);
+            this.BrowserInfo1.Controls.Add(this.ReserveTimeMin1);
             this.BrowserInfo1.Controls.Add(this.PlatformSelector1);
             this.BrowserInfo1.Controls.Add(this.BrowserNumber1);
             this.BrowserInfo1.Controls.Add(this.CityChecker1);
@@ -321,11 +318,29 @@
             this.BrowserInfo1.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo1.Name = "BrowserInfo1";
             this.BrowserInfo1.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo1.Size = new System.Drawing.Size(350, 187);
+            this.BrowserInfo1.Size = new System.Drawing.Size(350, 212);
             this.BrowserInfo1.TabIndex = 8;
             this.BrowserInfo1.TabStop = false;
             this.BrowserInfo1.Text = "Browser 1";
             this.BrowserInfo1.UrlInput = this.UrlInput1;
+            // 
+            // ReserveTimeMax1
+            // 
+            this.ReserveTimeMax1.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMax1.Location = new System.Drawing.Point(131, 161);
+            this.ReserveTimeMax1.Name = "ReserveTimeMax1";
+            this.ReserveTimeMax1.Size = new System.Drawing.Size(114, 20);
+            this.ReserveTimeMax1.TabIndex = 29;
+            this.ReserveTimeMax1.ValueChanged += new System.EventHandler(this.ReserveTimeMax_ValueChanged);
+            // 
+            // ReserveTimeMin1
+            // 
+            this.ReserveTimeMin1.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMin1.Location = new System.Drawing.Point(7, 161);
+            this.ReserveTimeMin1.Name = "ReserveTimeMin1";
+            this.ReserveTimeMin1.Size = new System.Drawing.Size(120, 20);
+            this.ReserveTimeMin1.TabIndex = 28;
+            this.ReserveTimeMin1.ValueChanged += new System.EventHandler(this.ReserveTimeMin_ValueChanged);
             // 
             // PlatformSelector1
             // 
@@ -344,7 +359,6 @@
             this.BrowserNumber1.Name = "BrowserNumber1";
             this.BrowserNumber1.Size = new System.Drawing.Size(81, 20);
             this.BrowserNumber1.TabIndex = 26;
-            this.BrowserNumber1.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
             // 
             // CityChecker1
             // 
@@ -432,7 +446,7 @@
             this.UrlInput1.InputText = "";
             this.UrlInput1.LabelLeft = 0;
             this.UrlInput1.LabelText = "URL:";
-            this.UrlInput1.Location = new System.Drawing.Point(4, 160);
+            this.UrlInput1.Location = new System.Drawing.Point(4, 186);
             this.UrlInput1.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput1.Name = "UrlInput1";
             this.UrlInput1.Size = new System.Drawing.Size(240, 19);
@@ -442,6 +456,8 @@
             // 
             // BrowserInfo2
             // 
+            this.BrowserInfo2.Controls.Add(this.ReserveTimeMax2);
+            this.BrowserInfo2.Controls.Add(this.ReserveTimeMin2);
             this.BrowserInfo2.Controls.Add(this.PlatformSelector2);
             this.BrowserInfo2.Controls.Add(this.BrowserNumber2);
             this.BrowserInfo2.Controls.Add(this.CityChecker2);
@@ -457,11 +473,29 @@
             this.BrowserInfo2.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo2.Name = "BrowserInfo2";
             this.BrowserInfo2.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo2.Size = new System.Drawing.Size(350, 187);
+            this.BrowserInfo2.Size = new System.Drawing.Size(350, 212);
             this.BrowserInfo2.TabIndex = 9;
             this.BrowserInfo2.TabStop = false;
             this.BrowserInfo2.Text = "Browser 2";
             this.BrowserInfo2.UrlInput = this.UrlInput2;
+            // 
+            // ReserveTimeMax2
+            // 
+            this.ReserveTimeMax2.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMax2.Location = new System.Drawing.Point(130, 161);
+            this.ReserveTimeMax2.Name = "ReserveTimeMax2";
+            this.ReserveTimeMax2.Size = new System.Drawing.Size(114, 20);
+            this.ReserveTimeMax2.TabIndex = 30;
+            this.ReserveTimeMax2.ValueChanged += new System.EventHandler(this.ReserveTimeMax_ValueChanged);
+            // 
+            // ReserveTimeMin2
+            // 
+            this.ReserveTimeMin2.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMin2.Location = new System.Drawing.Point(6, 161);
+            this.ReserveTimeMin2.Name = "ReserveTimeMin2";
+            this.ReserveTimeMin2.Size = new System.Drawing.Size(119, 20);
+            this.ReserveTimeMin2.TabIndex = 29;
+            this.ReserveTimeMin2.ValueChanged += new System.EventHandler(this.ReserveTimeMin_ValueChanged);
             // 
             // PlatformSelector2
             // 
@@ -480,7 +514,6 @@
             this.BrowserNumber2.Name = "BrowserNumber2";
             this.BrowserNumber2.Size = new System.Drawing.Size(81, 20);
             this.BrowserNumber2.TabIndex = 27;
-            this.BrowserNumber2.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
             // 
             // CityChecker2
             // 
@@ -568,7 +601,7 @@
             this.UrlInput2.InputText = "";
             this.UrlInput2.LabelLeft = 0;
             this.UrlInput2.LabelText = "URL:";
-            this.UrlInput2.Location = new System.Drawing.Point(6, 159);
+            this.UrlInput2.Location = new System.Drawing.Point(7, 186);
             this.UrlInput2.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput2.Name = "UrlInput2";
             this.UrlInput2.Size = new System.Drawing.Size(237, 19);
@@ -578,6 +611,8 @@
             // 
             // BrowserInfo3
             // 
+            this.BrowserInfo3.Controls.Add(this.ReserveTimeMax3);
+            this.BrowserInfo3.Controls.Add(this.ReserveTimeMin3);
             this.BrowserInfo3.Controls.Add(this.PlatformSelector3);
             this.BrowserInfo3.Controls.Add(this.BrowserNumber3);
             this.BrowserInfo3.Controls.Add(this.CityChecker3);
@@ -593,11 +628,29 @@
             this.BrowserInfo3.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo3.Name = "BrowserInfo3";
             this.BrowserInfo3.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo3.Size = new System.Drawing.Size(350, 187);
+            this.BrowserInfo3.Size = new System.Drawing.Size(350, 212);
             this.BrowserInfo3.TabIndex = 10;
             this.BrowserInfo3.TabStop = false;
             this.BrowserInfo3.Text = "Browser 3";
             this.BrowserInfo3.UrlInput = this.UrlInput3;
+            // 
+            // ReserveTimeMax3
+            // 
+            this.ReserveTimeMax3.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMax3.Location = new System.Drawing.Point(136, 161);
+            this.ReserveTimeMax3.Name = "ReserveTimeMax3";
+            this.ReserveTimeMax3.Size = new System.Drawing.Size(110, 20);
+            this.ReserveTimeMax3.TabIndex = 31;
+            this.ReserveTimeMax3.ValueChanged += new System.EventHandler(this.ReserveTimeMax_ValueChanged);
+            // 
+            // ReserveTimeMin3
+            // 
+            this.ReserveTimeMin3.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMin3.Location = new System.Drawing.Point(8, 161);
+            this.ReserveTimeMin3.Name = "ReserveTimeMin3";
+            this.ReserveTimeMin3.Size = new System.Drawing.Size(122, 20);
+            this.ReserveTimeMin3.TabIndex = 30;
+            this.ReserveTimeMin3.ValueChanged += new System.EventHandler(this.ReserveTimeMin_ValueChanged);
             // 
             // PlatformSelector3
             // 
@@ -616,7 +669,6 @@
             this.BrowserNumber3.Name = "BrowserNumber3";
             this.BrowserNumber3.Size = new System.Drawing.Size(81, 20);
             this.BrowserNumber3.TabIndex = 28;
-            this.BrowserNumber3.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
             // 
             // CityChecker3
             // 
@@ -704,7 +756,7 @@
             this.UrlInput3.InputText = "";
             this.UrlInput3.LabelLeft = 0;
             this.UrlInput3.LabelText = "URL:";
-            this.UrlInput3.Location = new System.Drawing.Point(8, 159);
+            this.UrlInput3.Location = new System.Drawing.Point(8, 186);
             this.UrlInput3.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput3.Name = "UrlInput3";
             this.UrlInput3.Size = new System.Drawing.Size(237, 19);
@@ -714,6 +766,8 @@
             // 
             // BrowserInfo4
             // 
+            this.BrowserInfo4.Controls.Add(this.ReserveTimeMax4);
+            this.BrowserInfo4.Controls.Add(this.ReserveTimeMin4);
             this.BrowserInfo4.Controls.Add(this.PlatformSelector4);
             this.BrowserInfo4.Controls.Add(this.BrowserNumber4);
             this.BrowserInfo4.Controls.Add(this.CityChecker4);
@@ -729,11 +783,29 @@
             this.BrowserInfo4.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo4.Name = "BrowserInfo4";
             this.BrowserInfo4.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo4.Size = new System.Drawing.Size(350, 187);
+            this.BrowserInfo4.Size = new System.Drawing.Size(350, 212);
             this.BrowserInfo4.TabIndex = 10;
             this.BrowserInfo4.TabStop = false;
             this.BrowserInfo4.Text = "Browser 4";
             this.BrowserInfo4.UrlInput = this.UrlInput4;
+            // 
+            // ReserveTimeMax4
+            // 
+            this.ReserveTimeMax4.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMax4.Location = new System.Drawing.Point(130, 161);
+            this.ReserveTimeMax4.Name = "ReserveTimeMax4";
+            this.ReserveTimeMax4.Size = new System.Drawing.Size(112, 20);
+            this.ReserveTimeMax4.TabIndex = 32;
+            this.ReserveTimeMax4.ValueChanged += new System.EventHandler(this.ReserveTimeMax_ValueChanged);
+            // 
+            // ReserveTimeMin4
+            // 
+            this.ReserveTimeMin4.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMin4.Location = new System.Drawing.Point(4, 162);
+            this.ReserveTimeMin4.Name = "ReserveTimeMin4";
+            this.ReserveTimeMin4.Size = new System.Drawing.Size(121, 20);
+            this.ReserveTimeMin4.TabIndex = 31;
+            this.ReserveTimeMin4.ValueChanged += new System.EventHandler(this.ReserveTimeMin_ValueChanged);
             // 
             // PlatformSelector4
             // 
@@ -752,7 +824,6 @@
             this.BrowserNumber4.Name = "BrowserNumber4";
             this.BrowserNumber4.Size = new System.Drawing.Size(81, 20);
             this.BrowserNumber4.TabIndex = 29;
-            this.BrowserNumber4.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
             // 
             // CityChecker4
             // 
@@ -840,7 +911,7 @@
             this.UrlInput4.InputText = "";
             this.UrlInput4.LabelLeft = 0;
             this.UrlInput4.LabelText = "URL:";
-            this.UrlInput4.Location = new System.Drawing.Point(5, 160);
+            this.UrlInput4.Location = new System.Drawing.Point(5, 187);
             this.UrlInput4.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput4.Name = "UrlInput4";
             this.UrlInput4.Size = new System.Drawing.Size(237, 19);
@@ -850,6 +921,8 @@
             // 
             // BrowserInfo5
             // 
+            this.BrowserInfo5.Controls.Add(this.ReserveTimeMax5);
+            this.BrowserInfo5.Controls.Add(this.ReserveTimeMin5);
             this.BrowserInfo5.Controls.Add(this.PlatformSelector5);
             this.BrowserInfo5.Controls.Add(this.BrowserNumber5);
             this.BrowserInfo5.Controls.Add(this.CityChecker5);
@@ -865,11 +938,29 @@
             this.BrowserInfo5.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo5.Name = "BrowserInfo5";
             this.BrowserInfo5.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo5.Size = new System.Drawing.Size(350, 187);
+            this.BrowserInfo5.Size = new System.Drawing.Size(350, 212);
             this.BrowserInfo5.TabIndex = 10;
             this.BrowserInfo5.TabStop = false;
             this.BrowserInfo5.Text = "Browser 5";
             this.BrowserInfo5.UrlInput = this.UrlInput5;
+            // 
+            // ReserveTimeMax5
+            // 
+            this.ReserveTimeMax5.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMax5.Location = new System.Drawing.Point(137, 161);
+            this.ReserveTimeMax5.Name = "ReserveTimeMax5";
+            this.ReserveTimeMax5.Size = new System.Drawing.Size(105, 20);
+            this.ReserveTimeMax5.TabIndex = 33;
+            this.ReserveTimeMax5.ValueChanged += new System.EventHandler(this.ReserveTimeMax_ValueChanged);
+            // 
+            // ReserveTimeMin5
+            // 
+            this.ReserveTimeMin5.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ReserveTimeMin5.Location = new System.Drawing.Point(5, 161);
+            this.ReserveTimeMin5.Name = "ReserveTimeMin5";
+            this.ReserveTimeMin5.Size = new System.Drawing.Size(126, 20);
+            this.ReserveTimeMin5.TabIndex = 32;
+            this.ReserveTimeMin5.ValueChanged += new System.EventHandler(this.ReserveTimeMin_ValueChanged);
             // 
             // PlatformSelector5
             // 
@@ -888,7 +979,6 @@
             this.BrowserNumber5.Name = "BrowserNumber5";
             this.BrowserNumber5.Size = new System.Drawing.Size(81, 20);
             this.BrowserNumber5.TabIndex = 30;
-            this.BrowserNumber5.ValueChanged += new System.EventHandler(this.BrowserNumber_ValueChanged);
             // 
             // CityChecker5
             // 
@@ -976,7 +1066,7 @@
             this.UrlInput5.InputText = "";
             this.UrlInput5.LabelLeft = 0;
             this.UrlInput5.LabelText = "URL:";
-            this.UrlInput5.Location = new System.Drawing.Point(5, 159);
+            this.UrlInput5.Location = new System.Drawing.Point(5, 186);
             this.UrlInput5.Margin = new System.Windows.Forms.Padding(2);
             this.UrlInput5.Name = "UrlInput5";
             this.UrlInput5.Size = new System.Drawing.Size(237, 19);
@@ -1346,6 +1436,16 @@
         private System.Windows.Forms.ComboBox PlatformSelector4;
         private System.Windows.Forms.ComboBox PlatformSelector5;
         private System.Windows.Forms.ComboBox PlatformSelector;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMax1;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMin1;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMax2;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMin2;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMax3;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMin3;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMax4;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMin4;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMax5;
+        private System.Windows.Forms.DateTimePicker ReserveTimeMin5;
     }
 }
 

@@ -9,7 +9,8 @@ using CefSharp.WinForms;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
-using PassportMeetReservator.Data.Platforms;
+using System.Collections.Generic;
+using PassportMeetReservator.Extensions;
 
 namespace PassportMeetReservator.Controls
 {
@@ -55,6 +56,8 @@ namespace PassportMeetReservator.Controls
         private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
 
         private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
+
+        private const string URL_CHANGE_SUCCESS_PATH = "Info";
 
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
@@ -118,45 +121,12 @@ namespace PassportMeetReservator.Controls
                 order = value;
 
                 if (order != null)
-                {
                     order.Doing = true;
-                    Url = order.CityUrl;
-                }
                 else
-                {
                     Checker = initChecker;
-                    Url = InitUrl;
-                }
 
                 if (OnOrderChanged != null)
                     Invoke(OnOrderChanged, this, new OrderEventArgs(order));
-            }
-        }
-
-        private string initUrl = "https://rejestracjapoznan.poznan.uw.gov.pl/";
-        public string InitUrl
-        {
-            get => initUrl;
-            set
-            {
-                initUrl = value;
-                Url = value;
-            }
-        }
-
-        private string url = "https://rejestracjapoznan.poznan.uw.gov.pl/";
-        private string Url
-        {
-            get => url;
-            set
-            {
-                if (url == value)
-                    return;
-
-                url = value;
-
-                UpdateBrowser();
-                Reset();
             }
         }
 
@@ -188,6 +158,8 @@ namespace PassportMeetReservator.Controls
 
                     if (Paused)
                         checker.PausedFollowersCount--;
+
+                    checker.OnDatesFound -= Checker_OnDatesFound;
                 }
 
                 checker = value;
@@ -198,17 +170,20 @@ namespace PassportMeetReservator.Controls
 
                     if (Paused)
                         checker.PausedFollowersCount++;
+
+                    checker.OnDatesFound += Checker_OnDatesFound;
                 }
+
+                Reset();
             }
         }
 
         public int BotNumber { get; set; }
         public int RealBrowserNumber { get; set; }
-        public int BrowserNumber { get; set; }
-        public int BrowsersCount { get; set; }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now.Date;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now.Date;
+        public BootPeriod ReserveTimePeriod { get; set; } = new BootPeriod();
 
         public DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
@@ -222,6 +197,7 @@ namespace PassportMeetReservator.Controls
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
             Scale(new SizeF(0.5f, 0.5f));
+            Load("https://google.com");
         }
 
         public void Free()
@@ -232,6 +208,7 @@ namespace PassportMeetReservator.Controls
         public void Reset()
         {
             TokenSource?.Cancel();
+            UpdateBrowser();
         }
 
         public void ResetScroll()
@@ -246,20 +223,81 @@ namespace PassportMeetReservator.Controls
             Selected = false;
             IsBusy = false;
 
-            TokenSource.Cancel();
+            TokenSource?.Cancel();
         }
 
-        public async void Start()
+        private async void Checker_OnDatesFound(object sender, EventArgs e)
         {
+            if (IsBusy)
+                return;
+
+            IsBusy = true;
+
             using (TokenSource = new CancellationTokenSource())
             {
                 Token = TokenSource.Token;
 
-                Loop = Init();
+                Loop = TryReserveDates();
 
                 try { await Loop; }
-                catch (OperationCanceledException ex) { Loop.Dispose(); Start(); }
+                catch (OperationCanceledException ex) { Loop.Dispose(); }
             }
+
+            IsBusy = false;
+        }
+
+        private async Task TryReserveDates()
+        {
+            if (Paused)
+                return;
+
+            if (Checker == null)
+            {
+                RaiseIterationSkipped("No operation set");
+                return;
+            }
+
+            if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
+            {
+                RaiseIterationSkipped("No schedule match");
+                return;
+            }
+
+            List<DateTime> slotsAtDatePeriod = Checker.Slots
+                .Where(slot => slot.Key >= ReserveDateMin && slot.Key <= ReserveDateMax)
+                .SelectMany(slot => slot.Value)
+                .ToList();
+
+            if (slotsAtDatePeriod.Count() == 0)
+            {
+                RaiseIterationSkipped("Reservation date period mismatch");
+                return;
+            }
+
+            List<DateTime> slotsAtTimePeriod = slotsAtDatePeriod.Where(
+                time => ReserveTimePeriod.IsIside(time.TimeOfDay)
+            ).ToList();
+
+            if (slotsAtTimePeriod.Count() == 0)
+            {
+                RaiseIterationSkipped("Reservation time period mismatch");
+                return;
+            }
+
+            DateTime reservedDateTime = slotsAtTimePeriod.First();
+
+            if (await Iteration(reservedDateTime))
+            {
+                if (!Auto || Order == null)
+                    await WaitForManualReaction();
+                else
+                {
+                    await FillForm();
+                    UpdateBrowser();
+                }
+            }
+            else
+                UpdateBrowser();
         }
 
         private void RaiseIterationSkipped(string message)
@@ -272,59 +310,6 @@ namespace PassportMeetReservator.Controls
         {
             LogEventArgs logEventArgs = new LogEventArgs(message, RealBrowserNumber);
             OnIterationFailure?.Invoke(this, logEventArgs);
-        }
-
-        private async Task Init()
-        {
-            IsBusy = true;
-            Load(Url);
-
-            while (true)
-            {
-                await Task.Delay(DelayInfo.BrowserIterationDelay, Token);
-
-                if (Paused)
-                    continue;
-
-                if (Checker == null && Order == null)
-                {
-                    RaiseIterationSkipped("No operation set");
-                    continue;
-                }
-
-                if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
-                {
-                    RaiseIterationSkipped("No schedule match");
-                    continue;
-                }
-
-                if (Checker.Dates.Length == 0)
-                {
-                    RaiseIterationSkipped($"No dates found for operation {Checker.OperationInfo}");
-                    continue;
-                }
-
-                if (!Checker.Dates.Any(date => date >= ReserveDateMin && date <= ReserveDateMax))
-                {
-                    RaiseIterationSkipped("Reservation period mismatch");
-                    continue;
-                }
-
-                DateTime dateInBounds = Checker.Dates.First(date => date >= ReserveDateMin && date <= ReserveDateMax);
-
-                if (await Iteration(dateInBounds))
-                {
-                    if (!Auto || Order == null)
-                        await WaitForManualReaction();
-                    else
-                    {
-                        await FillForm();
-                        UpdateBrowser();
-                    }
-                }
-                else
-                    UpdateBrowser();
-            }
         }
 
         private async Task WaitForManualReaction()
@@ -343,22 +328,14 @@ namespace PassportMeetReservator.Controls
             await WaitForManualReaction();
         }
 
-        private string GetFormattedDate(DateTime date)
-        {
-            string month = (date.Month < 10 ? "0" : "") + date.Month.ToString();
-            string day = (date.Day < 10 ? "0" : "") + date.Day.ToString();
-
-            return $"{date.Year}-{month}-{day}";
-        }
-
         private void UpdateBrowser()
         {
-            if (url == null)
+            if (Checker == null)
                 return;
 
             Request request = new Request()
             {
-                Url = Url,
+                Url = Checker.CityInfo.BaseUrl,
                 Flags = UrlRequestFlags.DisableCache
             };
 
@@ -474,7 +451,7 @@ namespace PassportMeetReservator.Controls
 
         private async Task<DateTime?> ScanTime(DateTime date)
         {
-            string formattedDate = GetFormattedDate(date);
+            string formattedDate = date.GetFormattedDate();
 
             bool dayFound = false;
             for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
@@ -508,33 +485,27 @@ namespace PassportMeetReservator.Controls
                 await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
             } //WAIT FOR TIME FOR SEVERAL TIMES - WAIT FOR LOADING
 
-            if (timeFound && await SelectValue(TIME_SELECTOR_CLASS, BotNumber * BrowsersCount + BrowserNumber))
-            {
-                JavascriptResponse jsTime = await this.GetMainFrame().EvaluateScriptAsync(
-                    $"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options[{BotNumber * BrowsersCount + BrowserNumber}].text"
-                );
-
-                TimeSpan time = TimeSpan.Parse(jsTime.Result.ToString());
-
-                return date + time;
-            }
+            if (timeFound && await SelectByValue(TIME_SELECTOR_CLASS, date.GetFormattedTime()))
+                return date;
 
             return null;
         }
 
         private void ReserverWebView_UrlChanged(object sender, EventArgs e)
         {
-            if (Address == Url || Order == null)
+            if (Address == Checker.CityInfo.BaseUrl || !Address.Contains(URL_CHANGE_SUCCESS_PATH) || Order == null)
                 return;
 
             Order.Done = true;
             Order.Doing = false;
 
-            Invoke(OnReserved, this, new ReservedEventArgs(Address, Order));
-            this.AddressChanged -= ReserverWebView_UrlChanged;
+            ReservedEventArgs args = new ReservedEventArgs(Address, Order);
 
             Order = null;
             Selected = false;
+
+            Invoke(OnReserved, this, args);
+            this.AddressChanged -= ReserverWebView_UrlChanged;
         }
 
         private async Task<bool> SetTextToViewOfClassWithNumber(string className, int number, string text)
@@ -556,7 +527,7 @@ namespace PassportMeetReservator.Controls
             return (bool)result.Result;
         }
 
-        private async Task<bool> SelectValue(string selectorClassName, int number)
+        private async Task<bool> SelectByIndex(string selectorClassName, int number)
         {
             JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" + 
@@ -569,6 +540,34 @@ namespace PassportMeetReservator.Controls
                         $"views[0].dispatchEvent(e);" +
                     "}" +
                     $"views.length == 1 && views[0].options.length > {number}" +
+                "}"
+            );
+
+            return (bool)result.Result;
+        }
+
+        private async Task<bool> SelectByValue(string selectorClassName, string value)
+        {
+            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
+                "{" +
+                    $"let found = false;" +
+                    $"let views = document.getElementsByClassName('{selectorClassName}');" +
+                    $"if(views.length == 1)" +
+                    "{" +
+                        "for(let i = 0; i < views[0].options.length; ++i)" +
+                        "{" +
+                            $"if(views[0].options[i].text == '{value}')" +
+                            "{" +
+                                "views[0].selectedIndex = i;" +
+                                "let e = document.createEvent('HTMLEvents');" +
+                                "e.initEvent('change', true, true);" +
+                                "views[0].dispatchEvent(e);" +
+                                "found = true;" +
+                                "break;" +
+                            "}" +
+                        "}" +
+                    "}" +
+                    "found == true" +
                 "}"
             );
 
