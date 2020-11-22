@@ -198,8 +198,8 @@ namespace PassportMeetReservator.Controls
         public ReserverWebView()
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
-            Scale(new SizeF(0.5f, 0.5f));
             Load("https://google.com");
+            //Scale(new SizeF(0.5f, 0.5f));
         }
 
         public void Free()
@@ -343,7 +343,8 @@ namespace PassportMeetReservator.Controls
                 Flags = UrlRequestFlags.DisableCache
             };
 
-            this.GetMainFrame().LoadRequest(request);
+            try { this.GetMainFrame().LoadRequest(request); }
+            catch { }
         }
 
         private async Task<bool> Iteration(DateTime date)

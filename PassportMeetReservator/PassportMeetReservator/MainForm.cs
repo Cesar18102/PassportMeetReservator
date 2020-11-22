@@ -21,15 +21,17 @@ namespace PassportMeetReservator
 {
     public partial class MainForm : Form
     {
-        private const int BROWSERS_COUNT = 5;
+        private const int RESERVERS_SPACE = 5;
         private const string URL_TO_SCREEN_FILENAME_TRASH_PREFIX = "https://rejestracjapoznan.poznan.uw.gov.pl/Info/";
+
+        #region FILE PATHS
 
         private static string ORDERS_FILE_PATH = Path.Combine(
             Environment.CurrentDirectory, "Data", "orders.json"
         );
 
         private static string OUTPUT_FILE_PATH = Path.Combine(
-            Environment.CurrentDirectory, "Data", "reserved.txt"
+            Environment.CurrentDirectory, "Data", "reserved.json"
         );
 
         private static string SCHEDULE_FILE_PATH = Path.Combine(
@@ -48,6 +50,16 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "Screens"
         );
 
+        private static string COMMON_SETTINGS_FILE_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "common_settings.json"
+        );
+
+        private static string BROWSER_SETTINGS_FILE_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "browser_settings.json"
+        );
+
+        #endregion
+
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {
             new PoznanPlatformInfo(),
@@ -56,33 +68,14 @@ namespace PassportMeetReservator
 
         private Dictionary<string, Dictionary<string, DateChecker[]>> DateCheckers { get; set; }
 
-        private ReserverWebView[] Browsers { get; set; }
-        private ReserverInfoView[] Infos { get; set; }
-        private Panel[] BrowserWrappers { get; set; }
-
-        private Button[] PausedChangeButtons { get; set; }
-        private Button[] ResetButtons { get; set; }
-        private Button[] DoneButtons { get; set; }
-
-        private CheckBox[] AutoCheckers { get; set; }
-
-        private ComboBox[] PlatformSelectors { get; set; }
-        private ComboBox[] CitySelectors { get; set; }
-        private ComboBox[] OperationSelectors { get; set; }
-
-        private NumericUpDown[] BrowserNumbers { get; set; }
-
-        private DateTimePicker[] ReserveDatesMin { get; set; }
-        private DateTimePicker[] ReserveDatesMax { get; set; }
-
-        private DateTimePicker[] ReserveTimesMin { get; set; }
-        private DateTimePicker[] ReserveTimesMax { get; set; }
+        private List<ReserverView> Reservers = new List<ReserverView>();
 
         private List<ReservationOrder> Orders { get; set; }
         private List<ReservedInfo> Reserved { get; set; }
         private BootSchedule Schedule { get; set; }
         private DelayInfo DelayInfo { get; set; }
         private Profile Profile { get; set; }
+        private List<BrowserSettings> SavedBrowserSettings { get; set; }
 
         private Size NonZoomedSize { get; set; }
         private Point NonZoomedLocation { get; set; }
@@ -100,7 +93,16 @@ namespace PassportMeetReservator
 
             DelayInfo = LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
 
+            DateCheckers = DateChecker.CreateFromPlatformInfos(
+                Platforms, DelayInfo,
+                Checker_OnRequestError,
+                Checker_OnRequestOk
+            );
+
             InitBrowsers();
+
+            PlatformSelector.Items.AddRange(Platforms);
+            PlatformSelector.SelectedIndex = 0;
 
             Orders = LoadData<List<ReservationOrder>>(ORDERS_FILE_PATH);
             Reserved = LoadData<List<ReservedInfo>>(OUTPUT_FILE_PATH);
@@ -109,13 +111,52 @@ namespace PassportMeetReservator
             Profile = LoadData<Profile>(PROFILE_FILE_PATH);
             LogChatId.Text = Profile?.TelegramChatId;
 
-            DateCheckers = DateChecker.CreateFromPlatformInfos(
-                Platforms, DelayInfo,
-                Checker_OnRequestError, 
-                Checker_OnRequestOk
-            );
+            CommonSettings commonSettings = LoadData<CommonSettings>(COMMON_SETTINGS_FILE_PATH);
+            ApplyCommonSettings(commonSettings);
+
+            SavedBrowserSettings = LoadData<List<BrowserSettings>>(BROWSER_SETTINGS_FILE_PATH);
+            foreach (BrowserSettings settings in SavedBrowserSettings)
+            {
+                if (settings.BrowserNumber < 0 || settings.BrowserNumber >= Reservers.Count)
+                    continue;
+
+                Reservers[settings.BrowserNumber].ApplySettings(settings);
+            }
 
             TryLogIn();
+        }
+
+        private void ApplyCommonSettings(CommonSettings settings)
+        {
+            PlatformSelector.SelectedIndex = PlatformSelector.Items.Cast<PlatformApiInfo>().ToList().FindIndex(
+                platform => platform.Name == settings.Platform
+            );
+
+            CitySelector.SelectedIndex = CitySelector.Items.Cast<CityPlatformInfo>().ToList().FindIndex(
+                city => city.Name == settings.City
+            );
+
+            OperationSelector.SelectedIndex = OperationSelector.Items.Cast<OperationInfo>().ToList().FindIndex(
+                operation => operation.Position == settings.Operation
+            );
+
+            if (settings.ReservationDateStart > DateTime.MinValue && settings.ReservationDateStart < DateTime.MaxValue)
+                ReserveDateMinPicker.Value = settings.ReservationDateStart;
+
+            if (settings.ReservationDateEnd > DateTime.MinValue && settings.ReservationDateEnd < DateTime.MaxValue)
+                ReserveDateMaxPicker.Value = settings.ReservationDateEnd;
+        }
+
+        private CommonSettings ExportCommonSettings()
+        {
+            return new CommonSettings()
+            {
+                Platform = (PlatformSelector.SelectedItem as PlatformApiInfo)?.Name,
+                City = (CitySelector.SelectedItem as CityPlatformInfo)?.Name,
+                Operation = (OperationSelector.SelectedItem as OperationInfo)?.Position,
+                ReservationDateStart = ReserveDateMinPicker.Value,
+                ReservationDateEnd = ReserveDateMaxPicker.Value,
+            };
         }
 
         private async void TryLogIn()
@@ -137,123 +178,76 @@ namespace PassportMeetReservator
 
         private void InitBrowsers()
         {
-            Browsers = new ReserverWebView[BROWSERS_COUNT]
+            int count = (int)ReserversCount.Value;
+
+            for (int i = 0; i < count; ++i)
+                CreateReserver(i, false);
+        }
+
+        private void CreateReserver(int number, bool runtime)
+        {
+            ReserverView reserver = new ReserverView();
+
+            reserver.BrowserNumber = number;
+            reserver.Browser.DelayInfo = DelayInfo;
+            reserver.Platforms = Platforms;
+            reserver.DateCheckers = DateCheckers;
+
+            reserver.Browser.OnPausedChanged += Browser_OnPausedChanged;
+            reserver.Browser.OnReservedManually += Browser_OnReservedManually;
+            reserver.Browser.OnReserved += Browser_OnReserved;
+            reserver.Browser.OnDateTimeSelected += MainForm_OnDateTimeSelected;
+            reserver.Browser.OnManualReactionWaiting += MainForm_OnManualReactionWaiting;
+            reserver.Browser.OnOrderChanged += Browser_OnOrderChanged;
+            reserver.Browser.OnIterationSkipped += Browser_OnIterationSkipped;
+            reserver.Browser.OnIterationFailure += Browser_OnIterationFailure;
+
+            reserver.AutoChanged += Browser_AutoChanged;
+
+            int locationX = Reservers.Count == 0 ? ReserversPanel.Location.X :
+                Reservers.Max(view => view.Location.X + view.Width);
+
+            reserver.Location = new Point(
+                locationX + RESERVERS_SPACE,
+                RESERVERS_SPACE
+            );
+
+            if(runtime)
             {
-                Browser1, Browser2, Browser3,
-                Browser4, Browser5
-            };
+                BrowserSettings settings = SavedBrowserSettings.FirstOrDefault(setting => setting.BrowserNumber == number);
 
-            Infos = new ReserverInfoView[BROWSERS_COUNT]
-            {
-                BrowserInfo1, BrowserInfo2, BrowserInfo3,
-                BrowserInfo4, BrowserInfo5
-            };
-
-            BrowserWrappers = new Panel[BROWSERS_COUNT]
-            {
-                BrowserPanel1, BrowserPanel2, BrowserPanel3,
-                BrowserPanel4, BrowserPanel5
-            };
-
-            PausedChangeButtons = new Button[BROWSERS_COUNT]
-            {
-                PauseChangeButton1, PauseChangeButton2, PauseChangeButton3,
-                PauseChangeButton4, PauseChangeButton5
-            };
-
-            ResetButtons = new Button[BROWSERS_COUNT]
-            {
-                ResetButton1, ResetButton2, ResetButton3,
-                ResetButton4, ResetButton5
-            };
-
-            DoneButtons = new Button[BROWSERS_COUNT]
-            {
-                DoneButton1, DoneButton2, DoneButton3,
-                DoneButton4, DoneButton5
-            };
-
-            AutoCheckers = new CheckBox[BROWSERS_COUNT]
-            {
-                Auto1, Auto2, Auto3, Auto4, Auto5
-            };
-
-            PlatformSelectors = new ComboBox[BROWSERS_COUNT]
-            {
-                PlatformSelector1, PlatformSelector2, PlatformSelector3,
-                PlatformSelector4, PlatformSelector5
-            };
-
-            CitySelectors = new ComboBox[BROWSERS_COUNT]
-            {
-                CityChecker1, CityChecker2, CityChecker3,
-                CityChecker4, CityChecker5
-            };
-
-            OperationSelectors = new ComboBox[BROWSERS_COUNT]
-            {
-                OrderTypeSelector1, OrderTypeSelector2, OrderTypeSelector3,
-                OrderTypeSelector4, OrderTypeSelector5
-            };
-
-            BrowserNumbers = new NumericUpDown[BROWSERS_COUNT]
-            {
-                BrowserNumber1, BrowserNumber2, BrowserNumber3,
-                BrowserNumber4, BrowserNumber5
-            };
-
-            ReserveDatesMin = new DateTimePicker[BROWSERS_COUNT]
-            {
-                ReserveDateMin1, ReserveDateMin2, ReserveDateMin3,
-                ReserveDateMin4, ReserveDateMin5
-            };
-
-            ReserveDatesMax = new DateTimePicker[BROWSERS_COUNT]
-            {
-                ReserveDateMax1, ReserveDateMax2, ReserveDateMax3,
-                ReserveDateMax4, ReserveDateMax5
-            };
-
-            ReserveTimesMin = new DateTimePicker[BROWSERS_COUNT]
-            {
-                ReserveTimeMin1, ReserveTimeMin2, ReserveTimeMin3,
-                ReserveTimeMin4, ReserveTimeMin5
-            };
-
-            ReserveTimesMax = new DateTimePicker[BROWSERS_COUNT]
-            {
-                ReserveTimeMax1, ReserveTimeMax2, ReserveTimeMax3,
-                ReserveTimeMax4, ReserveTimeMax5
-            };
-
-            for (int i = 0; i < BROWSERS_COUNT; ++i)
-            {
-                BrowserNumbers[i].Value = i;
-                Browsers[i].RealBrowserNumber = i;
-                Browsers[i].OnUrlChanged += Browser_OnUrlChanged;
-                Browsers[i].OnPausedChanged += Browser_OnPausedChanged;
-                Browsers[i].OnReservedManually += Browser_OnReservedManually;
-                Browsers[i].OnReserved += Browser_OnReserved;
-                Browsers[i].OnDateTimeSelected += MainForm_OnDateTimeSelected;
-                Browsers[i].OnManualReactionWaiting += MainForm_OnManualReactionWaiting;
-                Browsers[i].OnOrderChanged += Browser_OnOrderChanged;
-                Browsers[i].OnIterationSkipped += Browser_OnIterationSkipped;
-                Browsers[i].OnIterationFailure += Browser_OnIterationFailure;
-                Browsers[i].DelayInfo = DelayInfo;
-
-                Browsers[i].Size = BrowserWrappers[i].Size;
-
-                BrowserWrappers[i].Controls.Add(Browsers[i]);
-
-                PausedChangeButtons[i].Click += BrowserContinue_Click;
-                ResetButtons[i].Click += ResetButton_Click;
-                DoneButtons[i].Click += DoneButton_Click;
-
-                PlatformSelectors[i].Items.AddRange(Platforms);
+                if (settings != null)
+                    reserver.ApplySettings(settings);
+                else
+                    reserver.ApplySettings(ExportCommonSettings());
             }
 
-            PlatformSelector.Items.AddRange(Platforms);
-            PlatformSelector.SelectedIndex = 0;
+            Reservers.Add(reserver);
+            ReserversPanel.Controls.Add(reserver);
+        }
+
+        private void ReserversCount_ValueChanged(object sender, EventArgs e)
+        {
+            int oldCount = Reservers.Count;
+            int newCount = (int)ReserversCount.Value;
+
+            int diff = Math.Abs(newCount - oldCount);
+
+            if (newCount > oldCount)
+            {
+                for (int i = 0; i < diff; ++i)
+                    CreateReserver(oldCount + i, true);
+            }
+            else if (newCount < oldCount)
+            {
+                for (int i = 0; i < diff; ++i)
+                {
+                    ReserverView reserver = Reservers.Last();
+
+                    Reservers.RemoveAt(Reservers.Count - 1);
+                    ReserversPanel.Controls.Remove(reserver);
+                }
+            }
         }
 
         private string FixChatId(string chatId)
@@ -287,18 +281,6 @@ namespace PassportMeetReservator
         { 
             DateTime now = DateTime.Now;
             OrdersInfo.AppendText($"{now.ToString()}:{now.Millisecond}: {text}\n");
-        }
-
-        private int FindBrowserNumberByInfoControl(Control[] controls, Control control)
-        {
-            if (control == null)
-                return -1;
-
-            for (int i = 0; i < controls.Length; ++i)
-                if (controls[i].Equals(control))
-                    return i;
-
-            return -1;
         }
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
@@ -419,171 +401,25 @@ namespace PassportMeetReservator
 
         private void PutOrderToBrowser(ReservationOrder order)
         {
-            ReserverWebView found = Browsers.FirstOrDefault(
-                browser => browser.Auto && browser.Order == null && !browser.Selected
+            ReserverView found = Reservers.FirstOrDefault(
+                reserver => reserver.Browser.Auto && reserver.Browser.Order == null && !reserver.Browser.Selected
             );
 
             if (found != null)
             {
-                found.Order = order;
-                found.Checker = FindDateCheckerByOrder(order);
+                found.Browser.Order = order;
+                found.Browser.Checker = FindDateCheckerByOrder(order);
             }
-        }
-
-        private void HandlePausedChangeButtonClick(bool paused, Button sender)
-        {
-            FindBrowserAndExecute(
-                PausedChangeButtons, sender,
-                browser => browser.Paused = paused
-            );
-        }
-
-        private void DoneButton_Click(object sender, EventArgs e)
-        {
-            FindBrowserAndExecute(
-                DoneButtons, sender as Button,
-                browser => browser.Done()
-            );
-        }
-
-        private void ResetButton_Click(object sender, EventArgs e)
-        {
-            FindBrowserAndExecute(
-                ResetButtons, sender as Button,
-                browser => browser.Reset()
-            );
-        }
-
-        private void OrderTypeSelector_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ComboBox operationSelector = sender as ComboBox;
-            int browser = FindBrowserNumberByInfoControl(OperationSelectors, operationSelector);
-
-            if (browser == -1)
-                return;
-
-            string selectedPlatform = (PlatformSelectors[browser].SelectedItem as PlatformApiInfo).Name;
-            string selectedCity = (CitySelectors[browser].SelectedItem as CityPlatformInfo).Name;
-            OperationInfo selectedOperation = operationSelector.SelectedItem as OperationInfo;
-
-            Browsers[browser].InitChecker = DateCheckers[selectedPlatform][selectedCity][selectedOperation.Position];
-        }
-
-        private void CityChecker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ComboBox cityChecker = sender as ComboBox;
-            int browser = FindBrowserNumberByInfoControl(CitySelectors, cityChecker);
-
-            if (browser == -1)
-                return;
-
-            CityPlatformInfo selectedPlatform = cityChecker.SelectedItem as CityPlatformInfo;
-            Browsers[browser].InitChecker = null;
-
-            OperationSelectors[browser].Items.Clear();
-            OperationSelectors[browser].Items.AddRange(selectedPlatform.Operations);
-        }
-
-        private void PlatformSelector_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ComboBox platformChecker = sender as ComboBox;
-            int browser = FindBrowserNumberByInfoControl(PlatformSelectors, platformChecker);
-
-            if (browser == -1)
-                return;
-
-            PlatformApiInfo selectedPlatform = platformChecker.SelectedItem as PlatformApiInfo;
-            Browsers[browser].InitChecker = null;
-
-            OperationSelectors[browser].Items.Clear();
-
-            CitySelectors[browser].Items.Clear();
-            CitySelectors[browser].Items.AddRange(selectedPlatform.CityPlatforms);
-        }
-
-        private void ReserveDateMin_ValueChanged(object sender, EventArgs e)
-        {
-            FindBrowserAndExecute(
-                ReserveDatesMin, sender as DateTimePicker,
-                browser => browser.ReserveDateMin = (sender as DateTimePicker).Value.Date
-            );
-        }
-
-        private void ReserveDateMax_ValueChanged(object sender, EventArgs e)
-        {
-            FindBrowserAndExecute(
-                ReserveDatesMax, sender as DateTimePicker,
-                browser => browser.ReserveDateMax = (sender as DateTimePicker).Value.Date
-            );
-        }
-
-        private void ReserveTimeMin_ValueChanged(object sender, EventArgs e)
-        {
-            FindBrowserAndExecute(
-                ReserveTimesMin, sender as DateTimePicker,
-                browser => browser.ReserveTimePeriod.TimeStart = (sender as DateTimePicker).Value.TimeOfDay
-            );
-        }
-
-        private void ReserveTimeMax_ValueChanged(object sender, EventArgs e)
-        {
-            FindBrowserAndExecute(
-                ReserveTimesMax, sender as DateTimePicker,
-                browser => browser.ReserveTimePeriod.TimeEnd = (sender as DateTimePicker).Value.TimeOfDay
-            );
-        }
-
-        private void FindBrowserAndExecute<T>(T[] controls, T sender, Action<ReserverWebView> action) where T : Control
-        {
-            int browser = FindBrowserNumberByInfoControl(controls, sender);
-
-            if (browser == -1)
-                return;
-
-            action(Browsers[browser]);
-        }
-
-        private void BrowserContinue_Click(object sender, EventArgs e)
-        {
-            HandlePausedChangeButtonClick(false, sender as Button);
-        }
-
-        private void BrowserPause_Click(object sender, EventArgs e)
-        {
-            HandlePausedChangeButtonClick(true, sender as Button);
         }
 
         private void Browser_OnPausedChanged(object sender, BrowserPausedChangedEventArgs e)
         {
-            if(e.Paused)
-            {
-                HandleBusyChange();
+            HandleBusyChange();
 
-                PausedChangeButtons[e.BrowserNumber].Text = "Continue";
-                PausedChangeButtons[e.BrowserNumber].Click -= BrowserPause_Click;
-                PausedChangeButtons[e.BrowserNumber].Click += BrowserContinue_Click;
-
+            if (e.Paused)
                 Log($"Browser {e.BrowserNumber + 1} paused");
-            }
             else
-            {
-                HandleBusyChange();
-
-                Browsers[e.BrowserNumber].ReserveDateMin = ReserveDatesMin[e.BrowserNumber].Value.Date;
-                Browsers[e.BrowserNumber].ReserveDateMax = ReserveDatesMax[e.BrowserNumber].Value.Date;
-
-                PausedChangeButtons[e.BrowserNumber].Text = "Pause";
-                PausedChangeButtons[e.BrowserNumber].Click -= BrowserContinue_Click;
-                PausedChangeButtons[e.BrowserNumber].Click += BrowserPause_Click;
-
                 Log($"Browser {e.BrowserNumber + 1} resumed");
-            }
-        }
-
-        private void Browser_OnUrlChanged(object sender, UrlChangedEventArgs e)
-        {
-            ReserverWebView browser = sender as ReserverWebView;
-            Infos[browser.RealBrowserNumber].UrlInput.InputText = e.Url;
         }
 
         private T LoadData<T>(string filename) where T : new()
@@ -610,34 +446,18 @@ namespace PassportMeetReservator
 
         private void HandleBusyChange()
         {
-            bool changesAllowed = Browsers.All(browser => !browser.IsBusy || browser.Paused);
+            bool changesAllowed = Reservers.All(reserver => !reserver.Browser.IsBusy || reserver.Browser.Paused);
 
             OrderListButton.Enabled = changesAllowed;
             AddOrderButton.Enabled = changesAllowed;
         }
 
-        private void StartButton_Click(object sender, EventArgs e)
+        private void Browser_AutoChanged(object sender, EventArgs e)
         {
-            foreach (ReserverWebView browser in Browsers)
-                browser.Paused = false;
+            ReserverView reserver = sender as ReserverView;
 
-            HandleBusyChange();
-
-            Log("All browsers started");
-        }
-
-        private void Auto_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBox checker = sender as CheckBox;
-            int browser = FindBrowserNumberByInfoControl(AutoCheckers, checker);
-
-            if (browser == -1)
-                return;
-
-            Browsers[browser].Auto = checker.Checked;
-
-            if(checker.Checked)
-                PutOrderToBrowser(Browsers[browser]);
+            if(reserver.Browser.Auto)
+                PutOrderToBrowser(reserver.Browser);
         }
 
         private void PauseButton_Click(object sender, EventArgs e)
@@ -660,18 +480,28 @@ namespace PassportMeetReservator
             PauseButton.Click += PauseButton_Click;
         }
 
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            foreach (ReserverView reserver in Reservers)
+                reserver.Browser.Paused = false;
+
+            HandleBusyChange();
+
+            Log("All browsers started");
+        }
+
         private void SetPausedToAllBrowsers(bool paused)
         {
-            foreach (ReserverWebView browser in Browsers)
-                browser.Paused = paused;
+            foreach (ReserverView reserver in Reservers)
+                reserver.Browser.Paused = paused;
 
             HandleBusyChange();
         }
 
         private void ResetAllButton_Click(object sender, EventArgs e)
         {
-            foreach (ReserverWebView browser in Browsers)
-                browser.Reset();
+            foreach (ReserverView reserver in Reservers)
+                reserver.Browser.Reset();
         }
 
         private void ReservedListButton_Click(object sender, EventArgs e)
@@ -715,10 +545,10 @@ namespace PassportMeetReservator
 
         private void StartScheduledButton_Click(object sender, EventArgs e)
         {
-            foreach (ReserverWebView browser in Browsers)
+            foreach (ReserverView reserver in Reservers)
             {
-                browser.Schedule = Schedule;
-                browser.Paused = false;
+                reserver.Browser.Schedule = Schedule;
+                reserver.Browser.Paused = false;
             }
 
             ApplyToDateCheckers(checker => checker.Schedule = Schedule);
@@ -728,8 +558,8 @@ namespace PassportMeetReservator
 
         private void UnbindScheduleButton_Click(object sender, EventArgs e)
         {
-            foreach (ReserverWebView browser in Browsers)
-                browser.Schedule = null;
+            foreach (ReserverView reserver in Reservers)
+                reserver.Browser.Schedule = null;
 
             ApplyToDateCheckers(checker => checker.Schedule = null);
 
@@ -750,20 +580,27 @@ namespace PassportMeetReservator
             SaveData(OUTPUT_FILE_PATH, Reserved);
             SaveData(SCHEDULE_FILE_PATH, Schedule);
 
+            SaveData(COMMON_SETTINGS_FILE_PATH, ExportCommonSettings());
+
+            BrowserSettings[] browserSettings = Reservers.Select(
+                reserver => reserver.ExportSettings()
+            ).ToArray();
+            SaveData(BROWSER_SETTINGS_FILE_PATH, browserSettings);
+
             Log("ALL Saved");
         }
 
         private void BotNumber_ValueChanged(object sender, EventArgs e)
         {
-            for (int i = 0; i < Browsers.Length; ++i)
-                Browsers[i].BotNumber = (int)BotNumber.Value;
+            for (int i = 0; i < Reservers.Count; ++i)
+                Reservers[i].Browser.BotNumber = (int)BotNumber.Value;
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
                 ResetZoom();
-            else if (e.Control && e.KeyCode >= Keys.D1 && e.KeyCode < Keys.D1 + BROWSERS_COUNT)
+            else if (e.Control && e.KeyCode >= Keys.D1 && e.KeyCode < Keys.D1 + Reservers.Count)
             {
                 ResetZoom();
                 ZoomBrowser(e.KeyCode - Keys.D1);
@@ -772,8 +609,8 @@ namespace PassportMeetReservator
 
         private void ZoomBrowser(int browser)
         {
-            ZoomedBrowser = Browsers[browser];
-            ZoomedBrowserWrapper = BrowserWrappers[browser];
+            ZoomedBrowser = Reservers[browser].Browser;
+            ZoomedBrowserWrapper = Reservers[browser].BrowserWrapper;
 
             NonZoomedSize = ZoomedBrowserWrapper.Size;
             NonZoomedLocation = ZoomedBrowserWrapper.Location;
@@ -804,42 +641,42 @@ namespace PassportMeetReservator
             ResetZoom();
         }
 
-        private void CommonOrderTypeSelector_SelectedIndexChanged(object sender, EventArgs e)
+        private void CommonOperationSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (ComboBox orderTypeSelector in OperationSelectors)
-                orderTypeSelector.SelectedIndex = OrderTypeSelector.SelectedIndex;
+            OperationInfo operation = OperationSelector.SelectedItem as OperationInfo;
+            ApplyForAll(Reservers, reserver => reserver.SelectOperation(operation));
         }
 
         private void CommonCityChecker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (ComboBox citySelector in CitySelectors)
-                citySelector.SelectedIndex = CityChecker.SelectedIndex;
+            CityPlatformInfo city = CitySelector.SelectedItem as CityPlatformInfo;
+            ApplyForAll(Reservers, reserver => reserver.SelectCity(city));
 
-            OrderTypeSelector.Items.Clear();
-            OrderTypeSelector.Items.AddRange((CityChecker.SelectedItem as CityPlatformInfo).Operations);
+            OperationSelector.Items.Clear();
+            OperationSelector.Items.AddRange((CitySelector.SelectedItem as CityPlatformInfo).Operations);
         }
 
         private void CommonPlatformSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (ComboBox platformSelector in PlatformSelectors)
-                platformSelector.SelectedIndex = PlatformSelector.SelectedIndex;
+            PlatformApiInfo platform = PlatformSelector.SelectedItem as PlatformApiInfo;
+            ApplyForAll(Reservers, reserver => reserver.SelectPlatform(platform));
 
-            OrderTypeSelector.Items.Clear();
+            OperationSelector.Items.Clear();
 
-            CityChecker.Items.Clear();
-            CityChecker.Items.AddRange((PlatformSelector.SelectedItem as PlatformApiInfo).CityPlatforms);
+            CitySelector.Items.Clear();
+            CitySelector.Items.AddRange((PlatformSelector.SelectedItem as PlatformApiInfo).CityPlatforms);
         }
 
-        private void ReserveDateMinPicker_ValueChanged(object sender, EventArgs e)
-        {
-            foreach (DateTimePicker reserveDatePicker in ReserveDatesMin)
-                reserveDatePicker.Value = ReserveDateMinPicker.Value;
-        }
+        private void ReserveDateMinPicker_ValueChanged(object sender, EventArgs e) =>
+            ApplyForAll(Reservers, reserver => reserver.SelectMinReserveDate(ReserveDateMinPicker.Value));
 
-        private void ReserveDateMaxPicker_ValueChanged(object sender, EventArgs e)
+        private void ReserveDateMaxPicker_ValueChanged(object sender, EventArgs e) =>
+            ApplyForAll(Reservers, reserver => reserver.SelectMaxReserveDate(ReserveDateMaxPicker.Value));
+
+        private void ApplyForAll<T>(IEnumerable<T> collection, Action<T> action)
         {
-            foreach (DateTimePicker reserveDatePicker in ReserveDatesMax)
-                reserveDatePicker.Value = ReserveDateMaxPicker.Value;
+            foreach (T item in collection)
+                action(item);
         }
 
         private void LogChatId_TextChanged(object sender, EventArgs e)

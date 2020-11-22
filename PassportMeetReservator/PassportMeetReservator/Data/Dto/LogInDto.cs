@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PassportMeetReservator.Data
+namespace PassportMeetReservator.Data.Dto
 {
     public class LogInDto
     {

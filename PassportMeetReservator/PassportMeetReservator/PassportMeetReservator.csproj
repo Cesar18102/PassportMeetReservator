@@ -102,18 +102,26 @@
     <Compile Include="Controls\ReserverInfoView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ReserverView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ReserverView.Designer.cs">
+      <DependentUpon>ReserverView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ReserverWebView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\WebViewExtensions.cs" />
     <Compile Include="Data\BootPeriod.cs" />
+    <Compile Include="Data\BrowserSettings.cs" />
+    <Compile Include="Data\CommonSettings.cs" />
     <Compile Include="Data\CustomEventArgs\DateCheckerErrorEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\DateCheckerOkEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\DateUpdateEventArgs.cs" />
     <Compile Include="Data\DateChecker.cs" />
     <Compile Include="Data\Dto\DateCheckDto.cs" />
     <Compile Include="Data\Dto\TimeCheckDto.cs" />
-    <Compile Include="Data\LogInDto.cs" />
+    <Compile Include="Data\Dto\LogInDto.cs" />
     <Compile Include="Data\LogInForm.cs" />
     <Compile Include="Data\Platforms\PlatformApiInfo.cs" />
     <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
@@ -197,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ReservedListItemView.resx">
       <DependentUpon>ReservedListItemView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ReserverView.resx">
+      <DependentUpon>ReserverView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddOrderForm.resx">
       <DependentUpon>AddOrderForm.cs</DependentUpon>

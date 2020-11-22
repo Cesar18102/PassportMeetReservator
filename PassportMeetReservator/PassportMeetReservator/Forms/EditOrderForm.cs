@@ -44,8 +44,9 @@ namespace PassportMeetReservator.Forms
                 city => city.Name == Order.City
             );
 
-            if (Order.Operation != null)
-                OperationSelector.SelectedIndex = Order.Operation.Position;
+            OperationSelector.SelectedIndex = OperationSelector.Items.Cast<OperationInfo>().ToList().FindIndex(
+                operation => operation.Position == Order.Operation.Position
+            );
         }
 
         private void SaveButton_Click(object sender, EventArgs e)

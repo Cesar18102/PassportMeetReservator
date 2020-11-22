@@ -6,6 +6,7 @@ using RestSharp;
 using Newtonsoft.Json;
 
 using PassportMeetReservator.Data;
+using PassportMeetReservator.Data.Dto;
 
 namespace PassportMeetReservator.Services
 {
