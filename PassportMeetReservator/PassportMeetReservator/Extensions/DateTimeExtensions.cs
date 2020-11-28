@@ -19,5 +19,10 @@ namespace PassportMeetReservator.Extensions
 
             return $"{hour}:{minute}";
         }
+
+        public static string GetFormattedDateForFileName(this DateTime date)
+        {
+            return date.ToString().Replace(":", "_");
+        }
     }
 }

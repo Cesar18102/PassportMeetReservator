@@ -60,6 +60,8 @@ namespace PassportMeetReservator
 
         #endregion
 
+        private static Logger Logger = new Logger();
+
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {
             new PoznanPlatformInfo(),
@@ -88,6 +90,7 @@ namespace PassportMeetReservator
         public MainForm()
         {
             InitializeComponent();
+            Logger.CreateCommonLogFile();
 
             KeyPreview = true;
 
@@ -123,7 +126,7 @@ namespace PassportMeetReservator
                 Reservers[settings.BrowserNumber].ApplySettings(settings);
             }
 
-            TryLogIn();
+            //TryLogIn();
         }
 
         private void ApplyCommonSettings(CommonSettings settings)
@@ -201,6 +204,7 @@ namespace PassportMeetReservator
             reserver.Browser.OnOrderChanged += Browser_OnOrderChanged;
             reserver.Browser.OnIterationSkipped += Browser_OnIterationSkipped;
             reserver.Browser.OnIterationFailure += Browser_OnIterationFailure;
+            reserver.Browser.OnIterationLogRequired += Browser_OnIterationLogRequired;
 
             reserver.AutoChanged += Browser_AutoChanged;
 
@@ -221,6 +225,8 @@ namespace PassportMeetReservator
                 else
                     reserver.ApplySettings(ExportCommonSettings());
             }
+
+            Logger.CreateLogFilesForBrowser(number);
 
             Reservers.Add(reserver);
             ReserversPanel.Controls.Add(reserver);
@@ -258,29 +264,42 @@ namespace PassportMeetReservator
         private void Checker_OnRequestError(object sender, DateCheckerErrorEventArgs e)
         {
             DateChecker checker = sender as DateChecker;
-            Log($"Date check error at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Code: {e.ErrorCode}; Check your VPN and internet connection!");
+            Log($"Date check error at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Code: {e.ErrorCode}; Check your VPN and internet connection!", null);
         }
 
         private void Checker_OnRequestOk(object sender, DateCheckerOkEventArgs e)
         {
             DateChecker checker = sender as DateChecker;
-            Log($"Date check ok at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Content: {e.Content}");
+            Log($"Date check ok at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Content: {e.Content}", null);
         }
 
         private void Browser_OnIterationFailure(object sender, LogEventArgs e)
         {
-            Log($"Iteration failure at browser {e.BrowserNumber + 1}: {e.LogText}");
+            Log($"Iteration failure: {e.LogText}", e.BrowserNumber);
         }
 
         private void Browser_OnIterationSkipped(object sender, LogEventArgs e)
         {
-            Log($"Iteration skipped at browser {e.BrowserNumber + 1}: {e.LogText}");
+            Log($"Iteration skipped: {e.LogText}", e.BrowserNumber);
         }
 
-        private void Log(string text)
-        { 
-            DateTime now = DateTime.Now;
-            OrdersInfo.AppendText($"{now.ToString()}:{now.Millisecond}: {text}\n");
+        private void Browser_OnIterationLogRequired(object sender, LogEventArgs e)
+        {
+            LogIteration($"Iteration log: {e.LogText}", e.BrowserNumber);
+        }
+
+        private void Log(string text, int? browser)
+        {
+            OrdersInfo.AppendText(
+                Logger.GetLogWithMeta(text, browser)
+            );
+
+            Logger.LogMain(text, browser);
+        }
+
+        private void LogIteration(string text, int browser)
+        {
+            Logger.LogIteration(text, browser);
         }
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
@@ -292,7 +311,7 @@ namespace PassportMeetReservator
                 FixChatId(LogChatId.Text)
             );
 
-            Log($"Waiting for manual reaction at browser #{browser.RealBrowserNumber + 1}");
+            Log($"Waiting for manual reaction", browser.RealBrowserNumber);
         }
 
         private async void MainForm_OnDateTimeSelected(object sender, DateTimeEventArgs e)
@@ -304,11 +323,13 @@ namespace PassportMeetReservator
                 FixChatId(LogChatId.Text)
             );
 
-            Log($"Browser #{browser.RealBrowserNumber + 1} has selected a dateTime ({e.Date.ToString()})");
+            Log($"Date and time selected", browser.RealBrowserNumber);
         }
 
         private async void Browser_OnReserved(object sender, ReservedEventArgs e)
         {
+            ReserverWebView browser = sender as ReserverWebView;
+
             SaveData(ORDERS_FILE_PATH, Orders);
 
             await Notifier.NotifyMessage(
@@ -317,9 +338,9 @@ namespace PassportMeetReservator
             );
 
             Reserved.Add(new ReservedInfo(e.Url));
-            Log($"Link {e.Order?.Surname} {e.Order?.Name}: {e.Url}");
+            Log($"Link {e.Order?.Surname} {e.Order?.Name}: {e.Url}", browser.RealBrowserNumber);
 
-            PutOrderToBrowser(sender as ReserverWebView);
+            PutOrderToBrowser(browser);
             HandleBusyChange();
         }
 
@@ -352,7 +373,7 @@ namespace PassportMeetReservator
             Reserved.Add(new ReservedInfo(e.Url));
             SaveData(OUTPUT_FILE_PATH, Reserved);
 
-            Log($"Link: {e.Url}");
+            Log($"Link: {e.Url}", view.RealBrowserNumber);
             HandleBusyChange();
         }
 
@@ -367,7 +388,7 @@ namespace PassportMeetReservator
                     FixChatId(LogChatId.Text)
                 );
 
-                Log($"Browser #{browser.RealBrowserNumber + 1} has no order assigned, so working in manual mode");
+                Log($"No order assigned, working in manual mode", browser.RealBrowserNumber);
 
                 if (browser.Auto)
                     PutOrderToBrowser(browser);
@@ -379,7 +400,7 @@ namespace PassportMeetReservator
                     FixChatId(LogChatId.Text)
                 );
 
-                Log($"{browser.Order.Surname} {browser.Order.Name} is reserving on browser #{browser.RealBrowserNumber + 1}");
+                Log($"{browser.Order.Surname} {browser.Order.Name} is now reserving", browser.RealBrowserNumber);
             }
         }
 
@@ -415,11 +436,7 @@ namespace PassportMeetReservator
         private void Browser_OnPausedChanged(object sender, BrowserPausedChangedEventArgs e)
         {
             HandleBusyChange();
-
-            if (e.Paused)
-                Log($"Browser {e.BrowserNumber + 1} paused");
-            else
-                Log($"Browser {e.BrowserNumber + 1} resumed");
+            Log(e.Paused ? "PAUSED" : "RESUMED", e.BrowserNumber);
         }
 
         private T LoadData<T>(string filename) where T : new()
@@ -463,7 +480,7 @@ namespace PassportMeetReservator
         private void PauseButton_Click(object sender, EventArgs e)
         {
             SetPausedToAllBrowsers(true);
-            Log("All browsers paused");
+            Log("All browsers paused", null);
 
             PauseButton.Text = "Continue";
             PauseButton.Click -= PauseButton_Click;
@@ -473,7 +490,7 @@ namespace PassportMeetReservator
         private void ContinueButton_Click(object sender, EventArgs e)
         {
             SetPausedToAllBrowsers(false);
-            Log("All browsers continued");
+            Log("All browsers continued", null);
 
             PauseButton.Text = "Pause";
             PauseButton.Click -= ContinueButton_Click;
@@ -487,7 +504,7 @@ namespace PassportMeetReservator
 
             HandleBusyChange();
 
-            Log("All browsers started");
+            Log("All browsers started", null);
         }
 
         private void SetPausedToAllBrowsers(bool paused)
@@ -511,7 +528,7 @@ namespace PassportMeetReservator
 
             SaveData(OUTPUT_FILE_PATH, Reserved);
 
-            Log("Reserved list saved");
+            Log("Reserved list saved", null);
         }
 
         private void AddOrderButton_Click(object sender, EventArgs e)
@@ -540,7 +557,7 @@ namespace PassportMeetReservator
 
             SaveData(SCHEDULE_FILE_PATH, Schedule);
 
-            Log("Schedule saved");
+            Log("Schedule saved", null);
         }
 
         private void StartScheduledButton_Click(object sender, EventArgs e)
@@ -553,7 +570,7 @@ namespace PassportMeetReservator
 
             ApplyToDateCheckers(checker => checker.Schedule = Schedule);
 
-            Log("All browsers started scheduled");
+            Log("All browsers started scheduled", null);
         }
 
         private void UnbindScheduleButton_Click(object sender, EventArgs e)
@@ -563,7 +580,7 @@ namespace PassportMeetReservator
 
             ApplyToDateCheckers(checker => checker.Schedule = null);
 
-            Log("Schedule detached. Manual control");
+            Log("Schedule detached. Manual control", null);
         }
 
         private void DelaySettings_Click(object sender, EventArgs e)
@@ -587,7 +604,7 @@ namespace PassportMeetReservator
             ).ToArray();
             SaveData(BROWSER_SETTINGS_FILE_PATH, browserSettings);
 
-            Log("ALL Saved");
+            Log("ALL Saved", null);
         }
 
         private void BotNumber_ValueChanged(object sender, EventArgs e)

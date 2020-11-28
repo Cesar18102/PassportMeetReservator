@@ -30,6 +30,8 @@ namespace PassportMeetReservator.Controls
         public event EventHandler<LogEventArgs> OnIterationSkipped;
         public event EventHandler<LogEventArgs> OnIterationFailure;
 
+        public event EventHandler<LogEventArgs> OnIterationLogRequired;
+
         private const string RESERVATION_TYPE_BUTTON_CLASS = "operation-button";
 
         private const string NEXT_STEP_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
@@ -60,6 +62,8 @@ namespace PassportMeetReservator.Controls
         private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
 
         private const string URL_CHANGE_SUCCESS_PATH = "Info";
+
+        private const string BASE_ADDRESS_LOAD = "https://google.com";
 
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
@@ -198,7 +202,7 @@ namespace PassportMeetReservator.Controls
         public ReserverWebView()
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
-            Load("https://google.com");
+            Load(BASE_ADDRESS_LOAD);
             //Scale(new SizeF(0.5f, 0.5f));
         }
 
@@ -316,6 +320,12 @@ namespace PassportMeetReservator.Controls
             OnIterationFailure?.Invoke(this, logEventArgs);
         }
 
+        private void RaiseIterationLog(string message)
+        {
+            LogEventArgs logEventArgs = new LogEventArgs(message, RealBrowserNumber);
+            OnIterationLogRequired?.Invoke(this, logEventArgs);
+        }
+
         private async Task WaitForManualReaction()
         {
             OnManualReactionWaiting?.Invoke(this, new EventArgs());
@@ -343,20 +353,30 @@ namespace PassportMeetReservator.Controls
                 Flags = UrlRequestFlags.DisableCache
             };
 
-            try { this.GetMainFrame().LoadRequest(request); }
+            try {
+
+                if (this.CanGoBack)
+                    this.GetMainFrame().LoadRequest(request);
+                else
+                    this.Load(Checker.CityInfo.BaseUrl);
+            }
             catch { }
         }
 
         private async Task<bool> Iteration(DateTime date)
         {
+            RaiseIterationLog($"Iteration started for {date} started");
+
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
             await WaitForSpinner();
-            //await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
             if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
             {
                 RaiseIteraionFailure("Opreration button not found");
                 return false;
             }
+            RaiseIterationLog("Operation button found");
+            //SELECT ORDER TYPE
 
             await WaitForSpinner();
 
@@ -365,13 +385,15 @@ namespace PassportMeetReservator.Controls
                 RaiseIteraionFailure("NEXT button not found");
                 return false;
             }
-            //SELECT ORDER TYPE
+            RaiseIterationLog("NEXT button clicked");
+            //CONFIRM ORDER TYPE
 
             if (!await WaitForView(CALENDAR_CLASS, SITE_FALL_WAIT_ATTEMPTS))
             {
                 RaiseIteraionFailure("Calendar button not found");
                 return false;
             }
+            RaiseIterationLog("Calendar found");
 
             await Task.Delay(DelayInfo.ActionResultDelay, Token);
             await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
@@ -383,7 +405,10 @@ namespace PassportMeetReservator.Controls
 
                 await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
                 await Task.Delay(DelayInfo.ActionResultDelay, Token);
+
+                RaiseIterationLog($"Calendar pushed to month #{currentScanDate.Month + 1}");
             }
+            RaiseIterationLog($"Calendar month found");
             //PUSH CALENDAR FIRST TIME IF NEEDED
 
             DateTime? selectedDate = await ScanTime(date);
@@ -392,13 +417,18 @@ namespace PassportMeetReservator.Controls
                 RaiseIteraionFailure("Available time for selected date not found");
                 return false;
             }
+            RaiseIterationLog($"Matching time selection success");
 
             await WaitForSpinner();
-            await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
+
+            if(await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
+                RaiseIterationLog("NEXT button clicked");
+            else
+                RaiseIterationLog("NEXT button NOT clicked");
             //CONFIRM SELECTED DATE
 
-            /*for(int j = 0; j < 3; ++j) //triple delay
-                await Task.Delay(DelayInfo.ActionResultDelay, Token);*/
+            for (int j = 0; j < 3; ++j) //triple delay
+                await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
             await WaitForSpinner();
             if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
@@ -441,14 +471,22 @@ namespace PassportMeetReservator.Controls
             } //WAIT FOR DAY FOR SEVERAL TIMES - WAIT FOR LOADING
 
             if (!dayFound)
+            {
+                RaiseIterationLog($"Required date NOT FOUND");
                 return null;
+            }
+            RaiseIterationLog($"Required date found");
 
             await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click()");
+            RaiseIterationLog($"Required date selected");
 
             await WaitForSpinner();
+
+            RaiseIterationLog($"Waiting for time selector");
             await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
-            //await Task.Delay(DelayInfo.ActionResultDelay, Token);
-            //await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
+
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
 
             bool timeFound = false;
             for (int j = 0; j < TIME_WAIT_ITERATION_COUNT; ++j)
@@ -705,9 +743,13 @@ namespace PassportMeetReservator.Controls
         {
             while (await CheckSpinnerVisible())
             {
+                RaiseIterationLog($"Waiting for spinner");
+
                 Token.ThrowIfCancellationRequested();
                 await Task.Delay(DelayInfo.DiscreteWaitDelay);
             }
+
+            RaiseIterationLog("Spinner finished");
         }
 
         private async Task<bool> CheckSpinnerVisible()
