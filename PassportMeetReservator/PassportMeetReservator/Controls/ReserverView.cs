@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace PassportMeetReservator.Controls
 {
-    public partial class ReserverView : UserControl
+    public partial class ReserverView : UserControl, IDisposable
     {
         public event EventHandler<EventArgs> AutoChanged;
 
@@ -86,6 +86,14 @@ namespace PassportMeetReservator.Controls
 
         #region Methods
         #region Public
+
+        public new void Dispose()
+        {
+            Browser.Checker = null;
+            Browser.Dispose();
+
+            base.Dispose();
+        }
 
         public async Task<Bitmap> GetCapture()
         {

@@ -254,6 +254,7 @@ namespace PassportMeetReservator
                     reserver.ZoomOut();
                     Reservers.RemoveAt(Reservers.Count - 1);
                     ReserversPanel.Controls.Remove(reserver);
+                    reserver.Dispose();
                 }
             }
         }
