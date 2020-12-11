@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace PassportMeetReservator.Controls
+namespace PassportMeetReservator.Extensions
 {
-    public static class WebViewExtensions
+    public static class FormExtensions
     {
         public static Bitmap Snapshot(this Form form, Control control)
         {

@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Autofac;
@@ -16,6 +15,8 @@ using PassportMeetReservator.Telegram;
 using PassportMeetReservator.Data.Platforms;
 using PassportMeetReservator.Data.CustomEventArgs;
 using PassportMeetReservator.Services;
+using PassportMeetReservator.Extensions;
+using PassportMeetReservator.Strategies.DateCheckerNotifyStrategies;
 
 namespace PassportMeetReservator
 {
@@ -79,13 +80,11 @@ namespace PassportMeetReservator
         private Profile Profile { get; set; }
         private List<BrowserSettings> SavedBrowserSettings { get; set; }
 
-        private Size NonZoomedSize { get; set; }
-        private Point NonZoomedLocation { get; set; }
-
-        private Panel ZoomedBrowserWrapper { get; set; }
-        private ReserverWebView ZoomedBrowser { get; set; }
-
         private TelegramNotifier Notifier { get; set; } = new TelegramNotifier();
+
+        private NotifyAlwaysFlowStrategy NOTIFY_ALWAYS_DATE_CHECKER_FLOW_STRATEGY = new NotifyAlwaysFlowStrategy();
+        private NotifyIfDatesFoundFlowStrategy NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY = new NotifyIfDatesFoundFlowStrategy();
+        private NotifyIfDatesAndTimesFoundFlowStrategy NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY = new NotifyIfDatesAndTimesFoundFlowStrategy();
 
         public MainForm()
         {
@@ -125,6 +124,8 @@ namespace PassportMeetReservator
 
                 Reservers[settings.BrowserNumber].ApplySettings(settings);
             }
+
+            UpdateDateCheckersFlowStrategy();
 
             //TryLogIn();
         }
@@ -191,7 +192,7 @@ namespace PassportMeetReservator
         {
             ReserverView reserver = new ReserverView();
 
-            reserver.BrowserNumber = number;
+            reserver.RealBrowserNumber = number;
             reserver.Browser.DelayInfo = DelayInfo;
             reserver.Platforms = Platforms;
             reserver.DateCheckers = DateCheckers;
@@ -250,6 +251,7 @@ namespace PassportMeetReservator
                 {
                     ReserverView reserver = Reservers.Last();
 
+                    reserver.ZoomOut();
                     Reservers.RemoveAt(Reservers.Count - 1);
                     ReserversPanel.Controls.Remove(reserver);
                 }
@@ -275,7 +277,10 @@ namespace PassportMeetReservator
 
         private void Browser_OnIterationFailure(object sender, LogEventArgs e)
         {
-            Log($"Iteration failure: {e.LogText}", e.BrowserNumber);
+            string failureLog = $"Iteration failure: {e.LogText}";
+
+            Log(failureLog, e.BrowserNumber);
+            LogIteration(failureLog, e.BrowserNumber);
         }
 
         private void Browser_OnIterationSkipped(object sender, LogEventArgs e)
@@ -348,24 +353,11 @@ namespace PassportMeetReservator
         {
             ReserverWebView view = sender as ReserverWebView;
 
-            bool screenSaved = false;
             string path = Path.Combine(SCREENS_FOLDER_PATH, $"{e.Url.Replace(URL_TO_SCREEN_FILENAME_TRASH_PREFIX, "")}.png");
+            Bitmap screen = await Reservers[view.RealBrowserNumber].GetCapture();
+            bool saved = screen != null && screen.TrySave(path);
 
-            ZoomBrowser(view.RealBrowserNumber);
-            view.ResetScroll();
-
-            Task.Delay(1000).GetAwaiter().GetResult();
-
-            try
-            {
-                this.Snapshot(view).Save(path);
-                screenSaved = true;
-            }
-            catch (Exception ex) { }
-
-            ResetZoom();
-
-            if (screenSaved)
+            if (saved)
                 await Notifier.NotifyPhoto(path, $"(FROM {Profile.Login}) {e.Url}", FixChatId(LogChatId.Text));
             else
                 await Notifier.NotifyMessage($"(FROM {Profile.Login}) {e.Url}", FixChatId(LogChatId.Text));
@@ -615,47 +607,14 @@ namespace PassportMeetReservator
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape)
-                ResetZoom();
-            else if (e.Control && e.KeyCode >= Keys.D1 && e.KeyCode < Keys.D1 + Reservers.Count)
-            {
-                ResetZoom();
-                ZoomBrowser(e.KeyCode - Keys.D1);
-            }
+            if (e.Control && e.KeyCode >= Keys.D1 && e.KeyCode < Keys.D1 + Reservers.Count)
+                Reservers[e.KeyCode - Keys.D1].ZoomIn();
         }
 
-        private void ZoomBrowser(int browser)
+        private void UnzoomAllBrowsers_Click(object sender, EventArgs e)
         {
-            ZoomedBrowser = Reservers[browser].Browser;
-            ZoomedBrowserWrapper = Reservers[browser].BrowserWrapper;
-
-            NonZoomedSize = ZoomedBrowserWrapper.Size;
-            NonZoomedLocation = ZoomedBrowserWrapper.Location;
-
-            ZoomedBrowser.Size = new Size(this.Width, this.Height);
-
-            ZoomedBrowserWrapper.Location = new Point(0, 0);
-            ZoomedBrowserWrapper.Size = new Size(this.Width, this.Height);
-
-            ZoomedBrowserWrapper.BringToFront();
-            ForceRollBrowserUp.BringToFront();
-        }
-
-        private void ResetZoom()
-        {
-            if (ZoomedBrowserWrapper != null)
-            {
-                ZoomedBrowserWrapper.Size = NonZoomedSize;
-                ZoomedBrowserWrapper.Location = NonZoomedLocation;
-            }
-
-            if (ZoomedBrowser != null)
-                ZoomedBrowser.Size = NonZoomedSize;
-        }
-
-        private void ForceRollBrowserUp_Click(object sender, EventArgs e)
-        {
-            ResetZoom();
+            foreach (ReserverView reserver in Reservers)
+                reserver.ZoomOut();
         }
 
         private void CommonOperationSelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -700,6 +659,23 @@ namespace PassportMeetReservator
         {
             Profile.TelegramChatId = LogChatId.Text;
             SaveData(PROFILE_FILE_PATH, Profile);
+        }
+
+        private void NotifyStrategy_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDateCheckersFlowStrategy();
+        }
+
+        private void UpdateDateCheckersFlowStrategy()
+        {
+            DateCheckerFlowStrategyBase selectedStrategy = NOTIFY_ALWAYS_DATE_CHECKER_FLOW_STRATEGY;
+
+            if (NotifyIfDatesFoundStrategyChecker.Checked)
+                selectedStrategy = NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY;
+            else if (NotifyIfDatesAndTimesFoundStrategyChecker.Checked)
+                selectedStrategy = NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY;
+
+            ApplyToDateCheckers(checker => checker.FlowStrategy = selectedStrategy);
         }
     }
 }

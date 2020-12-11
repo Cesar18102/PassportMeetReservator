@@ -12,6 +12,7 @@ using PassportMeetReservator.Data.Platforms;
 using PassportMeetReservator.Data.CustomEventArgs;
 using PassportMeetReservator.Data.Dto;
 using PassportMeetReservator.Extensions;
+using PassportMeetReservator.Strategies.DateCheckerNotifyStrategies;
 
 namespace PassportMeetReservator.Data
 {
@@ -20,6 +21,8 @@ namespace PassportMeetReservator.Data
         public event EventHandler<DateCheckerErrorEventArgs> OnRequestError;
         public event EventHandler<DateCheckerOkEventArgs> OnRequestOK;
         public event EventHandler<EventArgs> OnDatesFound;
+
+        public DateCheckerFlowStrategyBase FlowStrategy { get; set; }
 
         private RestClient ApiClient { get; set; }
 
@@ -109,23 +112,14 @@ namespace PassportMeetReservator.Data
                 if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
                     continue;
 
-                try
-                {
-                    DateTime start = DateTime.Now;
-
-                    DateTime[] dates = await GetDates();
-
-                    Slots.Clear();
-                    foreach (DateTime date in dates)
-                        Slots.Add(date, await GetTimesForDate(date));
-
-                    TimeSpan time = DateTime.Now - start;
-
-                    if(dates != null && dates.Length != 0 && Slots.Any(slot => slot.Value != null && slot.Value.Length != 0))
-                        OnDatesFound?.Invoke(this, new EventArgs());
-                }
+                try { await FlowStrategy.DateCheckFlow(GetDates, GetTimesForDate, Slots, NotifyFound); }
                 catch { }
             }
+        }
+
+        protected void NotifyFound()
+        {
+            OnDatesFound?.Invoke(this, new EventArgs());
         }
 
         protected async Task<DateTime[]> GetDates()
@@ -199,7 +193,7 @@ namespace PassportMeetReservator.Data
         protected void ConfigureRequest(RestRequest request)
         {
             request.Method = Method.GET;
-            request.Timeout = 1000;
+            request.Timeout = 300;
 
             request.AddHeader("authority", CityInfo.Authority);
             request.AddHeader("accept", "application/json, text/plain, */*");

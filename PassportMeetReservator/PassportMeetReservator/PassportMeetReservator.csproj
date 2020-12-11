@@ -111,7 +111,8 @@
     <Compile Include="Controls\ReserverWebView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\WebViewExtensions.cs" />
+    <Compile Include="Extensions\ImageExtensions.cs" />
+    <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Data\BootPeriod.cs" />
     <Compile Include="Data\BrowserSettings.cs" />
     <Compile Include="Data\CommonSettings.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="Data\CustomEventArgs\UrlChangedEventArgs.cs" />
     <Compile Include="DependencyHolder.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\WebViewExtensions.cs" />
     <Compile Include="Forms\AddOrderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -185,6 +187,12 @@
     <Compile Include="Forms\ReservedListForm.Designer.cs">
       <DependentUpon>ReservedListForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ZoomedBrowserForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ZoomedBrowserForm.Designer.cs">
+      <DependentUpon>ZoomedBrowserForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +205,13 @@
     <Compile Include="Services\HashingService.cs" />
     <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\SaltService.cs" />
+    <Compile Include="Strategies\DateCheckerNotifyStrategies\DateCheckerFlowStrategyBase.cs" />
+    <Compile Include="Strategies\DateCheckerNotifyStrategies\NotifyAlwaysFlowStrategy.cs" />
+    <Compile Include="Strategies\DateCheckerNotifyStrategies\NotifyIfDatesFoundFlowStrategy.cs" />
+    <Compile Include="Strategies\DateCheckerNotifyStrategies\NotifyIfDatesAndTimesFoundFlowStrategy.cs" />
+    <Compile Include="Strategies\TimeSelectStrategies\TimeSelectByBrowserNumberStrategy.cs" />
+    <Compile Include="Strategies\TimeSelectStrategies\TimeSelectByTimePeriodStrategy.cs" />
+    <Compile Include="Strategies\TimeSelectStrategies\TimeSelectStrategyBase.cs" />
     <Compile Include="Telegram\TelegramNotifier.cs" />
     <EmbeddedResource Include="Controls\BootPeriodView.resx">
       <DependentUpon>BootPeriodView.cs</DependentUpon>
@@ -230,6 +245,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ReservedListForm.resx">
       <DependentUpon>ReservedListForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ZoomedBrowserForm.resx">
+      <DependentUpon>ZoomedBrowserForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

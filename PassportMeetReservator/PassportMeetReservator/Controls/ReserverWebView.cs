@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +10,7 @@ using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
 using System.Collections.Generic;
 using PassportMeetReservator.Extensions;
+using PassportMeetReservator.Strategies.TimeSelectStrategies;
 
 namespace PassportMeetReservator.Controls
 {
@@ -32,6 +32,7 @@ namespace PassportMeetReservator.Controls
 
         public event EventHandler<LogEventArgs> OnIterationLogRequired;
 
+        //MOVE ALL IT TO CSS INFO
         private const string RESERVATION_TYPE_BUTTON_CLASS = "operation-button";
 
         private const string NEXT_STEP_BUTTON_CLASS = "btn footer-btn btn-secondary btn-lg btn-block";
@@ -55,7 +56,7 @@ namespace PassportMeetReservator.Controls
         private const string FAILED_RESERVE_TIME_TEXT = "Niestety wybrana data jest już zarezerwowana, prosimy wybrać inną.";
 
         private const string CONTINUE_RESERVATION_BUTTON_CLASS = "btn btn-success btn-lg btn-block";
-        private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chce kontynuować";
+        private const string CONTINUE_RESERVATION_BUTTON_TEXT = "Tak, chcę kontynuować";
 
         private const string LOADER_CLASS = "vld-overlay is-active is-full-page";
 
@@ -186,6 +187,7 @@ namespace PassportMeetReservator.Controls
 
         public int BotNumber { get; set; }
         public int RealBrowserNumber { get; set; }
+        public int VirtualBrowserNumber { get; set; }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now.Date;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now.Date;
@@ -194,8 +196,9 @@ namespace PassportMeetReservator.Controls
         public DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
 
+        public TimeSelectStrategyBase TimeSelectStrategy { get; set; }
+
         private const int DATE_WAIT_ITERATION_COUNT = 4;
-        private const int TIME_WAIT_ITERATION_COUNT = 4;
         private const int SITE_FALL_WAIT_ATTEMPTS = 40;
 
         [Obsolete]
@@ -203,7 +206,6 @@ namespace PassportMeetReservator.Controls
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
             Load(BASE_ADDRESS_LOAD);
-            //Scale(new SizeF(0.5f, 0.5f));
         }
 
         public void Free()
@@ -282,9 +284,7 @@ namespace PassportMeetReservator.Controls
                 return;
             }
 
-            List<DateTime> slotsAtTimePeriod = slotsAtDatePeriod.Where(
-                time => ReserveTimePeriod.IsIside(time.TimeOfDay)
-            ).ToList();
+            List<DateTime> slotsAtTimePeriod = TimeSelectStrategy.FilterTimeSlots(slotsAtDatePeriod);
 
             if (slotsAtTimePeriod.Count() == 0)
             {
@@ -292,7 +292,7 @@ namespace PassportMeetReservator.Controls
                 return;
             }
 
-            DateTime reservedDateTime = slotsAtTimePeriod.First();
+            DateTime reservedDateTime = TimeSelectStrategy.ChooseTimeSlotToReserve(slotsAtTimePeriod);
 
             if (await Iteration(reservedDateTime))
             {
@@ -367,8 +367,8 @@ namespace PassportMeetReservator.Controls
         {
             RaiseIterationLog($"Iteration started for {date} started");
 
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
             await WaitForSpinner();
+            await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
             if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
             {
@@ -395,15 +395,14 @@ namespace PassportMeetReservator.Controls
             }
             RaiseIterationLog("Calendar found");
 
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
+            await Task.Delay(DelayInfo.ActionResultDelay * 2, Token);//duo delay
 
             DateTime currentScanDate = DateTime.Now;
             while (currentScanDate.Month != date.Month)
             {
                 currentScanDate = currentScanDate.AddMonths(1);
 
-                await TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
+                await this.TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
                 await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
                 RaiseIterationLog($"Calendar pushed to month #{currentScanDate.Month + 1}");
@@ -427,11 +426,10 @@ namespace PassportMeetReservator.Controls
                 RaiseIterationLog("NEXT button NOT clicked");
             //CONFIRM SELECTED DATE
 
-            for (int j = 0; j < 3; ++j) //triple delay
-                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+            await Task.Delay(DelayInfo.ActionResultDelay * 3, Token); //triple delay
 
             await WaitForSpinner();
-            if (await TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
+            if (await this.TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
             {
                 RaiseIteraionFailure("Already reserved error");
                 return false;
@@ -462,7 +460,7 @@ namespace PassportMeetReservator.Controls
             bool dayFound = false;
             for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
             {
-                dayFound = await TryFindView($"vc-day id-{formattedDate}");
+                dayFound = await this.TryFindView($"vc-day id-{formattedDate}");
 
                 if (dayFound)
                     break;
@@ -484,26 +482,9 @@ namespace PassportMeetReservator.Controls
 
             RaiseIterationLog($"Waiting for time selector");
             await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
+            await Task.Delay(DelayInfo.ActionResultDelay * 2, Token);//duo delay
 
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);//duo delay
-
-            bool timeFound = false;
-            for (int j = 0; j < TIME_WAIT_ITERATION_COUNT; ++j)
-            {
-                JavascriptResponse jsTimesCount = await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('{TIME_SELECTOR_CLASS}')[0].options.length");
-                timeFound = jsTimesCount.Success && jsTimesCount.Result != null && (int)jsTimesCount.Result != 0;
-
-                if (timeFound)
-                    break;
-
-                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
-            } //WAIT FOR TIME FOR SEVERAL TIMES - WAIT FOR LOADING
-
-            if (timeFound && await SelectByValue(TIME_SELECTOR_CLASS, date.GetFormattedTime()))
-                return date;
-
-            return null;
+            return await TimeSelectStrategy.SelectTimeFromList(date, Token);
         }
 
         private async Task FillForm()
@@ -515,9 +496,9 @@ namespace PassportMeetReservator.Controls
             await WaitForView(INPUT_CLASS, SITE_FALL_WAIT_ATTEMPTS);
             //await Task.Delay(DelayInfo.ActionResultDelay);
 
-            while (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname)) ;
-            while (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name)) ;
-            while (!await SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email)) ;
+            while (!await this.SetTextToViewOfClassWithNumber(INPUT_CLASS, 0, Order.Surname)) ;
+            while (!await this.SetTextToViewOfClassWithNumber(INPUT_CLASS, 1, Order.Name)) ;
+            while (!await this.SetTextToViewOfClassWithNumber(INPUT_CLASS, 2, Order.Email)) ;
 
             await Task.Delay(DelayInfo.PostInputDelay);
             await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
@@ -558,190 +539,9 @@ namespace PassportMeetReservator.Controls
             this.AddressChanged -= ReserverWebView_UrlChanged;
         }
 
-        private async Task<bool> SetTextToViewOfClassWithNumber(string className, int number, string text)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{className}');" +
-                    $"if(views.length > {number})" +
-                    "{" +
-                        $"views[{number}].value = '{text}';" +
-                        $"let e = document.createEvent('HTMLEvents');" +
-                        $"e.initEvent('change', true, true);" +
-                        $"views[{number}].dispatchEvent(e);" +
-                    "}" +
-                    $"views.length > {number};" +
-                "}"
-            );
-
-            return (bool)result.Result;
-        }
-
-        private async Task<bool> SelectByIndex(string selectorClassName, int number)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" + 
-                    $"let views = document.getElementsByClassName('{selectorClassName}');" +
-                    $"if(views.length == 1 && views[0].options.length > {number})" +
-                    "{" +
-                        $"views[0].selectedIndex = {number};" +
-                        $"let e = document.createEvent('HTMLEvents');" +
-                        $"e.initEvent('change', true, true);" +
-                        $"views[0].dispatchEvent(e);" +
-                    "}" +
-                    $"views.length == 1 && views[0].options.length > {number}" +
-                "}"
-            );
-
-            return (bool)result.Result;
-        }
-
-        private async Task<bool> SelectByValue(string selectorClassName, string value)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let found = false;" +
-                    $"let views = document.getElementsByClassName('{selectorClassName}');" +
-                    $"if(views.length == 1)" +
-                    "{" +
-                        "for(let i = 0; i < views[0].options.length; ++i)" +
-                        "{" +
-                            $"if(views[0].options[i].text == '{value}')" +
-                            "{" +
-                                "views[0].selectedIndex = i;" +
-                                "let e = document.createEvent('HTMLEvents');" +
-                                "e.initEvent('change', true, true);" +
-                                "views[0].dispatchEvent(e);" +
-                                "found = true;" +
-                                "break;" +
-                            "}" +
-                        "}" +
-                    "}" +
-                    "found == true" +
-                "}"
-            );
-
-            return (bool)result.Result;
-        }
-
-        private async Task ClickViewOfClass(string className)
-        {
-            await ClickViewOfClassWithNumber(className, 0, "");
-        }
-
-        private async Task<bool> ClickViewOfClassWithText(string className, string text, int attempts)
-        {
-            for(int i = 0; i < attempts; ++i)
-            {
-                if (await TryClickViewOfClassWithText(className, text))
-                    return true;
-
-                Token.ThrowIfCancellationRequested();
-                await Task.Delay(DelayInfo.DiscreteWaitDelay);
-            }
-
-            return false;
-        }
-
-        private async Task<bool> TryClickViewOfClassWithText(string className, string text)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{className}');" +
-                    $"let found = false;" +
-                    "for(let view of views) {" +
-                        $"if(view.textContent.indexOf('{text}') != -1)" + " {" +
-                            "view.click();" +
-                            "found = true;" +
-                            "break;" +
-                         "}" +
-                    "}" +
-                    "found;" +
-                "}"
-            );
-            return (bool)result.Result;
-        }
-
-        private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
-        {
-            while (!await TryClickViewOfClassWithNumber(className, number, forbiddenClass))
-            {
-                Token.ThrowIfCancellationRequested();
-                await Task.Delay(DelayInfo.DiscreteWaitDelay);
-            }
-        }
-
-        private async Task<bool> TryClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
-        {
-            string parentText = parent ? ".parentNode" : "";
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{className}');" +
-                    $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
-                    $"if(found.length > {number})" +
-                        $"found[{number}]{parentText}.click();" +
-                    $"found.length > {number};" +
-                "}"
-            );
-
-            return (bool)result.Result;
-        }
-
-        private async Task<bool> WaitForView(string className, int attempts)
-        {
-            for(int i = 0; i < attempts; ++i)
-            {
-                if (await TryFindView(className))
-                    return true;
-
-                Token.ThrowIfCancellationRequested();
-                await Task.Delay(DelayInfo.DiscreteWaitDelay);
-            }
-
-            return false;
-        }
-
-        private async Task<bool> TryFindView(string className)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{className}');" +
-                    $"views.length != 0;" +
-                "}"
-            );
-
-            return (bool)result.Result;
-        }
-
-        private async Task<bool> TryFindViewOfClassWithText(string className, string text)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{className}');" +
-                    $"let found = Array.prototype.filter.call(views, view => view.textContent === '{text}');" +
-                    "found.length != 0;" +
-                "}"
-            );
-
-            return (bool)result.Result;
-        }
-
-        private async Task<int> GetCountOfViewsOfClass(string className, string forbiddenClass)
-        {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{className}');" +
-                    $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
-                    "found.length;" +
-                "}"
-            );
-
-            return (int)result.Result;
-        }
-
         private async Task WaitForSpinner()
         {
-            while (await CheckSpinnerVisible())
+            while (await this.CheckItemOfClassVisible(LOADER_CLASS))
             {
                 RaiseIterationLog($"Waiting for spinner");
 
@@ -752,29 +552,24 @@ namespace PassportMeetReservator.Controls
             RaiseIterationLog("Spinner finished");
         }
 
-        private async Task<bool> CheckSpinnerVisible()
+        private async Task<bool> ClickViewOfClassWithText(string className, string text, int attempts)
         {
-            JavascriptResponse result = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    $"let views = document.getElementsByClassName('{LOADER_CLASS}');" +
-                    $"views.length == 1 && views[0].style.display != 'none'" + 
-                "}"
-            );
-
-            return (bool)result.Result;
+            return await this.ClickViewOfClassWithText(className, text, attempts, DelayInfo.DiscreteWaitDelay, Token);
         }
 
-        private static class BrowserUtil
+        private async Task ClickViewOfClassWithNumber(string className, int number, string forbiddenClass, bool parent = false)
         {
-            public static string GetViewsOfClassWithText(string className, string text)
-            {
-                return $"Array.prototype.filter.call({GetViewsOfClass(className)}, view => view.textContent === '{text}')";
-            }
+            await this.ClickViewOfClassWithNumber(className, number, forbiddenClass, DelayInfo.DiscreteWaitDelay, Token, parent);
+        }
 
-            public static string GetViewsOfClass(string className)
-            {
-                return $"document.getElementsByClassName('{className}')";
-            }
+        private async Task<bool> WaitForView(string className, int attempts)
+        {
+            return await this.WaitForView(className, attempts, DelayInfo.DiscreteWaitDelay, Token);
+        }
+
+        private async Task ClickViewOfClass(string className)
+        {
+            await this.ClickViewOfClassWithNumber(className, 0, "", DelayInfo.DiscreteWaitDelay, Token);
         }
     }
 }

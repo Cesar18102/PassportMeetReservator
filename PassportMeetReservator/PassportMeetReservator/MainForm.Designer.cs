@@ -47,13 +47,18 @@
             this.AddOrderButton = new System.Windows.Forms.Button();
             this.ResetAllButton = new System.Windows.Forms.Button();
             this.CitySelector = new System.Windows.Forms.ComboBox();
-            this.ForceRollBrowserUp = new System.Windows.Forms.Button();
+            this.UnzoomAllBrowsers = new System.Windows.Forms.Button();
             this.PlatformSelector = new System.Windows.Forms.ComboBox();
             this.ReserversPanel = new System.Windows.Forms.Panel();
             this.ReserversCount = new System.Windows.Forms.NumericUpDown();
             this.ReserversCountLabel = new System.Windows.Forms.Label();
+            this.DateCheckerFlowStrategyInfo = new System.Windows.Forms.GroupBox();
+            this.NotifyIfDatesAndTimesFoundStrategyChecker = new System.Windows.Forms.RadioButton();
+            this.NotifyIfDatesFoundStrategyChecker = new System.Windows.Forms.RadioButton();
+            this.NotifyAlwaysStrategyChecker = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.BotNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ReserversCount)).BeginInit();
+            this.DateCheckerFlowStrategyInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // OrdersInfo
@@ -252,16 +257,16 @@
             this.CitySelector.TabIndex = 33;
             this.CitySelector.SelectedIndexChanged += new System.EventHandler(this.CommonCityChecker_SelectedIndexChanged);
             // 
-            // ForceRollBrowserUp
+            // UnzoomAllBrowsers
             // 
-            this.ForceRollBrowserUp.Location = new System.Drawing.Point(1612, 870);
-            this.ForceRollBrowserUp.Margin = new System.Windows.Forms.Padding(2);
-            this.ForceRollBrowserUp.Name = "ForceRollBrowserUp";
-            this.ForceRollBrowserUp.Size = new System.Drawing.Size(150, 34);
-            this.ForceRollBrowserUp.TabIndex = 34;
-            this.ForceRollBrowserUp.Text = "Force Roll Browser Up";
-            this.ForceRollBrowserUp.UseVisualStyleBackColor = true;
-            this.ForceRollBrowserUp.Click += new System.EventHandler(this.ForceRollBrowserUp_Click);
+            this.UnzoomAllBrowsers.Location = new System.Drawing.Point(645, 724);
+            this.UnzoomAllBrowsers.Margin = new System.Windows.Forms.Padding(2);
+            this.UnzoomAllBrowsers.Name = "UnzoomAllBrowsers";
+            this.UnzoomAllBrowsers.Size = new System.Drawing.Size(207, 34);
+            this.UnzoomAllBrowsers.TabIndex = 34;
+            this.UnzoomAllBrowsers.Text = "Unzoom all browsers";
+            this.UnzoomAllBrowsers.UseVisualStyleBackColor = true;
+            this.UnzoomAllBrowsers.Click += new System.EventHandler(this.UnzoomAllBrowsers_Click);
             // 
             // PlatformSelector
             // 
@@ -305,16 +310,64 @@
             this.ReserversCountLabel.TabIndex = 37;
             this.ReserversCountLabel.Text = "Reservers Count:";
             // 
+            // DateCheckerFlowStrategyInfo
+            // 
+            this.DateCheckerFlowStrategyInfo.Controls.Add(this.NotifyAlwaysStrategyChecker);
+            this.DateCheckerFlowStrategyInfo.Controls.Add(this.NotifyIfDatesAndTimesFoundStrategyChecker);
+            this.DateCheckerFlowStrategyInfo.Controls.Add(this.NotifyIfDatesFoundStrategyChecker);
+            this.DateCheckerFlowStrategyInfo.Location = new System.Drawing.Point(1476, 649);
+            this.DateCheckerFlowStrategyInfo.Name = "DateCheckerFlowStrategyInfo";
+            this.DateCheckerFlowStrategyInfo.Size = new System.Drawing.Size(340, 107);
+            this.DateCheckerFlowStrategyInfo.TabIndex = 39;
+            this.DateCheckerFlowStrategyInfo.TabStop = false;
+            this.DateCheckerFlowStrategyInfo.Text = "Date Checker Flow Strategy";
+            // 
+            // NotifyIfDatesAndTimesFoundStrategyChecker
+            // 
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.AutoSize = true;
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.Checked = true;
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.Location = new System.Drawing.Point(6, 65);
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.Name = "NotifyIfDatesAndTimesFoundStrategyChecker";
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.Size = new System.Drawing.Size(167, 17);
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.TabIndex = 36;
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.TabStop = true;
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.Text = "Notify if dates and times found";
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.UseVisualStyleBackColor = true;
+            this.NotifyIfDatesAndTimesFoundStrategyChecker.CheckedChanged += new System.EventHandler(this.NotifyStrategy_CheckedChanged);
+            // 
+            // NotifyIfDatesFoundStrategyChecker
+            // 
+            this.NotifyIfDatesFoundStrategyChecker.AutoSize = true;
+            this.NotifyIfDatesFoundStrategyChecker.Location = new System.Drawing.Point(6, 42);
+            this.NotifyIfDatesFoundStrategyChecker.Name = "NotifyIfDatesFoundStrategyChecker";
+            this.NotifyIfDatesFoundStrategyChecker.Size = new System.Drawing.Size(119, 17);
+            this.NotifyIfDatesFoundStrategyChecker.TabIndex = 35;
+            this.NotifyIfDatesFoundStrategyChecker.Text = "Notify if dates found";
+            this.NotifyIfDatesFoundStrategyChecker.UseVisualStyleBackColor = true;
+            this.NotifyIfDatesFoundStrategyChecker.CheckedChanged += new System.EventHandler(this.NotifyStrategy_CheckedChanged);
+            // 
+            // NotifyAlwaysStrategyChecker
+            // 
+            this.NotifyAlwaysStrategyChecker.AutoSize = true;
+            this.NotifyAlwaysStrategyChecker.Location = new System.Drawing.Point(6, 19);
+            this.NotifyAlwaysStrategyChecker.Name = "NotifyAlwaysStrategyChecker";
+            this.NotifyAlwaysStrategyChecker.Size = new System.Drawing.Size(87, 17);
+            this.NotifyAlwaysStrategyChecker.TabIndex = 37;
+            this.NotifyAlwaysStrategyChecker.Text = "Notify always";
+            this.NotifyAlwaysStrategyChecker.UseVisualStyleBackColor = true;
+            this.NotifyAlwaysStrategyChecker.CheckedChanged += new System.EventHandler(this.NotifyStrategy_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1828, 904);
+            this.Controls.Add(this.DateCheckerFlowStrategyInfo);
             this.Controls.Add(this.ReserversCount);
             this.Controls.Add(this.ReserversCountLabel);
             this.Controls.Add(this.ReserversPanel);
             this.Controls.Add(this.PlatformSelector);
-            this.Controls.Add(this.ForceRollBrowserUp);
+            this.Controls.Add(this.UnzoomAllBrowsers);
             this.Controls.Add(this.CitySelector);
             this.Controls.Add(this.ResetAllButton);
             this.Controls.Add(this.OrderListButton);
@@ -339,10 +392,13 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.BotNumber)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ReserversCount)).EndInit();
+            this.DateCheckerFlowStrategyInfo.ResumeLayout(false);
+            this.DateCheckerFlowStrategyInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -368,11 +424,15 @@
         private System.Windows.Forms.Button AddOrderButton;
         private System.Windows.Forms.Button ResetAllButton;
         private System.Windows.Forms.ComboBox CitySelector;
-        private System.Windows.Forms.Button ForceRollBrowserUp;
+        private System.Windows.Forms.Button UnzoomAllBrowsers;
         private System.Windows.Forms.ComboBox PlatformSelector;
         private System.Windows.Forms.Panel ReserversPanel;
         private System.Windows.Forms.NumericUpDown ReserversCount;
         private System.Windows.Forms.Label ReserversCountLabel;
+        private System.Windows.Forms.GroupBox DateCheckerFlowStrategyInfo;
+        private System.Windows.Forms.RadioButton NotifyIfDatesAndTimesFoundStrategyChecker;
+        private System.Windows.Forms.RadioButton NotifyIfDatesFoundStrategyChecker;
+        private System.Windows.Forms.RadioButton NotifyAlwaysStrategyChecker;
     }
 }
 

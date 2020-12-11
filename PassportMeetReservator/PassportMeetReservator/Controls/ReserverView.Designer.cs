@@ -30,6 +30,10 @@
         {
             this.BrowserPanel = new System.Windows.Forms.Panel();
             this.BrowserInfo = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.TimeSelectStrategyInfo = new System.Windows.Forms.GroupBox();
+            this.TimePeriodStrategyChecker = new System.Windows.Forms.RadioButton();
+            this.BrowserNumberStrategyChecker = new System.Windows.Forms.RadioButton();
+            this.VirtualBrowserNumber = new System.Windows.Forms.NumericUpDown();
             this.ReserveTimeMax = new System.Windows.Forms.DateTimePicker();
             this.ReserveTimeMin = new System.Windows.Forms.DateTimePicker();
             this.PlatformSelector = new System.Windows.Forms.ComboBox();
@@ -43,6 +47,8 @@
             this.PauseChangeButton = new System.Windows.Forms.Button();
             this.UrlInput = new PassportMeetReservator.Controls.NamedInput();
             this.BrowserInfo.SuspendLayout();
+            this.TimeSelectStrategyInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.VirtualBrowserNumber)).BeginInit();
             this.SuspendLayout();
             // 
             // BrowserPanel
@@ -51,11 +57,13 @@
             this.BrowserPanel.Location = new System.Drawing.Point(2, 218);
             this.BrowserPanel.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserPanel.Name = "BrowserPanel";
-            this.BrowserPanel.Size = new System.Drawing.Size(350, 416);
+            this.BrowserPanel.Size = new System.Drawing.Size(376, 416);
             this.BrowserPanel.TabIndex = 9;
             // 
             // BrowserInfo
             // 
+            this.BrowserInfo.Controls.Add(this.TimeSelectStrategyInfo);
+            this.BrowserInfo.Controls.Add(this.VirtualBrowserNumber);
             this.BrowserInfo.Controls.Add(this.ReserveTimeMax);
             this.BrowserInfo.Controls.Add(this.ReserveTimeMin);
             this.BrowserInfo.Controls.Add(this.PlatformSelector);
@@ -72,10 +80,53 @@
             this.BrowserInfo.Margin = new System.Windows.Forms.Padding(2);
             this.BrowserInfo.Name = "BrowserInfo";
             this.BrowserInfo.Padding = new System.Windows.Forms.Padding(2);
-            this.BrowserInfo.Size = new System.Drawing.Size(350, 212);
+            this.BrowserInfo.Size = new System.Drawing.Size(376, 212);
             this.BrowserInfo.TabIndex = 10;
             this.BrowserInfo.TabStop = false;
             this.BrowserInfo.UrlInput = this.UrlInput;
+            // 
+            // TimeSelectStrategyInfo
+            // 
+            this.TimeSelectStrategyInfo.Controls.Add(this.TimePeriodStrategyChecker);
+            this.TimeSelectStrategyInfo.Controls.Add(this.BrowserNumberStrategyChecker);
+            this.TimeSelectStrategyInfo.Location = new System.Drawing.Point(249, 40);
+            this.TimeSelectStrategyInfo.Name = "TimeSelectStrategyInfo";
+            this.TimeSelectStrategyInfo.Size = new System.Drawing.Size(126, 64);
+            this.TimeSelectStrategyInfo.TabIndex = 36;
+            this.TimeSelectStrategyInfo.TabStop = false;
+            this.TimeSelectStrategyInfo.Text = "Time select strategy";
+            // 
+            // TimePeriodStrategyChecker
+            // 
+            this.TimePeriodStrategyChecker.AutoSize = true;
+            this.TimePeriodStrategyChecker.Checked = true;
+            this.TimePeriodStrategyChecker.Location = new System.Drawing.Point(6, 44);
+            this.TimePeriodStrategyChecker.Name = "TimePeriodStrategyChecker";
+            this.TimePeriodStrategyChecker.Size = new System.Drawing.Size(91, 17);
+            this.TimePeriodStrategyChecker.TabIndex = 34;
+            this.TimePeriodStrategyChecker.TabStop = true;
+            this.TimePeriodStrategyChecker.Text = "By time period";
+            this.TimePeriodStrategyChecker.UseVisualStyleBackColor = true;
+            this.TimePeriodStrategyChecker.CheckedChanged += new System.EventHandler(this.StrategyChecker_CheckedChanged);
+            // 
+            // BrowserNumberStrategyChecker
+            // 
+            this.BrowserNumberStrategyChecker.AutoSize = true;
+            this.BrowserNumberStrategyChecker.Location = new System.Drawing.Point(6, 19);
+            this.BrowserNumberStrategyChecker.Name = "BrowserNumberStrategyChecker";
+            this.BrowserNumberStrategyChecker.Size = new System.Drawing.Size(115, 17);
+            this.BrowserNumberStrategyChecker.TabIndex = 33;
+            this.BrowserNumberStrategyChecker.Text = "By browser number";
+            this.BrowserNumberStrategyChecker.UseVisualStyleBackColor = true;
+            this.BrowserNumberStrategyChecker.CheckedChanged += new System.EventHandler(this.StrategyChecker_CheckedChanged);
+            // 
+            // VirtualBrowserNumber
+            // 
+            this.VirtualBrowserNumber.Location = new System.Drawing.Point(250, 110);
+            this.VirtualBrowserNumber.Name = "VirtualBrowserNumber";
+            this.VirtualBrowserNumber.Size = new System.Drawing.Size(121, 20);
+            this.VirtualBrowserNumber.TabIndex = 30;
+            this.VirtualBrowserNumber.ValueChanged += new System.EventHandler(this.VirtualBrowserNumber_ValueChanged);
             // 
             // ReserveTimeMax
             // 
@@ -210,9 +261,12 @@
             this.Controls.Add(this.BrowserPanel);
             this.Controls.Add(this.BrowserInfo);
             this.Name = "ReserverView";
-            this.Size = new System.Drawing.Size(356, 636);
+            this.Size = new System.Drawing.Size(380, 636);
             this.BrowserInfo.ResumeLayout(false);
             this.BrowserInfo.PerformLayout();
+            this.TimeSelectStrategyInfo.ResumeLayout(false);
+            this.TimeSelectStrategyInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.VirtualBrowserNumber)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -233,5 +287,9 @@
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.Button PauseChangeButton;
         private NamedInput UrlInput;
+        private System.Windows.Forms.NumericUpDown VirtualBrowserNumber;
+        private System.Windows.Forms.GroupBox TimeSelectStrategyInfo;
+        private System.Windows.Forms.RadioButton TimePeriodStrategyChecker;
+        private System.Windows.Forms.RadioButton BrowserNumberStrategyChecker;
     }
 }

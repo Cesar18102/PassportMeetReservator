@@ -85,7 +85,7 @@ namespace PassportMeetReservator.Services
         private void WriteBrowserLog(string log, string baseDir, int browser)
         {
             string logFilePath = Path.Combine(
-                baseDir, $"Browser_{browser}_log.txt"
+                baseDir, GetBrowserLogFileName(browser)
             );
 
             WriteLog(log, logFilePath, Lockers[browser]);
@@ -102,7 +102,7 @@ namespace PassportMeetReservator.Services
                 Directory.CreateDirectory(baseDir);
 
             string browserLogPath = Path.Combine(
-                baseDir, $"Browser_{browser}_log.txt"
+                baseDir, GetBrowserLogFileName(browser)
             );
 
             if (!File.Exists(browserLogPath))

@@ -1,10 +1,15 @@
 ﻿using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
 using PassportMeetReservator.Data.Platforms;
+using PassportMeetReservator.Extensions;
+using PassportMeetReservator.Forms;
+using PassportMeetReservator.Strategies.TimeSelectStrategies;
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PassportMeetReservator.Controls
@@ -15,19 +20,23 @@ namespace PassportMeetReservator.Controls
 
         #region Properties
 
+        private TimeSelectByTimePeriodStrategy TIME_SELECT_BY_TIME_PERIOD_STRATEGY { get; set; }
+        private TimeSelectByBrowserNumberStrategy TIME_SELECT_BY_BROWSER_NUMBER_STRATEGY { get; set; }
+
+        public ZoomedBrowserForm ZoomedBrowserForm { get; private set; }
         public ReserverWebView Browser { get; private set; }
         public Panel BrowserWrapper => BrowserPanel;
 
-
-        private int browserNumber;
-        public int BrowserNumber
+        private int realBrowserNumber;
+        public int RealBrowserNumber
         {
-            get => browserNumber;
+            get => realBrowserNumber;
             set
             {
-                browserNumber = value;
-                Browser.RealBrowserNumber = browserNumber;
-                BrowserInfo.Text = $"Browser {browserNumber + 1}";
+                realBrowserNumber = value;
+                VirtualBrowserNumber.Value = realBrowserNumber;
+                Browser.RealBrowserNumber = realBrowserNumber;
+                BrowserInfo.Text = $"Browser {realBrowserNumber + 1}";
             }
         }
 
@@ -68,10 +77,57 @@ namespace PassportMeetReservator.Controls
 
             Browser.OnUrlChanged += Browser_OnUrlChanged;
             Browser.OnPausedChanged += Browser_OnPausedChanged;
+
+            TIME_SELECT_BY_TIME_PERIOD_STRATEGY = new TimeSelectByTimePeriodStrategy(Browser);
+            TIME_SELECT_BY_BROWSER_NUMBER_STRATEGY = new TimeSelectByBrowserNumberStrategy(Browser);
+
+            UpdateTimeSelectStrategy();
         }
 
         #region Methods
         #region Public
+
+        public async Task<Bitmap> GetCapture()
+        {
+            ZoomIn();
+            Browser.ResetScroll();
+
+            Bitmap screen = null;
+            await Task.Delay(1000);
+
+            try { screen = ZoomedBrowserForm.Snapshot(Browser); }
+            catch (Exception ex) { }
+
+            ZoomOut();
+
+            return screen;
+        }
+
+        public void ZoomIn()
+        {
+            ZoomedBrowserForm = new ZoomedBrowserForm();
+            ZoomedBrowserForm.FormClosing += (sender, e) => ZoomOutClosing();
+            ZoomedBrowserForm.Text = $"{BrowserInfo.Text}; {Browser.Checker.PlatformInfo}; {Browser.Checker.CityInfo}; {Browser.Checker.OperationInfo}; " +
+                                     $"{Browser.Order?.Surname} {Browser.Order?.Name}";
+
+            ZoomedBrowserForm.Controls.Add(Browser);
+            ZoomedBrowserForm.Show();
+
+            ZoomedBrowserForm.WindowState = FormWindowState.Maximized;
+            Browser.Size = ZoomedBrowserForm.Size;
+        }
+
+        public void ZoomOut()
+        {
+            ZoomOutClosing();
+            ZoomedBrowserForm?.Close();
+        }
+
+        private void ZoomOutClosing()
+        {
+            BrowserWrapper.Controls.Add(Browser);
+            Browser.Size = BrowserWrapper.Size;
+        }
 
         public void ApplySettings(BrowserSettings settings)
         {
@@ -226,6 +282,24 @@ namespace PassportMeetReservator.Controls
             OperationInfo selectedOperation = OperationSelector.SelectedItem as OperationInfo;
 
             Browser.InitChecker = DateCheckers[selectedPlatform][selectedCity][selectedOperation.Position];
+        }
+
+        private void StrategyChecker_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateTimeSelectStrategy();   
+        }
+
+        private void VirtualBrowserNumber_ValueChanged(object sender, EventArgs e)
+        {
+            Browser.VirtualBrowserNumber = (int)VirtualBrowserNumber.Value;
+        }
+
+        private void UpdateTimeSelectStrategy()
+        {
+            if (BrowserNumberStrategyChecker.Checked)
+                Browser.TimeSelectStrategy = TIME_SELECT_BY_BROWSER_NUMBER_STRATEGY;
+            else if (TimePeriodStrategyChecker.Checked)
+                Browser.TimeSelectStrategy = TIME_SELECT_BY_TIME_PERIOD_STRATEGY;
         }
 
         #endregion

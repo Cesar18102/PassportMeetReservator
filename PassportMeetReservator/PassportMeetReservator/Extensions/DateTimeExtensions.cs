@@ -24,5 +24,15 @@ namespace PassportMeetReservator.Extensions
         {
             return date.ToString().Replace(":", "_");
         }
+
+        public static TimeSpan ParseTime(this string timeString)
+        {
+            string[] items = timeString.Split(':');
+
+            int hour = Convert.ToInt32(items[0]);
+            int minute = Convert.ToInt32(items[1]);
+
+            return new TimeSpan(hour, minute, 0);
+        }
     }
 }
