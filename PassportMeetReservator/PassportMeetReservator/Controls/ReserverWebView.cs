@@ -273,10 +273,7 @@ namespace PassportMeetReservator.Controls
                 return;
             }
 
-            List<DateTime> slotsAtDatePeriod = Checker.Slots
-                .Where(slot => slot.Key >= ReserveDateMin && slot.Key <= ReserveDateMax)
-                .SelectMany(slot => slot.Value)
-                .ToList();
+            List<DateTime> slotsAtDatePeriod = TimeSelectStrategy.FilterDateTimeSlots(Checker.Slots);
 
             if (slotsAtDatePeriod.Count() == 0)
             {

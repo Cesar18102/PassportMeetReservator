@@ -18,6 +18,14 @@ namespace PassportMeetReservator.Strategies.TimeSelectStrategies
             return timeSlots.First();
         }
 
+        public override List<DateTime> FilterDateTimeSlots(Dictionary<DateTime, DateTime[]> dateTimeSlots)
+        {
+            if (dateTimeSlots.Count != 0)
+                return base.FilterDateTimeSlots(dateTimeSlots);
+
+            return Browser.ReserveDateMin.DatesUntil(Browser.ReserveDateMax);
+        }
+
         public override List<DateTime> FilterTimeSlots(List<DateTime> timeSlots)
         {
             return timeSlots;

@@ -4,6 +4,7 @@ using PassportMeetReservator.Controls;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +25,13 @@ namespace PassportMeetReservator.Strategies.TimeSelectStrategies
         public abstract List<DateTime> FilterTimeSlots(List<DateTime> timeSlots);
         public abstract DateTime ChooseTimeSlotToReserve(List<DateTime> timeSlots);
         public abstract Task<DateTime?> SelectTimeFromList(DateTime date, CancellationToken token);
+
+        public virtual List<DateTime> FilterDateTimeSlots(Dictionary<DateTime, DateTime[]> dateTimeSlots)
+        {
+            return dateTimeSlots.Where(slot => slot.Key >= Browser.ReserveDateMin && slot.Key <= Browser.ReserveDateMax)
+                .SelectMany(slot => slot.Value)
+                .ToList();
+        }
 
         protected async Task<bool> WaitForOptions(CancellationToken token)
         {

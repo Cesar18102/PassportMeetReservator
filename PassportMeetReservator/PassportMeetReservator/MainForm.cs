@@ -668,14 +668,12 @@ namespace PassportMeetReservator
 
         private void UpdateDateCheckersFlowStrategy()
         {
-            DateCheckerFlowStrategyBase selectedStrategy = NOTIFY_ALWAYS_DATE_CHECKER_FLOW_STRATEGY;
-
-            if (NotifyIfDatesFoundStrategyChecker.Checked)
-                selectedStrategy = NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY;
+            if(NotifyAlwaysStrategyChecker.Checked)
+                ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_ALWAYS_DATE_CHECKER_FLOW_STRATEGY);
+            else if (NotifyIfDatesFoundStrategyChecker.Checked)
+                ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY);
             else if (NotifyIfDatesAndTimesFoundStrategyChecker.Checked)
-                selectedStrategy = NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY;
-
-            ApplyToDateCheckers(checker => checker.FlowStrategy = selectedStrategy);
+                ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY);
         }
     }
 }

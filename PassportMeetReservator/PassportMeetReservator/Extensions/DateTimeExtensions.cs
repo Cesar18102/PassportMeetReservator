@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PassportMeetReservator.Extensions
 {
@@ -33,6 +34,19 @@ namespace PassportMeetReservator.Extensions
             int minute = Convert.ToInt32(items[1]);
 
             return new TimeSpan(hour, minute, 0);
+        }
+
+        public static List<DateTime> DatesUntil(this DateTime min, DateTime max)
+        {
+            if (min.Date > max.Date)
+                return new List<DateTime>();
+
+            List<DateTime> dates = new List<DateTime>();
+            for(DateTime current = min; current != max; current = current.AddDays(1))
+                dates.Add(current);
+            dates.Add(max);
+
+            return dates;
         }
     }
 }

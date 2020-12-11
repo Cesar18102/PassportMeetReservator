@@ -28,10 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.OrderLoadingDelayLabel = new System.Windows.Forms.Label();
-            this.OrderLoadingDelay = new System.Windows.Forms.NumericUpDown();
-            this.BrowserIterationDelay = new System.Windows.Forms.NumericUpDown();
-            this.BrowserIterationDelayLabel = new System.Windows.Forms.Label();
             this.ActionResultDelay = new System.Windows.Forms.NumericUpDown();
             this.ActionResultDelayLabel = new System.Windows.Forms.Label();
             this.SaveButton = new System.Windows.Forms.Button();
@@ -45,8 +41,6 @@
             this.PostInputDelayLabel = new System.Windows.Forms.Label();
             this.DateCheckDelay = new System.Windows.Forms.NumericUpDown();
             this.DateCheckDelayLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.OrderLoadingDelay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BrowserIterationDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ActionResultDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RefreshSessionUpdateDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiscreteWaitDelay)).BeginInit();
@@ -55,71 +49,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.DateCheckDelay)).BeginInit();
             this.SuspendLayout();
             // 
-            // OrderLoadingDelayLabel
-            // 
-            this.OrderLoadingDelayLabel.AutoSize = true;
-            this.OrderLoadingDelayLabel.Location = new System.Drawing.Point(12, 14);
-            this.OrderLoadingDelayLabel.Name = "OrderLoadingDelayLabel";
-            this.OrderLoadingDelayLabel.Size = new System.Drawing.Size(107, 13);
-            this.OrderLoadingDelayLabel.TabIndex = 0;
-            this.OrderLoadingDelayLabel.Text = "Order Loading Delay:";
-            // 
-            // OrderLoadingDelay
-            // 
-            this.OrderLoadingDelay.Location = new System.Drawing.Point(176, 12);
-            this.OrderLoadingDelay.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.OrderLoadingDelay.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.OrderLoadingDelay.Name = "OrderLoadingDelay";
-            this.OrderLoadingDelay.Size = new System.Drawing.Size(112, 20);
-            this.OrderLoadingDelay.TabIndex = 1;
-            this.OrderLoadingDelay.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // BrowserIterationDelay
-            // 
-            this.BrowserIterationDelay.Location = new System.Drawing.Point(176, 38);
-            this.BrowserIterationDelay.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.BrowserIterationDelay.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.BrowserIterationDelay.Name = "BrowserIterationDelay";
-            this.BrowserIterationDelay.Size = new System.Drawing.Size(112, 20);
-            this.BrowserIterationDelay.TabIndex = 3;
-            this.BrowserIterationDelay.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // BrowserIterationDelayLabel
-            // 
-            this.BrowserIterationDelayLabel.AutoSize = true;
-            this.BrowserIterationDelayLabel.Location = new System.Drawing.Point(11, 40);
-            this.BrowserIterationDelayLabel.Name = "BrowserIterationDelayLabel";
-            this.BrowserIterationDelayLabel.Size = new System.Drawing.Size(119, 13);
-            this.BrowserIterationDelayLabel.TabIndex = 2;
-            this.BrowserIterationDelayLabel.Text = "Browser Iteration Delay:";
-            // 
             // ActionResultDelay
             // 
-            this.ActionResultDelay.Location = new System.Drawing.Point(176, 64);
+            this.ActionResultDelay.Location = new System.Drawing.Point(176, 12);
             this.ActionResultDelay.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -142,7 +74,7 @@
             // ActionResultDelayLabel
             // 
             this.ActionResultDelayLabel.AutoSize = true;
-            this.ActionResultDelayLabel.Location = new System.Drawing.Point(11, 66);
+            this.ActionResultDelayLabel.Location = new System.Drawing.Point(11, 14);
             this.ActionResultDelayLabel.Name = "ActionResultDelayLabel";
             this.ActionResultDelayLabel.Size = new System.Drawing.Size(103, 13);
             this.ActionResultDelayLabel.TabIndex = 4;
@@ -150,7 +82,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(12, 220);
+            this.SaveButton.Location = new System.Drawing.Point(12, 168);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(276, 23);
             this.SaveButton.TabIndex = 6;
@@ -160,7 +92,7 @@
             // 
             // RefreshSessionUpdateDelay
             // 
-            this.RefreshSessionUpdateDelay.Location = new System.Drawing.Point(176, 90);
+            this.RefreshSessionUpdateDelay.Location = new System.Drawing.Point(176, 38);
             this.RefreshSessionUpdateDelay.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -183,7 +115,7 @@
             // RefreshSessionUpdateDelayLabel
             // 
             this.RefreshSessionUpdateDelayLabel.AutoSize = true;
-            this.RefreshSessionUpdateDelayLabel.Location = new System.Drawing.Point(12, 92);
+            this.RefreshSessionUpdateDelayLabel.Location = new System.Drawing.Point(12, 40);
             this.RefreshSessionUpdateDelayLabel.Name = "RefreshSessionUpdateDelayLabel";
             this.RefreshSessionUpdateDelayLabel.Size = new System.Drawing.Size(155, 13);
             this.RefreshSessionUpdateDelayLabel.TabIndex = 7;
@@ -191,7 +123,7 @@
             // 
             // DiscreteWaitDelay
             // 
-            this.DiscreteWaitDelay.Location = new System.Drawing.Point(176, 116);
+            this.DiscreteWaitDelay.Location = new System.Drawing.Point(176, 64);
             this.DiscreteWaitDelay.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -214,7 +146,7 @@
             // DiscreteWaitDelayLabel
             // 
             this.DiscreteWaitDelayLabel.AutoSize = true;
-            this.DiscreteWaitDelayLabel.Location = new System.Drawing.Point(12, 118);
+            this.DiscreteWaitDelayLabel.Location = new System.Drawing.Point(12, 66);
             this.DiscreteWaitDelayLabel.Name = "DiscreteWaitDelayLabel";
             this.DiscreteWaitDelayLabel.Size = new System.Drawing.Size(104, 13);
             this.DiscreteWaitDelayLabel.TabIndex = 9;
@@ -222,7 +154,7 @@
             // 
             // ManualReactionWaitDelay
             // 
-            this.ManualReactionWaitDelay.Location = new System.Drawing.Point(176, 142);
+            this.ManualReactionWaitDelay.Location = new System.Drawing.Point(176, 90);
             this.ManualReactionWaitDelay.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -245,7 +177,7 @@
             // ReserveRefreshDelayLabel
             // 
             this.ReserveRefreshDelayLabel.AutoSize = true;
-            this.ReserveRefreshDelayLabel.Location = new System.Drawing.Point(12, 144);
+            this.ReserveRefreshDelayLabel.Location = new System.Drawing.Point(12, 92);
             this.ReserveRefreshDelayLabel.Name = "ReserveRefreshDelayLabel";
             this.ReserveRefreshDelayLabel.Size = new System.Drawing.Size(116, 13);
             this.ReserveRefreshDelayLabel.TabIndex = 11;
@@ -253,7 +185,7 @@
             // 
             // PostInputDelay
             // 
-            this.PostInputDelay.Location = new System.Drawing.Point(176, 168);
+            this.PostInputDelay.Location = new System.Drawing.Point(176, 116);
             this.PostInputDelay.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -276,7 +208,7 @@
             // PostInputDelayLabel
             // 
             this.PostInputDelayLabel.AutoSize = true;
-            this.PostInputDelayLabel.Location = new System.Drawing.Point(12, 170);
+            this.PostInputDelayLabel.Location = new System.Drawing.Point(12, 118);
             this.PostInputDelayLabel.Name = "PostInputDelayLabel";
             this.PostInputDelayLabel.Size = new System.Drawing.Size(88, 13);
             this.PostInputDelayLabel.TabIndex = 13;
@@ -284,7 +216,7 @@
             // 
             // DateCheckDelay
             // 
-            this.DateCheckDelay.Location = new System.Drawing.Point(176, 194);
+            this.DateCheckDelay.Location = new System.Drawing.Point(176, 142);
             this.DateCheckDelay.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -307,7 +239,7 @@
             // DateCheckDelayLabel
             // 
             this.DateCheckDelayLabel.AutoSize = true;
-            this.DateCheckDelayLabel.Location = new System.Drawing.Point(12, 196);
+            this.DateCheckDelayLabel.Location = new System.Drawing.Point(12, 144);
             this.DateCheckDelayLabel.Name = "DateCheckDelayLabel";
             this.DateCheckDelayLabel.Size = new System.Drawing.Size(97, 13);
             this.DateCheckDelayLabel.TabIndex = 15;
@@ -317,7 +249,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 255);
+            this.ClientSize = new System.Drawing.Size(300, 200);
             this.Controls.Add(this.DateCheckDelay);
             this.Controls.Add(this.DateCheckDelayLabel);
             this.Controls.Add(this.PostInputDelay);
@@ -331,15 +263,9 @@
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.ActionResultDelay);
             this.Controls.Add(this.ActionResultDelayLabel);
-            this.Controls.Add(this.BrowserIterationDelay);
-            this.Controls.Add(this.BrowserIterationDelayLabel);
-            this.Controls.Add(this.OrderLoadingDelay);
-            this.Controls.Add(this.OrderLoadingDelayLabel);
             this.Name = "DelayInfoForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DelayInfoForm";
-            ((System.ComponentModel.ISupportInitialize)(this.OrderLoadingDelay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BrowserIterationDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ActionResultDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RefreshSessionUpdateDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiscreteWaitDelay)).EndInit();
@@ -352,11 +278,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label OrderLoadingDelayLabel;
-        private System.Windows.Forms.NumericUpDown OrderLoadingDelay;
-        private System.Windows.Forms.NumericUpDown BrowserIterationDelay;
-        private System.Windows.Forms.Label BrowserIterationDelayLabel;
         private System.Windows.Forms.NumericUpDown ActionResultDelay;
         private System.Windows.Forms.Label ActionResultDelayLabel;
         private System.Windows.Forms.Button SaveButton;
