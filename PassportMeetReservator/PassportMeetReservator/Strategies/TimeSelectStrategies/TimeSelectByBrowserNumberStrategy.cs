@@ -38,6 +38,10 @@ namespace PassportMeetReservator.Strategies.TimeSelectStrategies
             if (timeFound)
             {
                 string selectedTime = await Browser.SelectByIndex(TIME_SELECTOR_CLASS, Browser.VirtualBrowserNumber);
+
+                if (selectedTime == null)
+                    return null;
+
                 return date.Date + selectedTime.ParseTime();
             }
 
