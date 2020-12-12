@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
+
+using Autofac;
 
 using CefSharp;
 using CefSharp.WinForms;
 
+using PassportMeetReservator.Services;
+
 namespace PassportMeetReservator
 {
-    static class Program
+    public static class Program
     {
+        private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             var settings = new CefSettings();
             settings.BrowserSubprocessPath = Environment.CurrentDirectory + "/x86/CefSharp.BrowserSubprocess.exe";
@@ -21,7 +28,13 @@ namespace PassportMeetReservator
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.ThreadException += Application_ThreadException;
             Application.Run(new MainForm());
+        }
+
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            Logger.LogCriticalError(e.Exception);
         }
     }
 }

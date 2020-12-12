@@ -21,6 +21,7 @@ namespace PassportMeetReservator.Forms
             ManualReactionWaitDelay.Value = DelayInfo.ManualReactionWaitDelay;
             PostInputDelay.Value = DelayInfo.PostInputDelay;
             DateCheckDelay.Value = DelayInfo.DateCheckDelay;
+            RequestTimeout.Value = DelayInfo.RequestTimeout;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -31,6 +32,7 @@ namespace PassportMeetReservator.Forms
             DelayInfo.ManualReactionWaitDelay = (int)ManualReactionWaitDelay.Value;
             DelayInfo.PostInputDelay = (int)PostInputDelay.Value;
             DelayInfo.DateCheckDelay = (int)DateCheckDelay.Value;
+            DelayInfo.RequestTimeout = (int)RequestTimeout.Value;
 
             this.Close();
         }

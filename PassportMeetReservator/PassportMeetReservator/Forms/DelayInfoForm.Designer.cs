@@ -41,12 +41,15 @@
             this.PostInputDelayLabel = new System.Windows.Forms.Label();
             this.DateCheckDelay = new System.Windows.Forms.NumericUpDown();
             this.DateCheckDelayLabel = new System.Windows.Forms.Label();
+            this.RequestTimeout = new System.Windows.Forms.NumericUpDown();
+            this.RequestTimeoutLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ActionResultDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RefreshSessionUpdateDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiscreteWaitDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ManualReactionWaitDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PostInputDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DateCheckDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RequestTimeout)).BeginInit();
             this.SuspendLayout();
             // 
             // ActionResultDelay
@@ -82,7 +85,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(12, 168);
+            this.SaveButton.Location = new System.Drawing.Point(12, 194);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(276, 23);
             this.SaveButton.TabIndex = 6;
@@ -245,11 +248,44 @@
             this.DateCheckDelayLabel.TabIndex = 15;
             this.DateCheckDelayLabel.Text = "Date Check Delay:";
             // 
+            // RequestTimeout
+            // 
+            this.RequestTimeout.Location = new System.Drawing.Point(176, 168);
+            this.RequestTimeout.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.RequestTimeout.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.RequestTimeout.Name = "RequestTimeout";
+            this.RequestTimeout.Size = new System.Drawing.Size(112, 20);
+            this.RequestTimeout.TabIndex = 18;
+            this.RequestTimeout.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // RequestTimeoutLabel
+            // 
+            this.RequestTimeoutLabel.AutoSize = true;
+            this.RequestTimeoutLabel.Location = new System.Drawing.Point(12, 170);
+            this.RequestTimeoutLabel.Name = "RequestTimeoutLabel";
+            this.RequestTimeoutLabel.Size = new System.Drawing.Size(87, 13);
+            this.RequestTimeoutLabel.TabIndex = 17;
+            this.RequestTimeoutLabel.Text = "Request timeout:";
+            // 
             // DelayInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 200);
+            this.ClientSize = new System.Drawing.Size(300, 229);
+            this.Controls.Add(this.RequestTimeout);
+            this.Controls.Add(this.RequestTimeoutLabel);
             this.Controls.Add(this.DateCheckDelay);
             this.Controls.Add(this.DateCheckDelayLabel);
             this.Controls.Add(this.PostInputDelay);
@@ -272,6 +308,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ManualReactionWaitDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PostInputDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DateCheckDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RequestTimeout)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -291,5 +328,7 @@
         private System.Windows.Forms.Label PostInputDelayLabel;
         private System.Windows.Forms.NumericUpDown DateCheckDelay;
         private System.Windows.Forms.Label DateCheckDelayLabel;
+        private System.Windows.Forms.NumericUpDown RequestTimeout;
+        private System.Windows.Forms.Label RequestTimeoutLabel;
     }
 }

@@ -193,7 +193,7 @@ namespace PassportMeetReservator.Data
         protected void ConfigureRequest(RestRequest request)
         {
             request.Method = Method.GET;
-            request.Timeout = 300;
+            request.Timeout = DelayInfo.RequestTimeout;
 
             request.AddHeader("authority", CityInfo.Authority);
             request.AddHeader("accept", "application/json, text/plain, */*");

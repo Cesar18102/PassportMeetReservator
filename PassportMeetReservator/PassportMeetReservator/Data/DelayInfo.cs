@@ -8,5 +8,6 @@
         public int RefreshSessionUpdateDelay { get; set; } = 1000;
         public int PostInputDelay { get; set; } = 10000;
         public int DateCheckDelay { get; set; } = 200;
+        public int RequestTimeout { get; set; } = 500;
     }
 }

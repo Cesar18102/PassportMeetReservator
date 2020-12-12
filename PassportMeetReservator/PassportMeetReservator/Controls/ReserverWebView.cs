@@ -14,7 +14,7 @@ using PassportMeetReservator.Strategies.TimeSelectStrategies;
 
 namespace PassportMeetReservator.Controls
 {
-    public class ReserverWebView : ChromiumWebBrowser
+    public class ReserverWebView : ChromiumWebBrowser, IDisposable
     {
         public event EventHandler<OrderEventArgs> OnOrderChanged;
 
@@ -208,16 +208,28 @@ namespace PassportMeetReservator.Controls
             Load(BASE_ADDRESS_LOAD);
         }
 
+        public new void Dispose()
+        {
+            CancelTask();
+            Checker = null;
+
+            base.Dispose();
+        }
+
         public void Free()
         {
             IsBusy = false;
         }
 
-        public void Reset()
+        private void CancelTask()
         {
             try { TokenSource?.Cancel(); }
             catch { TokenSource = null; }
+        }
 
+        public void Reset()
+        {
+            CancelTask();
             UpdateBrowser();
         }
 
@@ -251,6 +263,7 @@ namespace PassportMeetReservator.Controls
 
                 try { await Loop; }
                 catch (OperationCanceledException ex) { Loop.Dispose(); }
+                catch (ObjectDisposedException ex) { }
             }
 
             IsBusy = false;

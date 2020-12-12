@@ -61,7 +61,7 @@ namespace PassportMeetReservator
 
         #endregion
 
-        private static Logger Logger = new Logger();
+        private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
 
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {

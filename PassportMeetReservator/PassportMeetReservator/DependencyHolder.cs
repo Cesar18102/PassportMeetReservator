@@ -36,6 +36,7 @@ namespace PassportMeetReservator
 
             builder.RegisterType<SaltService>().AsSelf().SingleInstance();
             builder.RegisterType<AuthService>().AsSelf().SingleInstance();
+            builder.RegisterType<Logger>().AsSelf().SingleInstance();
            
             return builder.Build();
         }

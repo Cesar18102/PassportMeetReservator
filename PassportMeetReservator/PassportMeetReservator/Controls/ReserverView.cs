@@ -89,9 +89,7 @@ namespace PassportMeetReservator.Controls
 
         public new void Dispose()
         {
-            Browser.Checker = null;
             Browser.Dispose();
-
             base.Dispose();
         }
 

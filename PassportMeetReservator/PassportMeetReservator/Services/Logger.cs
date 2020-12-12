@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace PassportMeetReservator.Services
 {
@@ -17,8 +18,12 @@ namespace PassportMeetReservator.Services
             Environment.CurrentDirectory, "Log", "Main", "Common", $"Log_{RUN_TIME_STRING}.txt"
         );
 
+        private static string CRITICALS_LOG_FILE = Path.Combine(
+            Environment.CurrentDirectory, "Log", "Main", "Criticals", $"{RUN_TIME_STRING}_CRITICALS.txt"
+        );
+
         private static string MAIN_LOG_BY_BWOSERS_PATH = Path.Combine(
-            Environment.CurrentDirectory, "Log", "Main", RUN_TIME_STRING
+            Environment.CurrentDirectory, "Log", "Main", "Browsers", RUN_TIME_STRING
         );
 
         private static string ITERATION_LOG_BY_BWOSERS_PATH = Path.Combine(
@@ -35,6 +40,7 @@ namespace PassportMeetReservator.Services
         public void CreateCommonLogFile()
         {
             using (File.Create(COMMON_MAIN_LOG_FILE)) ;
+            using (File.Create(CRITICALS_LOG_FILE)) ;
         }
 
         public void CreateLogFilesForBrowser(int browser)
@@ -58,6 +64,12 @@ namespace PassportMeetReservator.Services
             WriteBrowserLog(fullLog, ITERATION_LOG_BY_BWOSERS_PATH, browser);
         }
 
+        public void LogCriticalError(Exception ex)
+        {
+            string log = $"{GetExceptionLog(ex)}\n\n***********************************************\n\n";
+            WriteLog(log, CRITICALS_LOG_FILE, this);
+        }
+
         public string GetLogWithMeta(string text, int? browser)
         {
             DateTime now = DateTime.Now;
@@ -67,6 +79,21 @@ namespace PassportMeetReservator.Services
 
         #endregion
         #region Private
+
+        private string GetExceptionLog(Exception ex)
+        {
+            string innerLog = "";
+
+            if (ex.InnerException != null)
+            {
+                string rawInnerLog = GetExceptionLog(ex.InnerException);
+                innerLog = string.Join("\n", rawInnerLog.Split('\n').Select(line => '\t' + line));
+            }
+
+            return $"MESSAGE: {ex.Message}\n" +
+                   $"STACK TRACE: {ex.StackTrace}\n" +
+                   $"INNER: \n{innerLog}";
+        }
 
         private void WriteLog(string log, string file, object locker)
         {
