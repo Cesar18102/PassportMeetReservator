@@ -3,7 +3,7 @@
     public class PoznanPlatformInfo : PlatformApiInfo
     {
         public override string Name => "Poznan Gov Ua";
-        public override string Token => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55TmFtZSI6InV3cG96bmFuIiwiY29tcGFueUlkIjoiMSIsIm5iZiI6MTYwMTgwNzgyOSwiZXhwIjoyNTM0MDIyOTcyMDAsImlzcyI6IlFNU1dlYlJlc2VydmF0aW9uLkFQSSIsImF1ZCI6IlFNU1dlYlJlc2VydmF0aW9uLkNMSUVOVCJ9.IwDI0942FsfeN2Vm-0tFrg_3aKHU9dsouPpxRYl1OAw";
+        public override string Token => "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55TmFtZSI6InV3cG96bmFuIiwiY29tcGFueUlkIjoiMSIsIm5iZiI6MTYwNzk5Mzg1MywiZXhwIjoyNTM0MDIyOTcyMDAsImlzcyI6IlFNU1dlYlJlc2VydmF0aW9uLkFQSSIsImF1ZCI6IlFNU1dlYlJlc2VydmF0aW9uLkNMSUVOVCJ9.kl368XOXjTviBetcNI6N8Yc1W01J52l9p7XDH4RvmDs";
         public override string ApiUrl => "https://rejestracjapoznan.poznan.uw.gov.pl/api";
         public override string GetAvailableDatesApiMethod => "Slot/GetAvailableDaysForOperation";
         public override string GetAvailableSlotsForDateApiMethod => "Slot/GetAvailableSlotsForOperationAndDay";
