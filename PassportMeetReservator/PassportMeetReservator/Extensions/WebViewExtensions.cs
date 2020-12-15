@@ -128,7 +128,7 @@ namespace PassportMeetReservator.Extensions
             JavascriptResponse result = await browser.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     $"let views = document.getElementsByClassName('{className}');" +
-                    $"let found = Array.prototype.filter.call(views, view => view.textContent === '{text}');" +
+                    $"let found = Array.prototype.filter.call(views, view => view.textContent.indexOf('{text}') != -1);" +
                     "found.length != 0;" +
                 "}"
             );
@@ -207,7 +207,7 @@ namespace PassportMeetReservator.Extensions
         {
             public static string GetViewsOfClassWithText(string className, string text)
             {
-                return $"Array.prototype.filter.call({GetViewsOfClass(className)}, view => view.textContent === '{text}')";
+                return $"Array.prototype.filter.call({GetViewsOfClass(className)}, view => view.textContent.indexOf('{text}') != -1)";
             }
 
             public static string GetViewsOfClass(string className)
