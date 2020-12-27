@@ -12,7 +12,7 @@ namespace PassportMeetReservator.Strategies.TimeSelectStrategies
 {
     public abstract class TimeSelectStrategyBase
     {
-        protected const int TIME_WAIT_ITERATION_COUNT = 4;
+        protected const int TIME_WAIT_ITERATION_COUNT = 20;
         protected const string TIME_SELECTOR_CLASS = "text-center form-control custom-select";
 
         protected ReserverWebView Browser { get; set; }

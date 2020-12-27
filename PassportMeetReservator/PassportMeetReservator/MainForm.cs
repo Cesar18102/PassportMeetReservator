@@ -6,17 +6,25 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 using Autofac;
-using Newtonsoft.Json;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
 using PassportMeetReservator.Telegram;
-using PassportMeetReservator.Data.Platforms;
 using PassportMeetReservator.Data.CustomEventArgs;
-using PassportMeetReservator.Services;
 using PassportMeetReservator.Extensions;
-using PassportMeetReservator.Strategies.DateCheckerNotifyStrategies;
+
+using Common;
+using Common.Data;
+using Common.Data.Forms;
+using Common.Data.Platforms;
+using Common.Data.CustomEventArgs;
+
+using Common.Extensions;
+
+using Common.Services;
+using Common.Strategies.DateCheckerNotifyStrategies;
+using Common.Forms;
 
 namespace PassportMeetReservator
 {
@@ -62,6 +70,7 @@ namespace PassportMeetReservator
         #endregion
 
         private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
+        private static FileService FileService = DependencyHolder.ServiceDependencies.Resolve<FileService>();
 
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {
@@ -93,9 +102,9 @@ namespace PassportMeetReservator
 
             KeyPreview = true;
 
-            DelayInfo = LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
+            DelayInfo = FileService.LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
 
-            DateCheckers = DateChecker.CreateFromPlatformInfos(
+            DateCheckers = DateChecker.CreateFromPlatformInfos<DateChecker>(
                 Platforms, DelayInfo,
                 Checker_OnRequestError,
                 Checker_OnRequestOk
@@ -106,17 +115,17 @@ namespace PassportMeetReservator
             PlatformSelector.Items.AddRange(Platforms);
             PlatformSelector.SelectedIndex = 0;
 
-            Orders = LoadData<List<ReservationOrder>>(ORDERS_FILE_PATH);
-            Reserved = LoadData<List<ReservedInfo>>(OUTPUT_FILE_PATH);
-            Schedule = LoadData<BootSchedule>(SCHEDULE_FILE_PATH);
+            Orders = FileService.LoadData<List<ReservationOrder>>(ORDERS_FILE_PATH);
+            Reserved = FileService.LoadData<List<ReservedInfo>>(OUTPUT_FILE_PATH);
+            Schedule = FileService.LoadData<BootSchedule>(SCHEDULE_FILE_PATH);
 
-            Profile = LoadData<Profile>(PROFILE_FILE_PATH);
+            Profile = FileService.LoadData<Profile>(PROFILE_FILE_PATH);
             LogChatId.Text = Profile?.TelegramChatId;
 
-            CommonSettings commonSettings = LoadData<CommonSettings>(COMMON_SETTINGS_FILE_PATH);
+            CommonSettings commonSettings = FileService.LoadData<CommonSettings>(COMMON_SETTINGS_FILE_PATH);
             ApplyCommonSettings(commonSettings);
 
-            SavedBrowserSettings = LoadData<List<BrowserSettings>>(BROWSER_SETTINGS_FILE_PATH);
+            SavedBrowserSettings = FileService.LoadData<List<BrowserSettings>>(BROWSER_SETTINGS_FILE_PATH);
             foreach (BrowserSettings settings in SavedBrowserSettings)
             {
                 if (settings.BrowserNumber < 0 || settings.BrowserNumber >= Reservers.Count)
@@ -170,14 +179,6 @@ namespace PassportMeetReservator
 
             if (!success)
                 this.Close();
-        }
-
-        private void ApplyToDateCheckers(Action<DateChecker> action)
-        {
-            foreach (Dictionary<string, DateChecker[]> platformCheckers in DateCheckers.Values)
-                foreach (DateChecker[] cityCheckers in platformCheckers.Values)
-                    foreach(DateChecker checker in cityCheckers)
-                        action(checker);
         }
 
         private void InitBrowsers()
@@ -336,7 +337,7 @@ namespace PassportMeetReservator
         {
             ReserverWebView browser = sender as ReserverWebView;
 
-            SaveData(ORDERS_FILE_PATH, Orders);
+            FileService.SaveData(ORDERS_FILE_PATH, Orders);
 
             await Notifier.NotifyMessage(
                 $"(FROM {Profile.Login}) {e.Order?.Surname} {e.Order?.Name}: {e.Url}",
@@ -364,7 +365,7 @@ namespace PassportMeetReservator
                 await Notifier.NotifyMessage($"(FROM {Profile.Login}) {e.Url}", FixChatId(LogChatId.Text));
 
             Reserved.Add(new ReservedInfo(e.Url));
-            SaveData(OUTPUT_FILE_PATH, Reserved);
+            FileService.SaveData(OUTPUT_FILE_PATH, Reserved);
 
             Log($"Link: {e.Url}", view.RealBrowserNumber);
             HandleBusyChange();
@@ -432,28 +433,6 @@ namespace PassportMeetReservator
             Log(e.Paused ? "PAUSED" : "RESUMED", e.BrowserNumber);
         }
 
-        private T LoadData<T>(string filename) where T : new()
-        {
-            if (!File.Exists(filename))
-                return new T();
-
-            using (StreamReader str = new StreamReader(filename))
-            {
-                string json = str.ReadToEnd();
-
-                if (string.IsNullOrEmpty(json))
-                    return new T();
-
-                return JsonConvert.DeserializeObject<T>(json);
-            }
-        }
-
-        private void SaveData(string filename, object data)
-        {
-            using (StreamWriter strw = File.CreateText(filename))
-                strw.Write(JsonConvert.SerializeObject(data));
-        }
-
         private void HandleBusyChange()
         {
             bool changesAllowed = Reservers.All(reserver => !reserver.Browser.IsBusy || reserver.Browser.Paused);
@@ -519,7 +498,7 @@ namespace PassportMeetReservator
             ReservedListForm reservedListForm = new ReservedListForm(Reserved);
             reservedListForm.ShowDialog();
 
-            SaveData(OUTPUT_FILE_PATH, Reserved);
+            FileService.SaveData(OUTPUT_FILE_PATH, Reserved);
 
             Log("Reserved list saved", null);
         }
@@ -529,7 +508,7 @@ namespace PassportMeetReservator
             AddOrderForm addOrderForm = new AddOrderForm(Platforms, Orders);
             addOrderForm.ShowDialog();
 
-            SaveData(ORDERS_FILE_PATH, Orders);
+            FileService.SaveData(ORDERS_FILE_PATH, Orders);
 
             foreach (ReservationOrder found in Orders.Where(order => !order.Doing && !order.Done))
                 PutOrderToBrowser(found);
@@ -540,7 +519,7 @@ namespace PassportMeetReservator
             OrderListForm orderListForm = new OrderListForm(Platforms, Orders);
             orderListForm.ShowDialog();
 
-            SaveData(ORDERS_FILE_PATH, Orders);
+            FileService.SaveData(ORDERS_FILE_PATH, Orders);
         }
 
         private void ScheduleButton_Click(object sender, EventArgs e)
@@ -548,7 +527,7 @@ namespace PassportMeetReservator
             BootScheduleForm scheduleForm = new BootScheduleForm(Schedule);
             scheduleForm.ShowDialog();
 
-            SaveData(SCHEDULE_FILE_PATH, Schedule);
+            FileService.SaveData(SCHEDULE_FILE_PATH, Schedule);
 
             Log("Schedule saved", null);
         }
@@ -561,7 +540,7 @@ namespace PassportMeetReservator
                 reserver.Browser.Paused = false;
             }
 
-            ApplyToDateCheckers(checker => checker.Schedule = Schedule);
+            DateCheckers.ApplyToDateCheckers(checker => checker.Schedule = Schedule);
 
             Log("All browsers started scheduled", null);
         }
@@ -571,7 +550,7 @@ namespace PassportMeetReservator
             foreach (ReserverView reserver in Reservers)
                 reserver.Browser.Schedule = null;
 
-            ApplyToDateCheckers(checker => checker.Schedule = null);
+            DateCheckers.ApplyToDateCheckers(checker => checker.Schedule = null);
 
             Log("Schedule detached. Manual control", null);
         }
@@ -581,21 +560,21 @@ namespace PassportMeetReservator
             DelayInfoForm delayInfoForm = new DelayInfoForm(DelayInfo);
             delayInfoForm.ShowDialog();
 
-            SaveData(DELAY_SETTINGS_FILE_PATH, DelayInfo);
+            FileService.SaveData(DELAY_SETTINGS_FILE_PATH, DelayInfo);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveData(ORDERS_FILE_PATH, Orders);
-            SaveData(OUTPUT_FILE_PATH, Reserved);
-            SaveData(SCHEDULE_FILE_PATH, Schedule);
+            FileService.SaveData(ORDERS_FILE_PATH, Orders);
+            FileService.SaveData(OUTPUT_FILE_PATH, Reserved);
+            FileService.SaveData(SCHEDULE_FILE_PATH, Schedule);
 
-            SaveData(COMMON_SETTINGS_FILE_PATH, ExportCommonSettings());
+            FileService.SaveData(COMMON_SETTINGS_FILE_PATH, ExportCommonSettings());
 
             BrowserSettings[] browserSettings = Reservers.Select(
                 reserver => reserver.ExportSettings()
             ).ToArray();
-            SaveData(BROWSER_SETTINGS_FILE_PATH, browserSettings);
+            FileService.SaveData(BROWSER_SETTINGS_FILE_PATH, browserSettings);
 
             Log("ALL Saved", null);
         }
@@ -659,7 +638,7 @@ namespace PassportMeetReservator
         private void LogChatId_TextChanged(object sender, EventArgs e)
         {
             Profile.TelegramChatId = LogChatId.Text;
-            SaveData(PROFILE_FILE_PATH, Profile);
+            FileService.SaveData(PROFILE_FILE_PATH, Profile);
         }
 
         private void NotifyStrategy_CheckedChanged(object sender, EventArgs e)
@@ -670,11 +649,11 @@ namespace PassportMeetReservator
         private void UpdateDateCheckersFlowStrategy()
         {
             if(NotifyAlwaysStrategyChecker.Checked)
-                ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_ALWAYS_DATE_CHECKER_FLOW_STRATEGY);
+                DateCheckers.ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_ALWAYS_DATE_CHECKER_FLOW_STRATEGY);
             else if (NotifyIfDatesFoundStrategyChecker.Checked)
-                ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY);
+                DateCheckers.ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY);
             else if (NotifyIfDatesAndTimesFoundStrategyChecker.Checked)
-                ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY);
+                DateCheckers.ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY);
         }
     }
 }

@@ -7,7 +7,7 @@ using Autofac;
 using CefSharp;
 using CefSharp.WinForms;
 
-using PassportMeetReservator.Services;
+using Common.Services;
 
 namespace PassportMeetReservator
 {

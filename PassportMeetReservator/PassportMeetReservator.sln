@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassportMeetReservator", "PassportMeetReservator\PassportMeetReservator.csproj", "{9826B9F8-CEE0-4DDB-8C85-CFDA3FBBAC65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassportMeetBlocker", "PassportMeetBlocker\PassportMeetBlocker.csproj", "{CA013F3F-D3CB-44B6-ACA1-39A3532E581C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{BF83E975-8283-4855-87D1-A5DBE72026AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{9826B9F8-CEE0-4DDB-8C85-CFDA3FBBAC65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9826B9F8-CEE0-4DDB-8C85-CFDA3FBBAC65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9826B9F8-CEE0-4DDB-8C85-CFDA3FBBAC65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA013F3F-D3CB-44B6-ACA1-39A3532E581C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA013F3F-D3CB-44B6-ACA1-39A3532E581C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA013F3F-D3CB-44B6-ACA1-39A3532E581C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA013F3F-D3CB-44B6-ACA1-39A3532E581C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF83E975-8283-4855-87D1-A5DBE72026AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF83E975-8283-4855-87D1-A5DBE72026AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF83E975-8283-4855-87D1-A5DBE72026AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF83E975-8283-4855-87D1-A5DBE72026AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

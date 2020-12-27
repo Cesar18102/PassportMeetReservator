@@ -1,11 +1,13 @@
-﻿using PassportMeetReservator.Controls;
-using PassportMeetReservator.Extensions;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Common.Extensions;
+
+using PassportMeetReservator.Controls;
+using PassportMeetReservator.Extensions;
 
 namespace PassportMeetReservator.Strategies.TimeSelectStrategies
 {

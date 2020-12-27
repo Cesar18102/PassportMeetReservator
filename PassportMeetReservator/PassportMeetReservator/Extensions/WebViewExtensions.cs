@@ -41,7 +41,7 @@ namespace PassportMeetReservator.Extensions
                     "let found = null;" +
                     $"if(views.length == 1 && views[0].options.length > {number})" +
                         $"found = views[0].options[{number}].text;" +
-                    $"found" +
+                    $"found.toString()" +
                 "}"
             );
 
@@ -76,6 +76,25 @@ namespace PassportMeetReservator.Extensions
             return (bool)result.Result;
         }
 
+        public static async Task<bool> TryClickAnyViewOfClassWithoutText(this ChromiumWebBrowser browser, string className, string avoidText)
+        {
+            JavascriptResponse result = await browser.GetMainFrame().EvaluateScriptAsync(
+                "{" +
+                    $"let views = document.getElementsByClassName('{className}');" +
+                    $"let found = false;" +
+                    "for(let view of views) {" +
+                        $"if(view.textContent.indexOf('{avoidText}') == -1)" + " {" +
+                            "view.click();" +
+                            "found = true;" +
+                            "break;" +
+                         "}" +
+                    "}" +
+                    "found;" +
+                "}"
+            );
+            return (bool)result.Result;
+        }
+
         public static async Task<bool> TryClickViewOfClassWithText(this ChromiumWebBrowser browser, string className, string text)
         {
             JavascriptResponse result = await browser.GetMainFrame().EvaluateScriptAsync(
@@ -105,6 +124,19 @@ namespace PassportMeetReservator.Extensions
                     $"if(found.length > {number})" +
                         $"found[{number}]{parentText}.click();" +
                     $"found.length > {number};" +
+                "}"
+            );
+
+            return (bool)result.Result;
+        }
+
+        public static async Task<bool> TryFindViewOfClassWithoutClass(this ChromiumWebBrowser browser, string className, string forbiddenClass)
+        {
+            JavascriptResponse result = await browser.GetMainFrame().EvaluateScriptAsync(
+                "{" +
+                    $"let views = document.getElementsByClassName('{className}');" +
+                    $"let found = Array.prototype.filter.call(views, view => Array.prototype.indexOf.call(view.classList, '{forbiddenClass}') == -1);" +
+                    $"found.length > {0}" +
                 "}"
             );
 
@@ -166,6 +198,20 @@ namespace PassportMeetReservator.Extensions
             for (int i = 0; i < attempts; ++i)
             {
                 if (await browser.TryClickViewOfClassWithText(className, text))
+                    return true;
+
+                token.ThrowIfCancellationRequested();
+                await Task.Delay(delay);
+            }
+
+            return false;
+        }
+
+        public static async Task<bool> ClickAnyViewOfClassWithoutText(this ChromiumWebBrowser browser, string className, string avoidText, int attempts, int delay, CancellationToken token)
+        {
+            for (int i = 0; i < attempts; ++i)
+            {
+                if (await browser.TryClickAnyViewOfClassWithoutText(className, avoidText))
                     return true;
 
                 token.ThrowIfCancellationRequested();

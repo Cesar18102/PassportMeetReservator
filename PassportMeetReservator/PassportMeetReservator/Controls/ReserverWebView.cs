@@ -2,13 +2,18 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using CefSharp;
 using CefSharp.WinForms;
 
+using Common;
+using Common.Data;
+using Common.Extensions;
+
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
-using System.Collections.Generic;
+
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
 
@@ -60,7 +65,11 @@ namespace PassportMeetReservator.Controls
 
         private const string LOADER_CLASS = "vld-overlay is-active is-full-page";
 
-        private const string STATUS_CIRCLE_DONE_ID = "step-Dane2";
+        private const string OPERATION_CIRCLE_ID = "step-Operacja0";
+        private const string DONE_CIRCLE_ID = "step-Dane2";
+
+        private const string DATE_CLASS = "vc-day-content vc-focusable";
+        private const string DATE_INACTIVE_CLASS = "vc-text-gray-400";
 
         private const string URL_CHANGE_SUCCESS_PATH = "Info";
 
@@ -72,6 +81,9 @@ namespace PassportMeetReservator.Controls
 
         public bool IsBusy { get; private set; }
         public bool Selected { get; private set; }
+        public bool CalendarPushed { get; private set; }
+        public bool DateSelected { get; private set; }
+
 
         private bool paused = true;
         public bool Paused
@@ -198,7 +210,7 @@ namespace PassportMeetReservator.Controls
 
         public TimeSelectStrategyBase TimeSelectStrategy { get; set; }
 
-        private const int DATE_WAIT_ITERATION_COUNT = 4;
+        private const int DATE_WAIT_ITERATION_COUNT = 20;
         private const int SITE_FALL_WAIT_ATTEMPTS = 40;
 
         [Obsolete]
@@ -223,7 +235,7 @@ namespace PassportMeetReservator.Controls
 
         private void CancelTask()
         {
-            try { TokenSource?.Cancel(); }
+            try { IsBusy = false; TokenSource?.Cancel(); }
             catch { TokenSource = null; }
         }
 
@@ -314,7 +326,7 @@ namespace PassportMeetReservator.Controls
                     UpdateBrowser();
                 }
             }
-            else
+            else if(!await RefreshIteration())
                 UpdateBrowser();
         }
 
@@ -341,7 +353,7 @@ namespace PassportMeetReservator.Controls
             OnManualReactionWaiting?.Invoke(this, new EventArgs());
             await Task.Delay(DelayInfo.ManualReactionWaitDelay, Token);
 
-            this.Reload();
+            this.UpdateBrowser();
             await Task.Delay(DelayInfo.RefreshSessionUpdateDelay);
 
             await WaitForView(CONTINUE_RESERVATION_BUTTON_CLASS, SITE_FALL_WAIT_ATTEMPTS);
@@ -369,8 +381,24 @@ namespace PassportMeetReservator.Controls
                     this.GetMainFrame().LoadRequest(request);
                 else
                     this.Load(Checker.CityInfo.BaseUrl);
+
+                CalendarPushed = false;
+                DateSelected = false;
             }
             catch { }
+        }
+
+        private async Task<bool> RefreshIteration()
+        {
+            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementById('{OPERATION_CIRCLE_ID}').click()");
+
+            if (await this.ClickAnyViewOfClassWithoutText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
+            {
+                await WaitForSpinner();
+                return true;
+            }
+
+            return false;
         }
 
         private async Task<bool> Iteration(DateTime date)
@@ -407,17 +435,21 @@ namespace PassportMeetReservator.Controls
 
             await Task.Delay(DelayInfo.ActionResultDelay * 2, Token);//duo delay
 
-            DateTime currentScanDate = DateTime.Now;
-            while (currentScanDate.Month != date.Month)
+            if (!CalendarPushed)
             {
-                currentScanDate = currentScanDate.AddMonths(1);
+                DateTime currentScanDate = DateTime.Now;
+                while (currentScanDate.Month != date.Month)
+                {
+                    currentScanDate = currentScanDate.AddMonths(1);
 
-                await this.TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
-                await Task.Delay(DelayInfo.ActionResultDelay, Token);
+                    await this.TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
+                    await Task.Delay(DelayInfo.ActionResultDelay, Token);
 
-                RaiseIterationLog($"Calendar pushed to month #{currentScanDate.Month + 1}");
+                    RaiseIterationLog($"Calendar pushed to month #{currentScanDate.Month + 1}");
+                }
+                RaiseIterationLog($"Calendar month found");
+                CalendarPushed = true;
             }
-            RaiseIterationLog($"Calendar month found");
             //PUSH CALENDAR FIRST TIME IF NEEDED
 
             DateTime? selectedDate = await ScanTime(date);
@@ -447,7 +479,7 @@ namespace PassportMeetReservator.Controls
             //CHECK TIME RESERVED ERROR
 
             JavascriptResponse jsStatusCircleStyle = await this.GetMainFrame().EvaluateScriptAsync(
-                $"document.getElementById('{STATUS_CIRCLE_DONE_ID}').children[0].style.backgroundColor"
+                $"document.getElementById('{DONE_CIRCLE_ID}').children[0].style.backgroundColor"
             );
 
             if (jsStatusCircleStyle.Result.ToString() != Checker.CityInfo.CssInfo.StepCircleColor)
@@ -461,7 +493,7 @@ namespace PassportMeetReservator.Controls
             OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(selectedDate.Value));
 
             return true;
-        } 
+        }
 
         private async Task<DateTime?> ScanTime(DateTime date)
         {
@@ -470,7 +502,13 @@ namespace PassportMeetReservator.Controls
             bool dayFound = false;
             for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
             {
-                dayFound = await this.TryFindView($"vc-day id-{formattedDate}");
+                IEnumerable<Task<bool>> conditions = new List<Task<bool>>()
+                    {
+                        this.TryFindView($"vc-day id-{formattedDate}"),
+                        this.TryFindViewOfClassWithoutClass(DATE_CLASS, DATE_INACTIVE_CLASS)
+                    };
+
+                dayFound = (await Task.WhenAll(conditions)).All(cond => cond);
 
                 if (dayFound)
                     break;
@@ -485,7 +523,9 @@ namespace PassportMeetReservator.Controls
             }
             RaiseIterationLog($"Required date found");
 
-            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click()");
+            await this.GetMainFrame().EvaluateScriptAsync(
+                $"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click();"
+            );
             RaiseIterationLog($"Required date selected");
 
             await WaitForSpinner();
@@ -560,6 +600,11 @@ namespace PassportMeetReservator.Controls
             }
 
             RaiseIterationLog("Spinner finished");
+        }
+
+        private async Task<bool> ClickAnyViewOfClassWithoutText(string className, string text, int attempts)
+        {
+            return await this.ClickAnyViewOfClassWithoutText(className, text, attempts, DelayInfo.DiscreteWaitDelay, Token);
         }
 
         private async Task<bool> ClickViewOfClassWithText(string className, string text, int attempts)

@@ -78,15 +78,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\BootPeriodView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\BootPeriodView.Designer.cs">
-      <DependentUpon>BootPeriodView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\NamedInput.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controls\OrderListItemView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -113,61 +104,25 @@
     </Compile>
     <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
-    <Compile Include="Data\BootPeriod.cs" />
     <Compile Include="Data\BrowserSettings.cs" />
     <Compile Include="Data\CommonSettings.cs" />
-    <Compile Include="Data\CustomEventArgs\DateCheckerErrorEventArgs.cs" />
-    <Compile Include="Data\CustomEventArgs\DateCheckerOkEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\DateUpdateEventArgs.cs" />
-    <Compile Include="Data\DateChecker.cs" />
-    <Compile Include="Data\Dto\DateCheckDto.cs" />
-    <Compile Include="Data\Dto\TimeCheckDto.cs" />
-    <Compile Include="Data\Dto\LogInDto.cs" />
-    <Compile Include="Data\LogInForm.cs" />
-    <Compile Include="Data\Platforms\PlatformApiInfo.cs" />
-    <Compile Include="Data\Platforms\CityPlatformInfo.cs" />
     <Compile Include="Data\CustomEventArgs\DateTimeEventArgs.cs" />
-    <Compile Include="Data\DelayInfo.cs" />
     <Compile Include="Data\CustomEventArgs\LogEventArgs.cs" />
-    <Compile Include="Data\CustomEventArgs\NumberEventArgs.cs" />
-    <Compile Include="Data\BootSchedule.cs" />
     <Compile Include="Data\CustomEventArgs\BrowserPausedChangedEventArgs.cs" />
     <Compile Include="Data\CustomEventArgs\OrderEventArgs.cs" />
-    <Compile Include="Data\Platforms\CityInfos.cs" />
-    <Compile Include="Data\Platforms\OperationInfo.cs" />
-    <Compile Include="Data\Platforms\PlatformCssInfo.cs" />
-    <Compile Include="Data\Platforms\PlatformInfos.cs" />
     <Compile Include="Data\Profile.cs" />
     <Compile Include="Data\ReservationOrder.cs" />
     <Compile Include="Data\CustomEventArgs\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\CustomEventArgs\UrlChangedEventArgs.cs" />
     <Compile Include="DependencyHolder.cs" />
-    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\WebViewExtensions.cs" />
     <Compile Include="Forms\AddOrderForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\AddOrderForm.Designer.cs">
       <DependentUpon>AddOrderForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\BootPeriodSplitForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\BootPeriodSplitForm.Designer.cs">
-      <DependentUpon>BootPeriodSplitForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\BootScheduleForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\BootScheduleForm.Designer.cs">
-      <DependentUpon>BootScheduleForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DelayInfoForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DelayInfoForm.Designer.cs">
-      <DependentUpon>DelayInfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\EditOrderForm.cs">
       <SubType>Form</SubType>
@@ -201,21 +156,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AuthService.cs" />
-    <Compile Include="Services\HashingService.cs" />
-    <Compile Include="Services\Logger.cs" />
-    <Compile Include="Services\SaltService.cs" />
-    <Compile Include="Strategies\DateCheckerNotifyStrategies\DateCheckerFlowStrategyBase.cs" />
-    <Compile Include="Strategies\DateCheckerNotifyStrategies\NotifyAlwaysFlowStrategy.cs" />
-    <Compile Include="Strategies\DateCheckerNotifyStrategies\NotifyIfDatesFoundFlowStrategy.cs" />
-    <Compile Include="Strategies\DateCheckerNotifyStrategies\NotifyIfDatesAndTimesFoundFlowStrategy.cs" />
     <Compile Include="Strategies\TimeSelectStrategies\TimeSelectByBrowserNumberStrategy.cs" />
     <Compile Include="Strategies\TimeSelectStrategies\TimeSelectByTimePeriodStrategy.cs" />
     <Compile Include="Strategies\TimeSelectStrategies\TimeSelectStrategyBase.cs" />
     <Compile Include="Telegram\TelegramNotifier.cs" />
-    <EmbeddedResource Include="Controls\BootPeriodView.resx">
-      <DependentUpon>BootPeriodView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\OrderListItemView.resx">
       <DependentUpon>OrderListItemView.cs</DependentUpon>
     </EmbeddedResource>
@@ -227,15 +171,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddOrderForm.resx">
       <DependentUpon>AddOrderForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BootPeriodSplitForm.resx">
-      <DependentUpon>BootPeriodSplitForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BootScheduleForm.resx">
-      <DependentUpon>BootScheduleForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DelayInfoForm.resx">
-      <DependentUpon>DelayInfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditOrderForm.resx">
       <DependentUpon>EditOrderForm.cs</DependentUpon>
@@ -275,7 +210,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{bf83e975-8283-4855-87d1-a5dbe72026af}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

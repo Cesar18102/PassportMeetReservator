@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
-using PassportMeetReservator.Data.Platforms;
+
+using Common.Data.Platforms;
 
 namespace PassportMeetReservator.Data
 {

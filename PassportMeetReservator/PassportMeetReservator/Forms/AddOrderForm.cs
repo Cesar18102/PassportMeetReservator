@@ -2,8 +2,8 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 
+using Common.Data.Platforms;
 using PassportMeetReservator.Data;
-using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Forms
 {

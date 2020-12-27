@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.EmailInput = new PassportMeetReservator.Controls.NamedInput();
-            this.NameInput = new PassportMeetReservator.Controls.NamedInput();
-            this.SurnameInput = new PassportMeetReservator.Controls.NamedInput();
+            this.EmailInput = new Common.Controls.NamedInput();
+            this.NameInput = new Common.Controls.NamedInput();
+            this.SurnameInput = new Common.Controls.NamedInput();
             this.SaveButton = new System.Windows.Forms.Button();
             this.CitySelector = new System.Windows.Forms.ComboBox();
             this.CityLabel = new System.Windows.Forms.Label();
@@ -182,9 +182,9 @@
         }
 
         #endregion
-        private Controls.NamedInput EmailInput;
-        private Controls.NamedInput NameInput;
-        private Controls.NamedInput SurnameInput;
+        private Common.Controls.NamedInput EmailInput;
+        private Common.Controls.NamedInput NameInput;
+        private Common.Controls.NamedInput SurnameInput;
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.ComboBox CitySelector;
         private System.Windows.Forms.Label CityLabel;

@@ -1,16 +1,18 @@
-﻿using PassportMeetReservator.Data;
-using PassportMeetReservator.Data.CustomEventArgs;
-using PassportMeetReservator.Data.Platforms;
-using PassportMeetReservator.Extensions;
-using PassportMeetReservator.Forms;
-using PassportMeetReservator.Strategies.TimeSelectStrategies;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using Common;
+using Common.Data.Platforms;
+
+using PassportMeetReservator.Data;
+using PassportMeetReservator.Data.CustomEventArgs;
+using PassportMeetReservator.Extensions;
+using PassportMeetReservator.Forms;
+using PassportMeetReservator.Strategies.TimeSelectStrategies;
 
 namespace PassportMeetReservator.Controls
 {

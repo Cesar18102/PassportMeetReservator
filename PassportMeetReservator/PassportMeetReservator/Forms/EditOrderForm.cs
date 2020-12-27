@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Windows.Forms;
 
+using Common.Data.Platforms;
 using PassportMeetReservator.Data;
-using PassportMeetReservator.Data.Platforms;
 
 namespace PassportMeetReservator.Forms
 {

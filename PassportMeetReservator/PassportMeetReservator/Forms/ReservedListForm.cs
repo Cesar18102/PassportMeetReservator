@@ -3,10 +3,10 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-using PassportMeetReservator.Controls;
+using Common.Data.CustomEventArgs;
 
+using PassportMeetReservator.Controls;
 using PassportMeetReservator.Data;
-using PassportMeetReservator.Data.CustomEventArgs;
 
 namespace PassportMeetReservator.Forms
 {

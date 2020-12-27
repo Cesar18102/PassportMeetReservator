@@ -4,6 +4,12 @@
 /PassportMeetReservator/PassportMeetReservator/bin
 /PassportMeetReservator/PassportMeetReservator/obj
 
+/PassportMeetReservator/PassportMeetBlocker/bin
+/PassportMeetReservator/PassportMeetBlocker/obj
+
+/PassportMeetReservator/Common/bin
+/PassportMeetReservator/Common/obj
+
 /Server/.vs
 /Server/packages
 

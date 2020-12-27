@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 
+using Common.Data.CustomEventArgs;
+
 using PassportMeetReservator.Data;
-using PassportMeetReservator.Data.CustomEventArgs;
 
 namespace PassportMeetReservator.Controls
 {

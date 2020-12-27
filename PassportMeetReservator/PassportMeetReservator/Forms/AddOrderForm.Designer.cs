@@ -34,9 +34,9 @@
             this.AddLastButton = new System.Windows.Forms.Button();
             this.CitySelector = new System.Windows.Forms.ComboBox();
             this.CityLabel = new System.Windows.Forms.Label();
-            this.EmailInput = new PassportMeetReservator.Controls.NamedInput();
-            this.NameInput = new PassportMeetReservator.Controls.NamedInput();
-            this.SurnameInput = new PassportMeetReservator.Controls.NamedInput();
+            this.EmailInput = new Common.Controls.NamedInput();
+            this.NameInput = new Common.Controls.NamedInput();
+            this.SurnameInput = new Common.Controls.NamedInput();
             this.PlatformSelector = new System.Windows.Forms.ComboBox();
             this.PlatformLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -198,9 +198,9 @@
 
         #endregion
 
-        private Controls.NamedInput SurnameInput;
-        private Controls.NamedInput NameInput;
-        private Controls.NamedInput EmailInput;
+        private Common.Controls.NamedInput SurnameInput;
+        private Common.Controls.NamedInput NameInput;
+        private Common.Controls.NamedInput EmailInput;
         private System.Windows.Forms.Label OperationLabel;
         private System.Windows.Forms.ComboBox OperationSelector;
         private System.Windows.Forms.Button AddFirstButton;

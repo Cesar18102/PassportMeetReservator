@@ -45,7 +45,7 @@
             this.DoneButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.PauseChangeButton = new System.Windows.Forms.Button();
-            this.UrlInput = new PassportMeetReservator.Controls.NamedInput();
+            this.UrlInput = new Common.Controls.NamedInput();
             this.BrowserInfo.SuspendLayout();
             this.TimeSelectStrategyInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.VirtualBrowserNumber)).BeginInit();
@@ -286,7 +286,7 @@
         private System.Windows.Forms.Button DoneButton;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.Button PauseChangeButton;
-        private NamedInput UrlInput;
+        private Common.Controls.NamedInput UrlInput;
         private System.Windows.Forms.NumericUpDown VirtualBrowserNumber;
         private System.Windows.Forms.GroupBox TimeSelectStrategyInfo;
         private System.Windows.Forms.RadioButton TimePeriodStrategyChecker;

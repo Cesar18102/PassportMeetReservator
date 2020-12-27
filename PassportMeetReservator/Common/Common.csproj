@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="RestSharp" Version="106.11.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\BootPeriodView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\BootPeriodView.Designer.cs">
+      <DependentUpon>BootPeriodView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\NamedInput.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\BootPeriodSplitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BootPeriodSplitForm.Designer.cs">
+      <DependentUpon>BootPeriodSplitForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\BootScheduleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BootScheduleForm.Designer.cs">
+      <DependentUpon>BootScheduleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DelayInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DelayInfoForm.Designer.cs">
+      <DependentUpon>DelayInfoForm.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Controls\BootPeriodView.resx">
+      <DependentUpon>BootPeriodView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\BootPeriodSplitForm.resx">
+      <DependentUpon>BootPeriodSplitForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\BootScheduleForm.resx">
+      <DependentUpon>BootScheduleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\DelayInfoForm.resx">
+      <DependentUpon>DelayInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
