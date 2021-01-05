@@ -78,6 +78,7 @@ namespace PassportMeetReservator.Controls
             Browser.ReserveTimePeriod.TimeEnd = ReserveTimeMax.Value.TimeOfDay;
 
             Browser.OnUrlChanged += Browser_OnUrlChanged;
+            Browser.OnProxyChanged += Browser_OnProxyChanged;
             Browser.OnPausedChanged += Browser_OnPausedChanged;
 
             TIME_SELECT_BY_TIME_PERIOD_STRATEGY = new TimeSelectByTimePeriodStrategy(Browser);
@@ -207,6 +208,9 @@ namespace PassportMeetReservator.Controls
 
         private void Browser_OnUrlChanged(object sender, UrlChangedEventArgs e) =>
             UrlInput.InputText = e.Url;
+
+        private void Browser_OnProxyChanged(object sender, EventArgs e) =>
+            ProxyLabel.Text = Browser.Proxy;
 
         private void ResetButton_Click(object sender, EventArgs e) =>
             Browser.Reset();

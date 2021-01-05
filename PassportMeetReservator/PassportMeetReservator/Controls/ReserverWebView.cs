@@ -22,6 +22,7 @@ namespace PassportMeetReservator.Controls
     public class ReserverWebView : ChromiumWebBrowser, IDisposable
     {
         public event EventHandler<OrderEventArgs> OnOrderChanged;
+        public event EventHandler<EventArgs> OnProxyChanged;
 
         public event EventHandler<ReservedEventArgs> OnReserved;
         public event EventHandler<ReservedEventArgs> OnReservedManually;
@@ -73,7 +74,8 @@ namespace PassportMeetReservator.Controls
 
         private const string URL_CHANGE_SUCCESS_PATH = "Info";
 
-        private const string BASE_ADDRESS_LOAD = "https://google.com";
+        private const string BASE_ADDRESS_LOAD = "https://whatismyipaddress.com";
+        //private const string BASE_ADDRESS_LOAD = "https://google.com";
 
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
@@ -84,6 +86,22 @@ namespace PassportMeetReservator.Controls
         public bool CalendarPushed { get; private set; }
         public bool DateSelected { get; private set; }
 
+        private string proxy;
+        public string Proxy
+        {
+            get => proxy;
+            set
+            {
+                proxy = value;
+
+                if (IsBrowserInitialized)
+                    ApplyProxy();
+                else
+                    IsBrowserInitializedChanged += ReserverWebView_IsBrowserInitializedChanged;
+
+                OnProxyChanged?.Invoke(this, new EventArgs());
+            }
+        }
 
         private bool paused = true;
         public bool Paused
@@ -214,7 +232,7 @@ namespace PassportMeetReservator.Controls
         private const int SITE_FALL_WAIT_ATTEMPTS = 40;
 
         [Obsolete]
-        public ReserverWebView()
+        public ReserverWebView() : base(BASE_ADDRESS_LOAD, new RequestContext())
         {
             this.AddressChanged += (sender, e) => Invoke(OnUrlChanged, this, new UrlChangedEventArgs(Address));
             Load(BASE_ADDRESS_LOAD);
@@ -258,6 +276,34 @@ namespace PassportMeetReservator.Controls
             IsBusy = false;
 
             TokenSource?.Cancel();
+        }
+
+        private void ReserverWebView_IsBrowserInitializedChanged(object sender, EventArgs e)
+        {
+            ApplyProxy();
+            IsBrowserInitializedChanged -= ReserverWebView_IsBrowserInitializedChanged;
+        }
+
+        private async void ApplyProxy()
+        {
+            await SetProxy();
+        }
+
+        private async Task SetProxy()
+        {
+            if (Proxy == null)
+                return;
+
+            await Cef.UIThreadTaskFactory.StartNew(() =>
+            {
+                Dictionary<string, object> pref = new Dictionary<string, object>()
+                {
+                    { "mode", "fixed_servers" },
+                    { "server", Proxy }
+                };
+                bool success = GetBrowser().GetHost().RequestContext.SetPreference("proxy", pref, out string error);
+                object p = GetBrowser().GetHost().RequestContext.GetPreference("proxy");
+            });
         }
 
         private async void Checker_OnDatesFound(object sender, EventArgs e)
@@ -366,21 +412,19 @@ namespace PassportMeetReservator.Controls
 
         private void UpdateBrowser()
         {
-            if (Checker == null)
-                return;
+            string url = Checker?.CityInfo?.BaseUrl ?? BASE_ADDRESS_LOAD;
 
             Request request = new Request()
-            {
-                Url = Checker.CityInfo.BaseUrl,
+            { 
+                Url = url,
                 Flags = UrlRequestFlags.DisableCache
             };
 
             try {
-
                 if (this.CanGoBack)
                     this.GetMainFrame().LoadRequest(request);
                 else
-                    this.Load(Checker.CityInfo.BaseUrl);
+                    this.Load(url);
 
                 CalendarPushed = false;
                 DateSelected = false;
@@ -474,7 +518,15 @@ namespace PassportMeetReservator.Controls
             if (await this.TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
             {
                 RaiseIteraionFailure("Already reserved error");
-                return false;
+
+                selectedDate = await HandleAlreadyReservedError(date);
+                if (!selectedDate.HasValue)
+                {
+                    RaiseIteraionFailure("Already reserved handler failed");
+                    return false;
+                }
+
+                RaiseIterationLog("Already reserved handler success");
             }
             //CHECK TIME RESERVED ERROR
 
@@ -495,6 +547,27 @@ namespace PassportMeetReservator.Controls
             return true;
         }
 
+        private async Task<DateTime?> HandleAlreadyReservedError(DateTime date)
+        {
+            DateTime? selected = await TimeSelectStrategy.SelectTimeFromList(date, Token);
+
+            if (!selected.HasValue)
+                return null;
+
+            for (int i = 0; i < 2; ++i)
+            {
+                if (!await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
+                {
+                    RaiseIteraionFailure("NEXT button not found");
+                    return null;
+                }
+                RaiseIterationLog("NEXT button clicked");
+            }
+
+            await WaitForSpinner();
+            return selected;
+        }
+
         private async Task<DateTime?> ScanTime(DateTime date)
         {
             string formattedDate = date.GetFormattedDate();
@@ -503,10 +576,10 @@ namespace PassportMeetReservator.Controls
             for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
             {
                 IEnumerable<Task<bool>> conditions = new List<Task<bool>>()
-                    {
-                        this.TryFindView($"vc-day id-{formattedDate}"),
-                        this.TryFindViewOfClassWithoutClass(DATE_CLASS, DATE_INACTIVE_CLASS)
-                    };
+                {
+                    this.TryFindView($"vc-day id-{formattedDate}"),
+                    this.TryFindViewOfClassWithoutClass(DATE_CLASS, DATE_INACTIVE_CLASS)
+                };
 
                 dayFound = (await Task.WhenAll(conditions)).All(cond => cond);
 

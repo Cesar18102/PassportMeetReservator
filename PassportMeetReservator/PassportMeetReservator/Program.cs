@@ -21,7 +21,7 @@ namespace PassportMeetReservator
         [STAThread]
         public static void Main()
         {
-            var settings = new CefSettings();
+            CefSettings settings = new CefSettings();
             settings.BrowserSubprocessPath = Environment.CurrentDirectory + "/x86/CefSharp.BrowserSubprocess.exe";
 
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);

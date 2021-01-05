@@ -99,7 +99,7 @@
         public override string Authority => "bezkolejki.eu";
         public override string Referer => "https://bezkolejki.eu/suw/";
         public override string AltApiUrl => null;
-        public override string AltBlockSlotApiMethod => null;
+        public override string AltBlockSlotApiMethod => "Slot/BlockSlot/suw";
         public override OperationInfo[] Operations { get; protected set; }
         public override PlatformCssInfo CssInfo { get; protected set; }
 
@@ -138,7 +138,7 @@
         public override string Authority => "bezkolejki.eu";
         public override string Referer => "https://bezkolejki.eu/luw-gorzow";
         public override string AltApiUrl => null;
-        public override string AltBlockSlotApiMethod => null;
+        public override string AltBlockSlotApiMethod => "Slot/BlockSlot/luw-gorzow";
         public override OperationInfo[] Operations { get; protected set; }
         public override PlatformCssInfo CssInfo { get; protected set; }
 

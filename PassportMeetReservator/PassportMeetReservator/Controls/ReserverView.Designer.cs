@@ -46,6 +46,7 @@
             this.ResetButton = new System.Windows.Forms.Button();
             this.PauseChangeButton = new System.Windows.Forms.Button();
             this.UrlInput = new Common.Controls.NamedInput();
+            this.ProxyLabel = new System.Windows.Forms.Label();
             this.BrowserInfo.SuspendLayout();
             this.TimeSelectStrategyInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.VirtualBrowserNumber)).BeginInit();
@@ -62,6 +63,7 @@
             // 
             // BrowserInfo
             // 
+            this.BrowserInfo.Controls.Add(this.ProxyLabel);
             this.BrowserInfo.Controls.Add(this.TimeSelectStrategyInfo);
             this.BrowserInfo.Controls.Add(this.VirtualBrowserNumber);
             this.BrowserInfo.Controls.Add(this.ReserveTimeMax);
@@ -254,6 +256,14 @@
             this.UrlInput.Text = "namedInput1";
             this.UrlInput.TopPosition = 0;
             // 
+            // ProxyLabel
+            // 
+            this.ProxyLabel.AutoSize = true;
+            this.ProxyLabel.Location = new System.Drawing.Point(249, 192);
+            this.ProxyLabel.Name = "ProxyLabel";
+            this.ProxyLabel.Size = new System.Drawing.Size(0, 13);
+            this.ProxyLabel.TabIndex = 37;
+            // 
             // ReserverView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -291,5 +301,6 @@
         private System.Windows.Forms.GroupBox TimeSelectStrategyInfo;
         private System.Windows.Forms.RadioButton TimePeriodStrategyChecker;
         private System.Windows.Forms.RadioButton BrowserNumberStrategyChecker;
+        private System.Windows.Forms.Label ProxyLabel;
     }
 }

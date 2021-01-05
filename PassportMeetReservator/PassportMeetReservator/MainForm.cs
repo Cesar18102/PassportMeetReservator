@@ -69,6 +69,18 @@ namespace PassportMeetReservator
 
         #endregion
 
+        private static Dictionary<string, int> Proxies = new Dictionary<string, int>()
+        {
+            //{ "46.238.230.4:8080", 0 },
+            //{ "85.198.250.135:3128", 0 },
+            //{ "62.87.151.138:35116", 0 },
+            //{ "85.221.247.234:8080", 0 },
+            //{ "80.53.233.124:80", 0 },
+            //{ "146.120.214.62:8080", 0 }
+            //{ "91.228.89.29:3128", 0 },
+            //{ "62.133.130.206:3128", 0 }
+        };
+
         private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
         private static FileService FileService = DependencyHolder.ServiceDependencies.Resolve<FileService>();
 
@@ -197,6 +209,11 @@ namespace PassportMeetReservator
             reserver.Browser.DelayInfo = DelayInfo;
             reserver.Platforms = Platforms;
             reserver.DateCheckers = DateCheckers;
+
+            reserver.Browser.Proxy = Proxies.OrderBy(prx => prx.Value).FirstOrDefault().Key;
+
+            if (reserver.Browser.Proxy != null)
+                Proxies[reserver.Browser.Proxy]++;
 
             reserver.Browser.OnPausedChanged += Browser_OnPausedChanged;
             reserver.Browser.OnReservedManually += Browser_OnReservedManually;
