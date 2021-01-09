@@ -46,6 +46,7 @@ namespace PassportMeetReservator.Controls
 
         private const string CALENDAR_CLASS = "vc-container vc-reset vc-text-gray-900 vc-bg-white vc-border vc-border-gray-400 vc-rounded-lg";
 
+        private const string TIME_SELECTOR_ID = "selectTime";
         private const string TIME_SELECTOR_CLASS = "text-center form-control custom-select";
         private const string INPUT_CLASS = "property-input form-control";
 
@@ -376,19 +377,19 @@ namespace PassportMeetReservator.Controls
                 UpdateBrowser();
         }
 
-        private void RaiseIterationSkipped(string message)
+        private async void RaiseIterationSkipped(string message)
         {
             LogEventArgs logEventArgs = new LogEventArgs(message, RealBrowserNumber);
             OnIterationSkipped?.Invoke(this, logEventArgs);
         }
 
-        private void RaiseIteraionFailure(string message)
+        private async void RaiseIteraionFailure(string message)
         {
             LogEventArgs logEventArgs = new LogEventArgs(message, RealBrowserNumber);
             OnIterationFailure?.Invoke(this, logEventArgs);
         }
 
-        private void RaiseIterationLog(string message)
+        private async void RaiseIterationLog(string message)
         {
             LogEventArgs logEventArgs = new LogEventArgs(message, RealBrowserNumber);
             OnIterationLogRequired?.Invoke(this, logEventArgs);
@@ -449,165 +450,91 @@ namespace PassportMeetReservator.Controls
         {
             RaiseIterationLog($"Iteration started for {date} started");
 
-            await WaitForSpinner();
-            await Task.Delay(DelayInfo.ActionResultDelay, Token);
-
-            if (!await ClickViewOfClassWithText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
-            {
-                RaiseIteraionFailure("Opreration button not found");
-                return false;
-            }
-            RaiseIterationLog("Operation button found");
-            //SELECT ORDER TYPE
-
-            await WaitForSpinner();
-
-            if (!await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
-            {
-                RaiseIteraionFailure("NEXT button not found");
-                return false;
-            }
-            RaiseIterationLog("NEXT button clicked");
-            //CONFIRM ORDER TYPE
-
-            if (!await WaitForView(CALENDAR_CLASS, SITE_FALL_WAIT_ATTEMPTS))
-            {
-                RaiseIteraionFailure("Calendar button not found");
-                return false;
-            }
-            RaiseIterationLog("Calendar found");
-
-            await Task.Delay(DelayInfo.ActionResultDelay * 2, Token);//duo delay
-
-            if (!CalendarPushed)
-            {
-                DateTime currentScanDate = DateTime.Now;
-                while (currentScanDate.Month != date.Month)
-                {
-                    currentScanDate = currentScanDate.AddMonths(1);
-
-                    await this.TryClickViewOfClassWithNumber(NEXT_MONTH_BUTTON_CLASS, NEXT_MONTH_BUTTON_NUM, "", true);
-                    await Task.Delay(DelayInfo.ActionResultDelay, Token);
-
-                    RaiseIterationLog($"Calendar pushed to month #{currentScanDate.Month + 1}");
-                }
-                RaiseIterationLog($"Calendar month found");
-                CalendarPushed = true;
-            }
-            //PUSH CALENDAR FIRST TIME IF NEEDED
-
-            DateTime? selectedDate = await ScanTime(date);
-            if (!selectedDate.HasValue)
-            {
-                RaiseIteraionFailure("Available time for selected date not found");
-                return false;
-            }
-            RaiseIterationLog($"Matching time selection success");
-
-            await WaitForSpinner();
-
-            if(await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
-                RaiseIterationLog("NEXT button clicked");
-            else
-                RaiseIterationLog("NEXT button NOT clicked");
-            //CONFIRM SELECTED DATE
-
-            await Task.Delay(DelayInfo.ActionResultDelay * 3, Token); //triple delay
-
-            await WaitForSpinner();
-            if (await this.TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
-            {
-                RaiseIteraionFailure("Already reserved error");
-
-                selectedDate = await HandleAlreadyReservedError(date);
-                if (!selectedDate.HasValue)
-                {
-                    RaiseIteraionFailure("Already reserved handler failed");
-                    return false;
-                }
-
-                RaiseIterationLog("Already reserved handler success");
-            }
-            //CHECK TIME RESERVED ERROR
-
-            JavascriptResponse jsStatusCircleStyle = await this.GetMainFrame().EvaluateScriptAsync(
-                $"document.getElementById('{DONE_CIRCLE_ID}').children[0].style.backgroundColor"
-            );
-
-            if (jsStatusCircleStyle.Result.ToString() != Checker.CityInfo.CssInfo.StepCircleColor)
-            {
-                RaiseIteraionFailure("Step circle check failed");
-                return false;
-            }
-            //CURRENT STEP STATUS CHECK
-
-            Selected = true;
-            OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(selectedDate.Value));
-
-            return true;
-        }
-
-        private async Task<DateTime?> HandleAlreadyReservedError(DateTime date)
-        {
-            DateTime? selected = await TimeSelectStrategy.SelectTimeFromList(date, Token);
-
-            if (!selected.HasValue)
-                return null;
-
-            for (int i = 0; i < 2; ++i)
-            {
-                if (!await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
-                {
-                    RaiseIteraionFailure("NEXT button not found");
-                    return null;
-                }
-                RaiseIterationLog("NEXT button clicked");
-            }
-
-            await WaitForSpinner();
-            return selected;
-        }
-
-        private async Task<DateTime?> ScanTime(DateTime date)
-        {
             string formattedDate = date.GetFormattedDate();
 
-            bool dayFound = false;
-            for (int j = 0; j < DATE_WAIT_ITERATION_COUNT; ++j)
-            {
-                IEnumerable<Task<bool>> conditions = new List<Task<bool>>()
-                {
-                    this.TryFindView($"vc-day id-{formattedDate}"),
-                    this.TryFindViewOfClassWithoutClass(DATE_CLASS, DATE_INACTIVE_CLASS)
-                };
-
-                dayFound = (await Task.WhenAll(conditions)).All(cond => cond);
-
-                if (dayFound)
-                    break;
-
-                await Task.Delay(DelayInfo.DiscreteWaitDelay, Token);
-            } //WAIT FOR DAY FOR SEVERAL TIMES - WAIT FOR LOADING
-
-            if (!dayFound)
-            {
-                RaiseIterationLog($"Required date NOT FOUND");
-                return null;
-            }
-            RaiseIterationLog($"Required date found");
-
-            await this.GetMainFrame().EvaluateScriptAsync(
-                $"document.getElementsByClassName('vc-day id-{formattedDate}')[0].children[0].children[0].click();"
+            JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsync(
+                "{" +
+                    "function confirmBlock(unwatcher) {" +
+                        "unwatcher();" +
+                        $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
+                    "}" +
+                    "function block(unwatcher) {" +
+                        "unwatcher();" +
+                        $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" + 
+                        "let confirmUnwatcher = selector.__vue__.$watch(" +
+                            "function() {" +
+                                "return this.localValue;" +
+                            "}," +
+                            "function(newValue, oldValue) {" +
+                                "confirmBlock(confirmUnwatcher);" +
+                            "}" +
+                        ");" +
+                        $"selector.selectedIndex = {RealBrowserNumber};" +
+                        "let e = document.createEvent('HTMLEvents');" +
+                        "e.initEvent('change', true, true);" +
+                        "selector.dispatchEvent(e);" +
+                    "}" +
+                    "function selectTime(day) {" +
+                        "day.__vue__.click();" +
+                        $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
+                        $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" +
+                        "let unwatcher = selector.__vue__.$watch(" +
+                            "function() {" +
+                                "return this.formOptions;" +
+                            "}," +
+                            "function(newValue, oldValue) {" +
+                                "block(unwatcher);" +
+                            "}" +
+                        ");" +
+                    "}" +
+                    $"var days = document.getElementsByClassName('vc-day id-{formattedDate}');" +
+                    "days[0].__vue__.$watch(" +
+                        "function() {" +
+                            "return this.$props.day.isDisabled;" +
+                        "}," +
+                        "function(newValue, oldValue) {" +
+                            "if(newValue === false) {" +
+                                "selectTime(days[0]);" +
+                            "}" +
+                        "}" +
+                    ");" +
+                    $"let views = document.getElementsByClassName('{RESERVATION_TYPE_BUTTON_CLASS}');" +
+                    $"let found = false;" +
+                    "for(let view of views) {" +
+                        $"if(view.textContent.indexOf('{Checker.OperationInfo.Name}') != -1)" + " {" +
+                            "view.click();" +
+                            "found = true;" +
+                            "break;" +
+                         "}" +
+                    "}" +
+                "}"
             );
-            RaiseIterationLog($"Required date selected");
 
-            await WaitForSpinner();
+            if (!iterationResponse.Success)
+            {
+                RaiseIteraionFailure("Iteration failure");
+                return false;
+            }
 
-            RaiseIterationLog($"Waiting for time selector");
-            await WaitForView(TIME_SELECTOR_CLASS, SITE_FALL_WAIT_ATTEMPTS);
-            await Task.Delay(DelayInfo.ActionResultDelay * 2, Token);//duo delay
+            await Task.Delay(500);
 
-            return await TimeSelectStrategy.SelectTimeFromList(date, Token);
+            JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
+                $"document.getElementById('{TIME_SELECTOR_ID}').__vue__.localValue.dateTime;"
+            );
+
+            if (selected.Success)
+            {
+                Selected = true;
+                DateTime taken = DateTime.Parse(selected.Result.ToString());
+                OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken));
+
+                return true;
+            }
+            else
+            {
+                RaiseIteraionFailure("Iteration failure");
+                return false;
+            }
         }
 
         private async Task FillForm()
