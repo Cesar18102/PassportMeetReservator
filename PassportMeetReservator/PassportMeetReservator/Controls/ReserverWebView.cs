@@ -16,6 +16,7 @@ using PassportMeetReservator.Data.CustomEventArgs;
 
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
+using Common.Data.Platforms;
 
 namespace PassportMeetReservator.Controls
 {
@@ -454,13 +455,15 @@ namespace PassportMeetReservator.Controls
 
             JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
+                    "var VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+
                     "function confirmBlock(unwatcher) {" +
                         "unwatcher();" +
                         $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
                     "}" +
                     "function block(unwatcher) {" +
                         "unwatcher();" +
-                        $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" + 
+                        $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" +
                         "let confirmUnwatcher = selector.__vue__.$watch(" +
                             "function() {" +
                                 "return this.localValue;" +
@@ -469,14 +472,12 @@ namespace PassportMeetReservator.Controls
                                 "confirmBlock(confirmUnwatcher);" +
                             "}" +
                         ");" +
-                        $"selector.selectedIndex = {RealBrowserNumber};" +
+                        $"selector.selectedIndex = {VirtualBrowserNumber};" +
                         "let e = document.createEvent('HTMLEvents');" +
                         "e.initEvent('change', true, true);" +
                         "selector.dispatchEvent(e);" +
                     "}" +
                     "function selectTime(day) {" +
-                        "day.__vue__.click();" +
-                        $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
                         $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" +
                         "let unwatcher = selector.__vue__.$watch(" +
                             "function() {" +
@@ -486,6 +487,17 @@ namespace PassportMeetReservator.Controls
                                 "block(unwatcher);" +
                             "}" +
                         ");" +
+                        $"VUE.selectedDay = '{formattedDate}';" +
+                        $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
+                    "}" +
+                    "function findOperationButton(operation) {" +
+                        $"let views = document.getElementsByClassName('{RESERVATION_TYPE_BUTTON_CLASS}');" +
+                        "for(let view of views) {" +
+                            $"if(view.textContent.indexOf(operation) != -1)" + " {" +
+                                "return view;" +
+                             "}" +
+                        "}" +
+                        "return null" + 
                     "}" +
                     $"var days = document.getElementsByClassName('vc-day id-{formattedDate}');" +
                     "days[0].__vue__.$watch(" +
@@ -493,20 +505,13 @@ namespace PassportMeetReservator.Controls
                             "return this.$props.day.isDisabled;" +
                         "}," +
                         "function(newValue, oldValue) {" +
-                            "if(newValue === false) {" +
+                            $"if(newValue === false && VUE.selectedOperation == {Checker.OperationInfo.Number})" +
+                            "{" +
                                 "selectTime(days[0]);" +
                             "}" +
                         "}" +
                     ");" +
-                    $"let views = document.getElementsByClassName('{RESERVATION_TYPE_BUTTON_CLASS}');" +
-                    $"let found = false;" +
-                    "for(let view of views) {" +
-                        $"if(view.textContent.indexOf('{Checker.OperationInfo.Name}') != -1)" + " {" +
-                            "view.click();" +
-                            "found = true;" +
-                            "break;" +
-                         "}" +
-                    "}" +
+                    $"VUE.selectedOperation = {Checker.OperationInfo.Number};" +
                 "}"
             );
 
@@ -518,23 +523,35 @@ namespace PassportMeetReservator.Controls
 
             await Task.Delay(500);
 
+            /*if (Checker.PlatformInfo is PoznanPlatformInfo)
+            {
+                JavascriptResponse jsStatusCircleStyle = await this.GetMainFrame().EvaluateScriptAsync(
+                    $"document.getElementById('{DONE_CIRCLE_ID}').children[0].style.backgroundColor"
+                );
+
+                if (jsStatusCircleStyle.Result?.ToString() != Checker.CityInfo.CssInfo.StepCircleColor)
+                {
+                    RaiseIteraionFailure("Step circle check failed");
+                    return false;
+                }
+                //CURRENT STEP STATUS CHECK
+            }*/
+
             JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
                 $"document.getElementById('{TIME_SELECTOR_ID}').__vue__.localValue.dateTime;"
             );
 
-            if (selected.Success)
+            if(!selected.Success || selected.Result == null || selected.Result.Equals(""))
             {
-                Selected = true;
-                DateTime taken = DateTime.Parse(selected.Result.ToString());
-                OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken));
-
-                return true;
-            }
-            else
-            {
-                RaiseIteraionFailure("Iteration failure");
+                RaiseIteraionFailure("Nothing selected");
                 return false;
             }
+
+            Selected = true;
+            DateTime taken = DateTime.Parse(selected.Result.ToString());
+            OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken));
+
+            return true;
         }
 
         private async Task FillForm()
