@@ -219,7 +219,17 @@ namespace PassportMeetReservator.Controls
 
         public int BotNumber { get; set; }
         public int RealBrowserNumber { get; set; }
-        public int VirtualBrowserNumber { get; set; }
+
+        private int virtualBrowserNumber;
+        public int VirtualBrowserNumber
+        {
+            get => virtualBrowserNumber;
+            set
+            {
+                virtualBrowserNumber = value;
+                Reset();
+            }
+        }
 
         public DateTime ReserveDateMin { get; set; } = DateTime.Now.Date;
         public DateTime ReserveDateMax { get; set; } = DateTime.Now.Date;
@@ -329,9 +339,10 @@ namespace PassportMeetReservator.Controls
             IsBusy = false;
         }
 
+        [Obsolete]
         private async Task TryReserveDates()
         {
-            if (Paused)
+            if (Paused || Selected)
                 return;
 
             if (Checker == null)
@@ -374,7 +385,7 @@ namespace PassportMeetReservator.Controls
                     UpdateBrowser();
                 }
             }
-            else if(!await RefreshIteration())
+            else
                 UpdateBrowser();
         }
 
@@ -434,19 +445,6 @@ namespace PassportMeetReservator.Controls
             catch { }
         }
 
-        private async Task<bool> RefreshIteration()
-        {
-            await this.GetMainFrame().EvaluateScriptAsync($"document.getElementById('{OPERATION_CIRCLE_ID}').click()");
-
-            if (await this.ClickAnyViewOfClassWithoutText(RESERVATION_TYPE_BUTTON_CLASS, Checker.OperationInfo.Name, SITE_FALL_WAIT_ATTEMPTS))
-            {
-                await WaitForSpinner();
-                return true;
-            }
-
-            return false;
-        }
-
         private async Task<bool> Iteration(DateTime date)
         {
             RaiseIterationLog($"Iteration started for {date} started");
@@ -455,63 +453,29 @@ namespace PassportMeetReservator.Controls
 
             JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
-                    "var VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
-
-                    "function confirmBlock(unwatcher) {" +
-                        "unwatcher();" +
-                        $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
-                    "}" +
-                    "function block(unwatcher) {" +
-                        "unwatcher();" +
-                        $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" +
-                        "let confirmUnwatcher = selector.__vue__.$watch(" +
-                            "function() {" +
-                                "return this.localValue;" +
-                            "}," +
-                            "function(newValue, oldValue) {" +
-                                "confirmBlock(confirmUnwatcher);" +
-                            "}" +
-                        ");" +
-                        $"selector.selectedIndex = {VirtualBrowserNumber};" +
-                        "let e = document.createEvent('HTMLEvents');" +
-                        "e.initEvent('change', true, true);" +
-                        "selector.dispatchEvent(e);" +
-                    "}" +
-                    "function selectTime(day) {" +
-                        $"let selector = document.getElementById('{TIME_SELECTOR_ID}');" +
-                        "let unwatcher = selector.__vue__.$watch(" +
-                            "function() {" +
-                                "return this.formOptions;" +
-                            "}," +
-                            "function(newValue, oldValue) {" +
-                                "block(unwatcher);" +
-                            "}" +
-                        ");" +
-                        $"VUE.selectedDay = '{formattedDate}';" +
-                        $"document.getElementsByClassName('{NEXT_STEP_BUTTON_CLASS}')[0].click();" +
-                    "}" +
-                    "function findOperationButton(operation) {" +
-                        $"let views = document.getElementsByClassName('{RESERVATION_TYPE_BUTTON_CLASS}');" +
-                        "for(let view of views) {" +
-                            $"if(view.textContent.indexOf(operation) != -1)" + " {" +
-                                "return view;" +
-                             "}" +
+                    "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                    $"let BROWSER_NUMBER = {VirtualBrowserNumber};" +
+                    "async function selectTime() {" +
+                        "await VUE.refreshSlots();" +
+                        "if (VUE.availableSlots.length != 0 && VUE.availableSlots.length > BROWSER_NUMBER) {" +
+                            $"VUE.selectedSlot = VUE.availableSlots[BROWSER_NUMBER];" +
+                            $"await VUE.blockSlot();" +
+                            $"window.RESERVATION_RESULT = VUE.selectedSlot.dateTime;" +
+                        "} else { " +
+                            $"setTimeout(selectTime, {DelayInfo.DiscreteWaitDelay});" +
                         "}" +
-                        "return null" + 
-                    "}" +
-                    $"var days = document.getElementsByClassName('vc-day id-{formattedDate}');" +
-                    "days[0].__vue__.$watch(" +
-                        "function() {" +
-                            "return this.$props.day.isDisabled;" +
-                        "}," +
-                        "function(newValue, oldValue) {" +
-                            $"if(newValue === false && VUE.selectedOperation == {Checker.OperationInfo.Number})" +
-                            "{" +
-                                "selectTime(days[0]);" +
-                            "}" +
+                   "}" +
+                   "async function selectDate() {" +
+                        "await VUE.getAvailableDates();" +
+                        "if (VUE.minAvailableDate.toString() != 'Invalid Date') {" +
+                            "VUE.selectedDay = VUE.minAvailableDate;" +
+                            "selectTime();" +
+                        "} else {" +
+                            $"setTimeout(selectDate, {DelayInfo.DiscreteWaitDelay});" +
                         "}" +
-                    ");" +
-                    $"VUE.selectedOperation = {Checker.OperationInfo.Number};" +
+                   "}" +
+                   $"VUE.selectedOperation = {Checker.OperationInfo.Number};" +
+                   "selectDate();" +
                 "}"
             );
 
@@ -521,37 +485,79 @@ namespace PassportMeetReservator.Controls
                 return false;
             }
 
-            await Task.Delay(500);
+            DateTime? taken = await WaitForReserveIteration();
 
-            /*if (Checker.PlatformInfo is PoznanPlatformInfo)
+            if (!taken.HasValue)
             {
-                JavascriptResponse jsStatusCircleStyle = await this.GetMainFrame().EvaluateScriptAsync(
-                    $"document.getElementById('{DONE_CIRCLE_ID}').children[0].style.backgroundColor"
-                );
-
-                if (jsStatusCircleStyle.Result?.ToString() != Checker.CityInfo.CssInfo.StepCircleColor)
-                {
-                    RaiseIteraionFailure("Step circle check failed");
-                    return false;
-                }
-                //CURRENT STEP STATUS CHECK
-            }*/
-
-            JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
-                $"document.getElementById('{TIME_SELECTOR_ID}').__vue__.localValue.dateTime;"
-            );
-
-            if(!selected.Success || selected.Result == null || selected.Result.Equals(""))
-            {
-                RaiseIteraionFailure("Nothing selected");
+                RaiseIteraionFailure("Wait reserve iteration fail");
                 return false;
             }
 
-            Selected = true;
-            DateTime taken = DateTime.Parse(selected.Result.ToString());
-            OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken));
+            if (!Selected)
+            {
+                Selected = true;
 
-            return true;
+                for (int i = 0; i < 2; ++i)
+                {
+                    await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS);
+                    await Task.Delay(DelayInfo.ActionResultDelay);
+                }
+
+                OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken.Value));
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private async Task<DateTime?> WaitForReserveIteration()
+        {
+            for (; ; )
+            {
+                JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
+                   $"window.RESERVATION_RESULT"
+                );
+
+                if (await this.TryFindViewOfClassWithText(FAILED_RESERVE_TIME_CLASS, FAILED_RESERVE_TIME_TEXT))
+                {
+                    RaiseIteraionFailure("Already reserved error");
+
+                    JavascriptResponse slotsCount = await this.GetMainFrame().EvaluateScriptAsync(
+                        "{" +
+                            "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                            $"VUE.availableSlots.length;" +
+                        "}"
+                    );
+
+                    if (slotsCount.Success && Convert.ToInt32(slotsCount.Result) == 0)
+                    {
+                        RaiseIteraionFailure("Already reserved handler failed");
+                        return null;
+                    }
+
+                    JavascriptResponse alreadyReservedHandlerResult = await this.GetMainFrame().EvaluateScriptAsync(
+                        "{" +
+                            "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                            $"VUE.selectedSlot = VUE.availableSlots[Math.min({VirtualBrowserNumber}, VUE.availableSlots.length - 1)];" +
+                            $"VUE.blockSlot();" +
+                        "}"
+                    );
+
+                    DateTime? selectedDateTime = await WaitForReserveIteration();
+                    if (!selectedDateTime.HasValue)
+                    {
+                        RaiseIteraionFailure("Already reserved handler failed");
+                        return null;
+                    }
+
+                    RaiseIterationLog("Already reserved handler success");
+                }
+
+                if (selected.Success && selected.Result != null && !selected.Result.Equals(""))
+                    return DateTime.Parse(selected.Result.ToString());
+
+                await Task.Delay(DelayInfo.ActionResultDelay);
+            }
         }
 
         private async Task FillForm()
