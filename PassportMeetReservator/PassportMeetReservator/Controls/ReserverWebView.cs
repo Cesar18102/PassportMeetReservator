@@ -16,7 +16,8 @@ using PassportMeetReservator.Data.CustomEventArgs;
 
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
-using Common.Data.Platforms;
+using System.Windows.Forms;
+using Common.Data.Exceptions;
 
 namespace PassportMeetReservator.Controls
 {
@@ -77,7 +78,6 @@ namespace PassportMeetReservator.Controls
         private const string URL_CHANGE_SUCCESS_PATH = "Info";
 
         private const string BASE_ADDRESS_LOAD = "https://whatismyipaddress.com";
-        //private const string BASE_ADDRESS_LOAD = "https://google.com";
 
         private Task Loop { get; set; }
         private CancellationToken Token { get; set; }
@@ -85,8 +85,6 @@ namespace PassportMeetReservator.Controls
 
         public bool IsBusy { get; private set; }
         public bool Selected { get; private set; }
-        public bool CalendarPushed { get; private set; }
-        public bool DateSelected { get; private set; }
 
         private string proxy;
         public string Proxy
@@ -265,14 +263,25 @@ namespace PassportMeetReservator.Controls
 
         private void CancelTask()
         {
-            try { IsBusy = false; TokenSource?.Cancel(); }
+            try { TokenSource?.Cancel(); }
             catch { TokenSource = null; }
+        }
+
+        private bool CanPerformReset()
+        {
+            return !Selected || MessageBox.Show("This browser has selected a slot. Are you sure to reset it?", "Reset", MessageBoxButtons.YesNo) == DialogResult.Yes;
         }
 
         public void Reset()
         {
-            CancelTask();
-            UpdateBrowser();
+            if (CanPerformReset())
+            {
+                CancelTask();
+                UpdateBrowser();
+
+                Selected = false;
+                IsBusy = false;
+            }
         }
 
         public void ResetScroll()
@@ -375,6 +384,7 @@ namespace PassportMeetReservator.Controls
 
             DateTime reservedDateTime = TimeSelectStrategy.ChooseTimeSlotToReserve(slotsAtTimePeriod);
 
+
             if (await Iteration(reservedDateTime))
             {
                 if (!Auto || Order == null)
@@ -433,14 +443,12 @@ namespace PassportMeetReservator.Controls
                 Flags = UrlRequestFlags.DisableCache
             };
 
-            try {
+            try
+            {
                 if (this.CanGoBack)
                     this.GetMainFrame().LoadRequest(request);
                 else
                     this.Load(url);
-
-                CalendarPushed = false;
-                DateSelected = false;
             }
             catch { }
         }
@@ -469,7 +477,7 @@ namespace PassportMeetReservator.Controls
                         "await VUE.getAvailableDates();" +
                         "if (VUE.minAvailableDate.toString() != 'Invalid Date') {" +
                             "VUE.selectedDay = VUE.minAvailableDate;" +
-                            "selectTime();" +
+                            "await selectTime();" +
                         "} else {" +
                             $"setTimeout(selectDate, {DelayInfo.DiscreteWaitDelay});" +
                         "}" +
@@ -481,12 +489,11 @@ namespace PassportMeetReservator.Controls
 
             if (!iterationResponse.Success)
             {
-                RaiseIteraionFailure("Iteration failure");
+                RaiseIteraionFailure($"Iteration failure: {iterationResponse.Message}");
                 return false;
             }
 
             DateTime? taken = await WaitForReserveIteration();
-
             if (!taken.HasValue)
             {
                 RaiseIteraionFailure("Wait reserve iteration fail");
@@ -504,16 +511,25 @@ namespace PassportMeetReservator.Controls
                 }
 
                 OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken.Value));
+                RaiseIterationLog($"Iteration success");
                 return true;
             }
             else
-                return false;
+            {
+                RaiseIteraionFailure($"Iteration failure: selection races detected");
+                throw new SelectionRacesException();
+            }
         }
 
         private async Task<DateTime?> WaitForReserveIteration()
         {
             for (; ; )
             {
+                if (Selected)
+                    throw new SelectionRacesException();
+
+                Token.ThrowIfCancellationRequested();
+
                 JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
                    $"window.RESERVATION_RESULT"
                 );
@@ -531,7 +547,7 @@ namespace PassportMeetReservator.Controls
 
                     if (slotsCount.Success && Convert.ToInt32(slotsCount.Result) == 0)
                     {
-                        RaiseIteraionFailure("Already reserved handler failed");
+                        RaiseIteraionFailure("Already reserved handler failed: no more slots available");
                         return null;
                     }
 
@@ -549,8 +565,7 @@ namespace PassportMeetReservator.Controls
                         RaiseIteraionFailure("Already reserved handler failed");
                         return null;
                     }
-
-                    RaiseIterationLog("Already reserved handler success");
+                    RaiseIterationLog("Already reserved handler succes");
                 }
 
                 if (selected.Success && selected.Result != null && !selected.Result.Equals(""))
