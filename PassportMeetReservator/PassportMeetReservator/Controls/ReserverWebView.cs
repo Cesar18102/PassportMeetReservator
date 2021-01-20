@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Windows.Forms;
-using System.Collections.Generic;
-
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using CefSharp;
 using CefSharp.WinForms;
@@ -18,6 +16,8 @@ using PassportMeetReservator.Data.CustomEventArgs;
 
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
+using System.Windows.Forms;
+using Common.Data.Exceptions;
 
 namespace PassportMeetReservator.Controls
 {
@@ -396,6 +396,8 @@ namespace PassportMeetReservator.Controls
                     UpdateBrowser();
                 }
             }
+            else
+                UpdateBrowser();
         }
 
         private void RaiseIterationSkipped(string message)
@@ -458,7 +460,7 @@ namespace PassportMeetReservator.Controls
 
             string formattedDate = date.GetFormattedDate();
 
-            JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsPromiseAsync(
+            JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
                     "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
                     $"let BROWSER_NUMBER = {VirtualBrowserNumber};" +
@@ -467,116 +469,116 @@ namespace PassportMeetReservator.Controls
                         "if (VUE.availableSlots.length != 0 && VUE.availableSlots.length > BROWSER_NUMBER) {" +
                             $"VUE.selectedSlot = VUE.availableSlots[BROWSER_NUMBER];" +
                             $"await VUE.blockSlot();" +
-                            $"return VUE.reservationBlockEndIn != null && VUE.slotBlockedError == '';" +
+                        "} else { " +
+                            $"setTimeout(selectTime, {DelayInfo.DiscreteWaitDelay});" +
                         "}" +
-                        "return false;" +
                    "}" +
                    "async function selectDate() {" +
                         "await VUE.getAvailableDates();" +
                         "if (VUE.minAvailableDate.toString() != 'Invalid Date') {" +
                             "VUE.selectedDay = VUE.minAvailableDate;" +
-                            "return await selectTime();" +
+                            "await selectTime();" +
+                        "} else {" +
+                            $"setTimeout(selectDate, {DelayInfo.DiscreteWaitDelay});" +
                         "}" +
-                        "return false;" +
                    "}" +
                    $"VUE.selectedOperation = {Checker.OperationInfo.Number};" +
-                   "return selectDate();" +
+                   "selectDate();" +
                 "}"
             );
 
             if (!iterationResponse.Success)
             {
-                RaiseIteraionFailure($"Iteration error: {iterationResponse.Message}");
+                RaiseIteraionFailure($"Iteration failure: {iterationResponse.Message}");
                 return false;
             }
 
-            if((bool)iterationResponse.Result)
+            DateTime? taken = await WaitForReserveIteration();
+            if (!taken.HasValue)
             {
-                DateTime? taken = await HandleReserveIteration();
-                if (!taken.HasValue)
-                {
-                    RaiseIteraionFailure("Wait reserve iteration fail");
-                    return false;
-                }
-
-                Selected = true;
-                RaiseIterationLog($"Reserve iteration success");
-
-                await this.GetMainFrame().EvaluateScriptAsync(
-                    "document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__.continueReservation();"
-                );
-
-                OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken.Value));
-
-                return true;
+                RaiseIteraionFailure("Wait reserve iteration fail");
+                return false;
             }
 
-            await Task.Delay(DelayInfo.ActionResultDelay);
-            return false;
-        }
+            Selected = true;
+            RaiseIterationLog($"Reserve iteration success");
 
-        private async Task<DateTime?> HandleReserveIteration()
-        {
-            RaiseIterationLog($"Reserve iteration handler");
-
-            JavascriptResponse probe = await this.GetMainFrame().EvaluateScriptAsync(
-                "{" +
-                    "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
-                    "let result = (VUE.reservationBlockEndIn == null ? '0' : '1') + (VUE.slotBlockedError == '' ? '0' : '1');" +
-                    "result" +
-                "}"
+            await this.GetMainFrame().EvaluateScriptAsync(
+                "document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__.continueReservation();"
             );
 
-            if (probe.Success && probe.Result != null)
+            OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken.Value));
+
+            return true;
+        }
+
+        private async Task<DateTime?> WaitForReserveIteration()
+        {
+            for (; ; )
             {
-                string probeResult = probe.Result.ToString();
+                RaiseIterationLog($"Waiting for reserve iteration");
 
-                bool isBlocked = probeResult[0] == '1';
-                bool hasAlreadyReservedError = probeResult[1] == '1';
+                Token.ThrowIfCancellationRequested();
 
-                if (isBlocked)
+                JavascriptResponse probe = await this.GetMainFrame().EvaluateScriptAsync(
+                    "{" +
+                        "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                        "let result = (VUE.reservationBlockEndIn == null ? '0' : '1') + (VUE.slotBlockedError == '' ? '0' : '1');" +
+                        "result" +
+                    "}"
+                );
+
+                if (probe.Success && probe.Result != null)
                 {
-                    JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
-                        "{" +
-                            "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
-                            "VUE.selectedSlot.dateTime" +
-                        "}"
-                    );
+                    string probeResult = probe.Result.ToString();
 
-                    return DateTime.Parse(selected.Result.ToString());
-                }
-                else if (hasAlreadyReservedError)
-                {
-                    RaiseIteraionFailure("Already reserved error");
+                    bool isBlocked = probeResult[0] == '1';
+                    bool hasAlreadyReservedError = probeResult[1] == '1';
 
-                    JavascriptResponse alreadyReservedHandlerResult = await this.GetMainFrame().EvaluateScriptAsPromiseAsync(
-                        "{" +
-                            "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
-                            $"VUE.selectedSlot = VUE.availableSlots[Math.min({VirtualBrowserNumber}, VUE.availableSlots.length - 1)];" +
-                            $"return VUE.blockSlot();" +
-                        "}"
-                    );
-
-                    if (alreadyReservedHandlerResult.Success)
+                    if (isBlocked)
                     {
-                        DateTime? selectedDateTime = await HandleReserveIteration();
-                        if (!selectedDateTime.HasValue)
+                        JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
+                            "{" +
+                                "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                                "VUE.selectedSlot.dateTime" +
+                            "}"
+                        );
+
+                        return DateTime.Parse(selected.Result.ToString());
+                    }
+                    else if (hasAlreadyReservedError)
+                    {
+                        RaiseIteraionFailure("Already reserved error");
+
+                        JavascriptResponse alreadyReservedHandlerResult = await this.GetMainFrame().EvaluateScriptAsync(
+                            "{" +
+                                "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                                $"VUE.selectedSlot = VUE.availableSlots[Math.min({VirtualBrowserNumber}, VUE.availableSlots.length - 1)];" +
+                                $"VUE.blockSlot();" +
+                            "}"
+                        );
+
+                        if (alreadyReservedHandlerResult.Success)
                         {
-                            RaiseIteraionFailure("Already reserved handler failed");
+                            DateTime? selectedDateTime = await WaitForReserveIteration();
+                            if (!selectedDateTime.HasValue)
+                            {
+                                RaiseIteraionFailure("Already reserved handler failed");
+                                return null;
+                            }
+                            RaiseIterationLog("Already reserved handler success");
+                            return selectedDateTime;
+                        }
+                        else
+                        {
+                            RaiseIteraionFailure("Already reserved handler failed: no more slots available");
                             return null;
                         }
-                        RaiseIterationLog("Already reserved handler success");
-                        return selectedDateTime;
-                    }
-                    else
-                    {
-                        RaiseIteraionFailure("Already reserved handler failed: no more slots available");
-                        return null;
                     }
                 }
-            }
 
-            return null;
+                await Task.Delay(DelayInfo.ActionResultDelay);
+            }
         }
 
         private async Task FillForm()
