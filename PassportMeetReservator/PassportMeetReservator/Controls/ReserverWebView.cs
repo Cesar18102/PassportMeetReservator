@@ -10,10 +10,8 @@ using CefSharp;
 using CefSharp.WinForms;
 
 using Common;
-using Common.Extensions;
-
 using Common.Data;
-using Common.Data.Exceptions;
+using Common.Extensions;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
