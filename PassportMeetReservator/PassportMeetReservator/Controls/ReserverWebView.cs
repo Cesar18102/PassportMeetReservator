@@ -241,6 +241,8 @@ namespace PassportMeetReservator.Controls
         private const int DATE_WAIT_ITERATION_COUNT = 20;
         private const int SITE_FALL_WAIT_ATTEMPTS = 40;
 
+        private bool IsRefreshed { get; set; }
+
         [Obsolete]
         public ReserverWebView() : base(BASE_ADDRESS_LOAD, new RequestContext())
         {
@@ -365,6 +367,15 @@ namespace PassportMeetReservator.Controls
             if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
             {
                 RaiseIterationSkipped("No schedule match");
+                IsRefreshed = false;
+                return;
+            }
+
+            if (!IsRefreshed)
+            {
+                this.Reset();
+                this.IsRefreshed = true;
+                this.Paused = false;
                 return;
             }
 
