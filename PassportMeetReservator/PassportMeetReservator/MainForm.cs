@@ -323,6 +323,10 @@ namespace PassportMeetReservator
 
         private void LogIteration(string text, int browser)
         {
+            OrdersInfo.AppendText(
+                Logger.GetLogWithMeta(text, browser)
+            );
+
             Logger.LogIteration(text, browser);
         }
 

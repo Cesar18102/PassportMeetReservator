@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Forms;
+using System.Collections.Generic;
+
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 using CefSharp;
 using CefSharp.WinForms;
 
 using Common;
-using Common.Data;
 using Common.Extensions;
+
+using Common.Data;
+using Common.Data.Exceptions;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
 
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
-using System.Windows.Forms;
-using Common.Data.Exceptions;
 
 namespace PassportMeetReservator.Controls
 {
@@ -468,7 +470,6 @@ namespace PassportMeetReservator.Controls
                         "await VUE.refreshSlots();" +
                         "if (VUE.availableSlots.length != 0 && VUE.availableSlots.length > BROWSER_NUMBER) {" +
                             $"VUE.selectedSlot = VUE.availableSlots[BROWSER_NUMBER];" +
-                            $"await VUE.blockSlot();" +
                         "} else { " +
                             $"setTimeout(selectTime, {DelayInfo.DiscreteWaitDelay});" +
                         "}" +
@@ -493,7 +494,10 @@ namespace PassportMeetReservator.Controls
                 return false;
             }
 
-            DateTime? taken = await WaitForReserveIteration();
+            await WaitForSlotSelection();
+            await BlockSlot();
+
+            DateTime? taken = await WaitForSlotBlock();
             if (!taken.HasValue)
             {
                 RaiseIteraionFailure("Wait reserve iteration fail");
@@ -503,24 +507,37 @@ namespace PassportMeetReservator.Controls
             Selected = true;
             RaiseIterationLog($"Reserve iteration success");
 
-            await this.GetMainFrame().EvaluateScriptAsync(
-                "document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__.continueReservation();"
-            );
-
             OnDateTimeSelected?.Invoke(this, new DateTimeEventArgs(taken.Value));
 
             return true;
         }
 
-        private async Task<DateTime?> WaitForReserveIteration()
+        private async Task WaitForSlotSelection()
         {
             for (; ; )
             {
-                RaiseIterationLog($"Waiting for reserve iteration");
-
+                RaiseIterationLog($"Waiting for slot selection");
                 Token.ThrowIfCancellationRequested();
 
-                JavascriptResponse probe = await this.GetMainFrame().EvaluateScriptAsync(
+                JavascriptResponse slotSelectedProbe = await this.GetMainFrame().EvaluateScriptAsync(
+                    "document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__.selectedSlot != null"
+                );
+
+                if (slotSelectedProbe.Success && slotSelectedProbe.Result != null && (bool)slotSelectedProbe.Result)
+                    break;
+
+                await Task.Delay(DelayInfo.ActionResultDelay);
+            }
+        }
+
+        private async Task<DateTime?> WaitForSlotBlock()
+        {
+            for (; ; )
+            {
+                RaiseIterationLog($"Waiting for slot block");
+                Token.ThrowIfCancellationRequested();
+
+                JavascriptResponse slotBlockedProbe = await this.GetMainFrame().EvaluateScriptAsync(
                     "{" +
                         "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
                         "let result = (VUE.reservationBlockEndIn == null ? '0' : '1') + (VUE.slotBlockedError == '' ? '0' : '1');" +
@@ -528,9 +545,9 @@ namespace PassportMeetReservator.Controls
                     "}"
                 );
 
-                if (probe.Success && probe.Result != null)
+                if (slotBlockedProbe.Success && slotBlockedProbe.Result != null)
                 {
-                    string probeResult = probe.Result.ToString();
+                    string probeResult = slotBlockedProbe.Result.ToString();
 
                     bool isBlocked = probeResult[0] == '1';
                     bool hasAlreadyReservedError = probeResult[1] == '1';
@@ -554,18 +571,20 @@ namespace PassportMeetReservator.Controls
                             "{" +
                                 "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
                                 $"VUE.selectedSlot = VUE.availableSlots[Math.min({VirtualBrowserNumber}, VUE.availableSlots.length - 1)];" +
-                                $"VUE.blockSlot();" +
                             "}"
                         );
 
                         if (alreadyReservedHandlerResult.Success)
                         {
-                            DateTime? selectedDateTime = await WaitForReserveIteration();
+                            await BlockSlot();
+
+                            DateTime? selectedDateTime = await WaitForSlotBlock();
                             if (!selectedDateTime.HasValue)
                             {
                                 RaiseIteraionFailure("Already reserved handler failed");
                                 return null;
                             }
+
                             RaiseIterationLog("Already reserved handler success");
                             return selectedDateTime;
                         }
@@ -579,6 +598,24 @@ namespace PassportMeetReservator.Controls
 
                 await Task.Delay(DelayInfo.ActionResultDelay);
             }
+        }
+
+        private async Task BlockSlot()
+        {
+            for (int i = 0; i < 2; ++i)
+                await PressNextButton();
+        }
+
+        private async Task<bool> PressNextButton()
+        {
+            if (!await ClickViewOfClassWithText(NEXT_STEP_BUTTON_CLASS, NEXT_STEP_BUTTON_TEXT, SITE_FALL_WAIT_ATTEMPTS))
+            {
+                RaiseIteraionFailure("NEXT button not found");
+                return false;
+            }
+
+            RaiseIterationLog("NEXT button clicked");
+            return true;
         }
 
         private async Task FillForm()
