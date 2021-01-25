@@ -71,12 +71,14 @@ namespace PassportMeetReservator
 
         private static Dictionary<string, int> Proxies = new Dictionary<string, int>()
         {
-            //{ "188.252.97.34:80", 0 },
-            //{ "178.212.54.137:8080", 0 },
-            //{ "91.225.11.51:8080", 0 },
-            //{ "83.12.149.202:8080", 0 },
-            //{ "176.103.45.24:8080", 0 },
-            //{ "146.120.214.62:8080", 0 },
+            //{ "46.238.230.4:8080", 0 },
+            //{ "85.198.250.135:3128", 0 },
+            //{ "62.87.151.138:35116", 0 },
+            //{ "85.221.247.234:8080", 0 },
+            //{ "80.53.233.124:80", 0 },
+            //{ "146.120.214.62:8080", 0 }
+            //{ "91.228.89.29:3128", 0 },
+            //{ "62.133.130.206:3128", 0 }
         };
 
         private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
@@ -296,8 +298,9 @@ namespace PassportMeetReservator
         {
             string failureLog = $"Iteration failure: {e.LogText}";
 
-            Log(failureLog, e.BrowserNumber);
-            LogIteration(failureLog, e.BrowserNumber);
+            LogRealTime(failureLog, e.BrowserNumber);
+            Logger.LogMain(failureLog, e.BrowserNumber);
+            Logger.LogIteration(failureLog, e.BrowserNumber);
         }
 
         private void Browser_OnIterationSkipped(object sender, LogEventArgs e)
@@ -312,16 +315,21 @@ namespace PassportMeetReservator
 
         private void Log(string text, int? browser)
         {
-            OrdersInfo.AppendText(
-                Logger.GetLogWithMeta(text, browser)
-            );
-
+            LogRealTime(text, browser);
             Logger.LogMain(text, browser);
         }
 
         private void LogIteration(string text, int browser)
         {
+            LogRealTime(text, browser);
             Logger.LogIteration(text, browser);
+        }
+
+        private void LogRealTime(string text, int? browser)
+        {
+            OrdersInfo.AppendText(
+                Logger.GetLogWithMeta(text, browser)
+            );
         }
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)
