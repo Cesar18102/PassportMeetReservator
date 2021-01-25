@@ -298,8 +298,9 @@ namespace PassportMeetReservator
         {
             string failureLog = $"Iteration failure: {e.LogText}";
 
-            Log(failureLog, e.BrowserNumber);
-            LogIteration(failureLog, e.BrowserNumber);
+            LogRealTime(failureLog, e.BrowserNumber);
+            Logger.LogMain(failureLog, e.BrowserNumber);
+            Logger.LogIteration(failureLog, e.BrowserNumber);
         }
 
         private void Browser_OnIterationSkipped(object sender, LogEventArgs e)
@@ -314,20 +315,21 @@ namespace PassportMeetReservator
 
         private void Log(string text, int? browser)
         {
-            OrdersInfo.AppendText(
-                Logger.GetLogWithMeta(text, browser)
-            );
-
+            LogRealTime(text, browser);
             Logger.LogMain(text, browser);
         }
 
         private void LogIteration(string text, int browser)
         {
+            LogRealTime(text, browser);
+            Logger.LogIteration(text, browser);
+        }
+
+        private void LogRealTime(string text, int? browser)
+        {
             OrdersInfo.AppendText(
                 Logger.GetLogWithMeta(text, browser)
             );
-
-            Logger.LogIteration(text, browser);
         }
 
         private async void MainForm_OnManualReactionWaiting(object sender, EventArgs e)

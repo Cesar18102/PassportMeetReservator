@@ -18,6 +18,7 @@ using PassportMeetReservator.Data.CustomEventArgs;
 
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
+using PassportMeetReservator.Data.Exceptions;
 
 namespace PassportMeetReservator.Controls
 {
@@ -397,18 +398,31 @@ namespace PassportMeetReservator.Controls
 
             DateTime reservedDateTime = TimeSelectStrategy.ChooseTimeSlotToReserve(slotsAtTimePeriod);
 
-            if (await Iteration(reservedDateTime))
+            try
             {
-                if (!Auto || Order == null)
-                    await WaitForManualReaction();
-                else
+                if (await Iteration(reservedDateTime))
                 {
-                    await FillForm();
-                    UpdateBrowser();
+                    if (!Auto || Order == null)
+                        await WaitForManualReaction();
+                    else
+                    {
+                        await FillForm();
+                        UpdateBrowser();
+                    }
                 }
+                else
+                    UpdateBrowser();
             }
-            else
+            catch (PromiseFailedException)
+            {
+                RaiseIteraionFailure($"Iteration failure: selectDate promise contains error");
                 UpdateBrowser();
+            }
+            catch (GlobalErrorException)
+            {
+                RaiseIteraionFailure($"Iteration failure: global error occured");
+                UpdateBrowser();
+            }
         }
 
         private void RaiseIterationSkipped(string message)
@@ -469,7 +483,7 @@ namespace PassportMeetReservator.Controls
         {
             RaiseIterationLog($"Iteration started for {date} started");
 
-            string formattedDate = date.GetFormattedDate();
+            await WaitForLoading();
 
             JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
@@ -493,7 +507,7 @@ namespace PassportMeetReservator.Controls
                         "}" +
                    "}" +
                    $"VUE.selectedOperation = {Checker.OperationInfo.Number};" +
-                   "selectDate();" +
+                   "selectDate().catch(err => window.ERROR = true);" +
                 "}"
             );
 
@@ -521,6 +535,28 @@ namespace PassportMeetReservator.Controls
             return true;
         }
 
+        private async Task WaitForLoading()
+        {
+            for(; ; )
+            {
+                RaiseIterationLog($"Waiting for browser to load page");
+                Token.ThrowIfCancellationRequested();
+
+                JavascriptResponse loadedProbe = await this.GetMainFrame().EvaluateScriptAsync(
+                    "{" +
+                        "let vueWrapper = document.getElementsByClassName('container-fluid')[0];" +
+                        "vueWrapper != undefined && vueWrapper != null && " +
+                        "vueWrapper.childNodes[0] != undefined && vueWrapper.childNodes[0] != null && " +
+                        "vueWrapper.childNodes[0].__vue__ != undefined && vueWrapper.childNodes[0].__vue__ != null && " +
+                        "vueWrapper.childNodes[0].__vue__.isInitialized" +
+                    "}"
+                );
+
+                if (loadedProbe.Success && loadedProbe.Result != null && (bool)loadedProbe.Result)
+                    return;
+            }
+        }
+
         private async Task WaitForSlotSelection()
         {
             for (; ; )
@@ -533,7 +569,21 @@ namespace PassportMeetReservator.Controls
                 );
 
                 if (slotSelectedProbe.Success && slotSelectedProbe.Result != null && (bool)slotSelectedProbe.Result)
-                    break;
+                    return;
+
+                JavascriptResponse errorProbe = await this.GetMainFrame().EvaluateScriptAsync(
+                    "window.ERROR"
+                );
+
+                if (errorProbe.Success && errorProbe.Result != null && (bool)errorProbe.Result)
+                    throw new PromiseFailedException();
+
+                JavascriptResponse globalErrorProbe = await this.GetMainFrame().EvaluateScriptAsync(
+                    "document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__.globalError != null"
+                );
+
+                if (globalErrorProbe.Success && globalErrorProbe.Result != null && (bool)globalErrorProbe.Result)
+                    throw new GlobalErrorException();
 
                 await Task.Delay(DelayInfo.ActionResultDelay);
             }
@@ -564,10 +614,7 @@ namespace PassportMeetReservator.Controls
                     if (isBlocked)
                     {
                         JavascriptResponse selected = await this.GetMainFrame().EvaluateScriptAsync(
-                            "{" +
-                                "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
-                                "VUE.selectedSlot.dateTime" +
-                            "}"
+                            "document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__.selectedSlot.dateTime"
                         );
 
                         return DateTime.Parse(selected.Result.ToString());

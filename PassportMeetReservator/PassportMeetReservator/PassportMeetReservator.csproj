@@ -102,6 +102,8 @@
     <Compile Include="Controls\ReserverWebView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Data\Exceptions\GlobalErrorException.cs" />
+    <Compile Include="Data\Exceptions\PromiseFailedException.cs" />
     <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Data\BrowserSettings.cs" />
