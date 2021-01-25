@@ -374,9 +374,8 @@ namespace PassportMeetReservator.Controls
 
             if (!IsRefreshed)
             {
-                this.Reset();
-                this.IsRefreshed = true;
-                this.Paused = false;
+                UpdateBrowser();
+                IsRefreshed = true;
                 return;
             }
 
