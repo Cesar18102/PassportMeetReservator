@@ -30,6 +30,7 @@
         {
             this.BrowserPanel = new System.Windows.Forms.Panel();
             this.BrowserInfo = new PassportMeetReservator.Controls.ReserverInfoView();
+            this.ProxyLabel = new System.Windows.Forms.Label();
             this.TimeSelectStrategyInfo = new System.Windows.Forms.GroupBox();
             this.TimePeriodStrategyChecker = new System.Windows.Forms.RadioButton();
             this.BrowserNumberStrategyChecker = new System.Windows.Forms.RadioButton();
@@ -46,7 +47,7 @@
             this.ResetButton = new System.Windows.Forms.Button();
             this.PauseChangeButton = new System.Windows.Forms.Button();
             this.UrlInput = new Common.Controls.NamedInput();
-            this.ProxyLabel = new System.Windows.Forms.Label();
+            this.UseBakedReservationsCheckBox = new System.Windows.Forms.CheckBox();
             this.BrowserInfo.SuspendLayout();
             this.TimeSelectStrategyInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.VirtualBrowserNumber)).BeginInit();
@@ -63,6 +64,7 @@
             // 
             // BrowserInfo
             // 
+            this.BrowserInfo.Controls.Add(this.UseBakedReservationsCheckBox);
             this.BrowserInfo.Controls.Add(this.ProxyLabel);
             this.BrowserInfo.Controls.Add(this.TimeSelectStrategyInfo);
             this.BrowserInfo.Controls.Add(this.VirtualBrowserNumber);
@@ -86,6 +88,14 @@
             this.BrowserInfo.TabIndex = 10;
             this.BrowserInfo.TabStop = false;
             this.BrowserInfo.UrlInput = this.UrlInput;
+            // 
+            // ProxyLabel
+            // 
+            this.ProxyLabel.AutoSize = true;
+            this.ProxyLabel.Location = new System.Drawing.Point(249, 192);
+            this.ProxyLabel.Name = "ProxyLabel";
+            this.ProxyLabel.Size = new System.Drawing.Size(0, 13);
+            this.ProxyLabel.TabIndex = 37;
             // 
             // TimeSelectStrategyInfo
             // 
@@ -256,13 +266,16 @@
             this.UrlInput.Text = "namedInput1";
             this.UrlInput.TopPosition = 0;
             // 
-            // ProxyLabel
+            // UseBakedReservationsCheckBox
             // 
-            this.ProxyLabel.AutoSize = true;
-            this.ProxyLabel.Location = new System.Drawing.Point(249, 192);
-            this.ProxyLabel.Name = "ProxyLabel";
-            this.ProxyLabel.Size = new System.Drawing.Size(0, 13);
-            this.ProxyLabel.TabIndex = 37;
+            this.UseBakedReservationsCheckBox.AutoSize = true;
+            this.UseBakedReservationsCheckBox.Location = new System.Drawing.Point(251, 136);
+            this.UseBakedReservationsCheckBox.Name = "UseBakedReservationsCheckBox";
+            this.UseBakedReservationsCheckBox.Size = new System.Drawing.Size(121, 17);
+            this.UseBakedReservationsCheckBox.TabIndex = 38;
+            this.UseBakedReservationsCheckBox.Text = "Use Baked Reservs";
+            this.UseBakedReservationsCheckBox.UseVisualStyleBackColor = true;
+            this.UseBakedReservationsCheckBox.CheckedChanged += new System.EventHandler(this.UseBakedReservationsCheckBox_CheckedChanged);
             // 
             // ReserverView
             // 
@@ -302,5 +315,6 @@
         private System.Windows.Forms.RadioButton TimePeriodStrategyChecker;
         private System.Windows.Forms.RadioButton BrowserNumberStrategyChecker;
         private System.Windows.Forms.Label ProxyLabel;
+        private System.Windows.Forms.CheckBox UseBakedReservationsCheckBox;
     }
 }

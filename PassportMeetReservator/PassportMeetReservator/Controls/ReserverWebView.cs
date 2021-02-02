@@ -11,7 +11,6 @@ using CefSharp.WinForms;
 
 using Common;
 using Common.Data;
-using Common.Extensions;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
@@ -86,6 +85,32 @@ namespace PassportMeetReservator.Controls
 
         public bool IsBusy { get; private set; }
         public bool Selected { get; private set; }
+
+        private bool isUsingBakedReservations;
+        public bool IsUsingBakedReservations
+        {
+            get => isUsingBakedReservations;
+            set
+            {
+                isUsingBakedReservations = value;
+
+                if (isUsingBakedReservations && !string.IsNullOrEmpty(BakedReservationToken))
+                    CompleteBakedReservation();
+            }
+        }
+
+        private string bakedReservationToken;
+        public string BakedReservationToken
+        {
+            get => bakedReservationToken;
+            set
+            {
+                bakedReservationToken = value;
+
+                if (isUsingBakedReservations && !string.IsNullOrEmpty(BakedReservationToken))
+                    CompleteBakedReservation();
+            }
+        }
 
         private string proxy;
         public string Proxy
@@ -334,7 +359,7 @@ namespace PassportMeetReservator.Controls
 
         private async void Checker_OnDatesFound(object sender, EventArgs e)
         {
-            if (IsBusy)
+            if (IsBusy || IsUsingBakedReservations)
                 return;
 
             IsBusy = true;
@@ -351,6 +376,52 @@ namespace PassportMeetReservator.Controls
             }
 
             IsBusy = false;
+        }
+
+        public async Task CompleteReservation()
+        {
+            if (!Auto || Order == null)
+                await WaitForManualReaction();
+            else
+            {
+                await FillForm();
+                UpdateBrowser();
+            }
+        }
+
+        public async void CompleteBakedReservation()
+        {
+            try
+            {
+                IsBusy = true;
+
+                RaiseIterationLog($"Baked reservation started for token {this.BakedReservationToken}");
+
+                if (!await WaitForLoading(TimeSpan.FromSeconds(1)))
+                    throw new BakedReservationFailedException($"Baked reservation error: Page loading failed");
+
+                JavascriptResponse response = await this.GetMainFrame().EvaluateScriptAsync(
+                    "{" +
+                        $"sessionStorage.setItem('token', '{this.BakedReservationToken}');" +
+                        $"let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
+                        $"VUE.continueReservation();" +
+                    "}"
+                );
+
+                if (!response.Success)
+                    throw new BakedReservationFailedException($"Baked reservation error: Script failed due to {response.Message}");
+
+                await CompleteReservation();
+            }
+            catch(BakedReservationFailedException ex)
+            {
+                RaiseIteraionFailure(ex.Reason);
+                this.BakedReservationToken = null;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [Obsolete]
@@ -400,15 +471,7 @@ namespace PassportMeetReservator.Controls
             try
             {
                 if (await Iteration(reservedDateTime))
-                {
-                    if (!Auto || Order == null)
-                        await WaitForManualReaction();
-                    else
-                    {
-                        await FillForm();
-                        UpdateBrowser();
-                    }
-                }
+                    await CompleteReservation();
                 else
                     UpdateBrowser();
             }
@@ -482,7 +545,11 @@ namespace PassportMeetReservator.Controls
         {
             RaiseIterationLog($"Iteration started for {date} started");
 
-            await WaitForLoading();
+            if(!await WaitForLoading(TimeSpan.FromSeconds(1)))
+            {
+                RaiseIteraionFailure($"Iteration failure: Page loading failed");
+                return false;
+            }
 
             JavascriptResponse iterationResponse = await this.GetMainFrame().EvaluateScriptAsync(
                 "{" +
@@ -534,8 +601,10 @@ namespace PassportMeetReservator.Controls
             return true;
         }
 
-        private async Task WaitForLoading()
+        private async Task<bool> WaitForLoading(TimeSpan maxWaitTime)
         {
+            DateTime start = DateTime.Now;
+
             for(; ; )
             {
                 RaiseIterationLog($"Waiting for browser to load page");
@@ -552,7 +621,12 @@ namespace PassportMeetReservator.Controls
                 );
 
                 if (loadedProbe.Success && loadedProbe.Result != null && (bool)loadedProbe.Result)
-                    return;
+                    return true;
+
+                if (DateTime.Now - start > maxWaitTime)
+                    return false;
+
+                await Task.Delay(DelayInfo.DiscreteWaitDelay);
             }
         }
 

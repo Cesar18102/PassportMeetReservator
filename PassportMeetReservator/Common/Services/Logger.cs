@@ -37,9 +37,9 @@ namespace Common.Services
         #region Methods
         #region Public
 
-        public void CreateCommonLogFile()
+        public void CreateCommonLogFile(string modifier = "")
         {
-            using (File.Create(COMMON_MAIN_LOG_FILE)) ;
+            using (File.Create(COMMON_MAIN_LOG_FILE + "_" + modifier)) ;
             using (File.Create(CRITICALS_LOG_FILE)) ;
         }
 

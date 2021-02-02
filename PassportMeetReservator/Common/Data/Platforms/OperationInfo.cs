@@ -1,6 +1,8 @@
-﻿namespace Common.Data.Platforms
+﻿using System;
+
+namespace Common.Data.Platforms
 {
-    public class OperationInfo
+    public class OperationInfo : IEquatable<OperationInfo>
     {
         public string Name { get; private set; }
         public int Number { get; private set; }
@@ -16,6 +18,11 @@
         public override string ToString()
         {
             return Name;
+        }
+
+        public bool Equals(OperationInfo other)
+        {
+            return this.Number == other.Number;
         }
     }
 }

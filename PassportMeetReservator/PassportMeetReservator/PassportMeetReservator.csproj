@@ -102,6 +102,7 @@
     <Compile Include="Controls\ReserverWebView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Data\Exceptions\BakedReservationFailedException.cs" />
     <Compile Include="Data\Exceptions\GlobalErrorException.cs" />
     <Compile Include="Data\Exceptions\PromiseFailedException.cs" />
     <Compile Include="Extensions\ImageExtensions.cs" />
@@ -216,6 +217,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{bf83e975-8283-4855-87d1-a5dbe72026af}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PassportMeetBlocker\PassportMeetBlocker.csproj">
+      <Project>{ca013f3f-d3cb-44b6-aca1-39a3532e581c}</Project>
+      <Name>PassportMeetBlocker</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

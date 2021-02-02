@@ -59,7 +59,10 @@ namespace PassportMeetReservator.Controls
             }
         }
 
+        public Dictionary<DateChecker, PassportMeetBlocker.MainForm> BlockerForms { get; set; }
         public Dictionary<string, Dictionary<string, DateChecker[]>> DateCheckers { get; set; }
+
+        public event EventHandler<EventArgs> ConfigurationChanged;
 
         #endregion
 
@@ -270,6 +273,8 @@ namespace PassportMeetReservator.Controls
 
             CitySelector.Items.Clear();
             CitySelector.Items.AddRange(selectedPlatform.CityPlatforms);
+
+            this.ConfigurationChanged?.Invoke(this, new EventArgs());
         }
 
         private void CitySelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -282,6 +287,8 @@ namespace PassportMeetReservator.Controls
 
             OperationSelector.Items.Clear();
             OperationSelector.Items.AddRange(selectedCity.Operations);
+
+            this.ConfigurationChanged?.Invoke(this, new EventArgs());
         }
 
         private void OperationSelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -289,11 +296,13 @@ namespace PassportMeetReservator.Controls
             if (PlatformSelector.SelectedItem == null || CitySelector.SelectedItem == null || OperationSelector.SelectedItem == null)
                 return;
 
-            string selectedPlatform = (PlatformSelector.SelectedItem as PlatformApiInfo).Name;
-            string selectedCity = (CitySelector.SelectedItem as CityPlatformInfo).Name;
+            PlatformApiInfo selectedPlatform = (PlatformSelector.SelectedItem as PlatformApiInfo);
+            CityPlatformInfo selectedCity = (CitySelector.SelectedItem as CityPlatformInfo);
             OperationInfo selectedOperation = OperationSelector.SelectedItem as OperationInfo;
 
-            Browser.InitChecker = DateCheckers[selectedPlatform][selectedCity][selectedOperation.Position];
+            Browser.InitChecker = DateCheckers[selectedPlatform.Name][selectedCity.Name][selectedOperation.Position];
+
+            this.ConfigurationChanged?.Invoke(this, new EventArgs());
         }
 
         private void StrategyChecker_CheckedChanged(object sender, EventArgs e)
@@ -304,6 +313,12 @@ namespace PassportMeetReservator.Controls
         private void VirtualBrowserNumber_ValueChanged(object sender, EventArgs e)
         {
             Browser.VirtualBrowserNumber = (int)VirtualBrowserNumber.Value;
+        }
+
+        private void UseBakedReservationsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Browser.IsUsingBakedReservations = UseBakedReservationsCheckBox.Checked;
+            this.ConfigurationChanged?.Invoke(this, new EventArgs());
         }
 
         private void UpdateTimeSelectStrategy()

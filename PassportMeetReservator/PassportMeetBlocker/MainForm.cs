@@ -33,6 +33,18 @@ namespace PassportMeetBlocker
             new BezkolejkiPlatformInfo()
         };
 
+
+        private BootSchedule schedule;
+        public BootSchedule Schedule
+        {
+            get => schedule;
+            set
+            {
+                schedule = value;
+                DateBlockers.ApplyToDateCheckers(checker => checker.Schedule = schedule);
+            }
+        }
+
         private DelayInfo DelayInfo { get; set; }
         private Dictionary<string, Dictionary<string, DateBlocker[]>> DateBlockers { get; set; }
 
@@ -60,9 +72,8 @@ namespace PassportMeetBlocker
             }
         }
 
-
         private DateBlocker blocker;
-        private DateBlocker Blocker
+        public DateBlocker Blocker
         {
             get => blocker;
             set
@@ -96,6 +107,8 @@ namespace PassportMeetBlocker
             }
         }
 
+        public event EventHandler<SlotBlockedEventArgs> OnSlotBlocked;
+
         public MainForm()
         {
             InitializeComponent();
@@ -103,17 +116,49 @@ namespace PassportMeetBlocker
 
             DelayInfo = FileService.LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
 
+            this.InitDateBlockers();
+
+            PlatformSelector.Items.AddRange(Platforms);
+            PlatformSelector.SelectedIndex = 0;
+        }
+
+        public MainForm(DelayInfo delayInfo, DateChecker checker)
+        {
+            InitializeComponent();
+            Logger.CreateCommonLogFile($"{checker.PlatformInfo.Name}_{checker.CityInfo.Name}_{checker.OperationInfo.Number}");
+
+            PlatformSelector.Items.AddRange(Platforms);
+            PlatformSelector.SelectedIndex = 0;
+
+            DelayInfo = delayInfo;
+
+            this.InitDateBlockers();
+
+            PlatformSelector.SelectedIndex = PlatformSelector.Items.Cast<PlatformApiInfo>().ToList().FindIndex(pl => pl.Equals(checker.PlatformInfo));
+            CitySelector.SelectedIndex = CitySelector.Items.Cast<CityPlatformInfo>().ToList().FindIndex(ct => ct.Equals(checker.CityInfo));
+            OperationSelector.SelectedIndex = OperationSelector.Items.Cast<OperationInfo>().ToList().FindIndex(op => op.Equals(checker.OperationInfo));
+
+            PlatformSelector.Enabled = false;
+            CitySelector.Enabled = false;
+            OperationSelector.Enabled = false;
+            DelaySettings.Enabled = false;
+            StartButton.Enabled = false;
+        }
+
+        private void InitDateBlockers()
+        {
             DateBlockers = DateChecker.CreateFromPlatformInfos<DateBlocker>(
                 Platforms, DelayInfo,
                 Checker_OnRequestError,
                 Checker_OnRequestOk
             );
 
-            DateBlockers.ApplyToDateCheckers(checker => checker.OnBlockRequestError += Checker_OnBlockRequestError);
-            DateBlockers.ApplyToDateCheckers(checker => checker.FlowStrategy = new NotifyIfDatesAndTimesFoundFlowStrategy()); 
-
-            PlatformSelector.Items.AddRange(Platforms);
-            PlatformSelector.SelectedIndex = 0;
+            DateBlockers.ApplyToDateCheckers(checker =>
+            {
+                checker.Schedule = Schedule;
+                checker.OnBlockRequestError += Checker_OnBlockRequestError;
+                checker.FlowStrategy = new NotifyIfDatesAndTimesFoundFlowStrategy();
+            });
         }
 
         private void Checker_OnBlockRequestError(object sender, DateCheckerErrorEventArgs e)
@@ -186,7 +231,8 @@ namespace PassportMeetBlocker
 
         private void Blocker_OnSlotBlocked(object sender, SlotBlockedEventArgs e)
         {
-            Log($"{e.Slot.DateTime} was blocked");
+            this.OnSlotBlocked?.Invoke(this, e);
+            Log($"{e.Slot.DateTime} was blocked with token {e.Block.Token}");
         }
 
         private void DelaySettings_Click(object sender, EventArgs e)

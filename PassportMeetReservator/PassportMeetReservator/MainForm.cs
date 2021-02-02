@@ -90,6 +90,7 @@ namespace PassportMeetReservator
             new BezkolejkiPlatformInfo()
         };
 
+        private Dictionary<DateChecker, PassportMeetBlocker.MainForm> BlockerForms { get; set; }
         private Dictionary<string, Dictionary<string, DateChecker[]>> DateCheckers { get; set; }
 
         private List<ReserverView> Reservers = new List<ReserverView>();
@@ -116,6 +117,7 @@ namespace PassportMeetReservator
 
             DelayInfo = FileService.LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
 
+            BlockerForms = new Dictionary<DateChecker, PassportMeetBlocker.MainForm>();
             DateCheckers = DateChecker.CreateFromPlatformInfos<DateChecker>(
                 Platforms, DelayInfo,
                 Checker_OnRequestError,
@@ -209,6 +211,7 @@ namespace PassportMeetReservator
             reserver.Browser.DelayInfo = DelayInfo;
             reserver.Platforms = Platforms;
             reserver.DateCheckers = DateCheckers;
+            reserver.BlockerForms = BlockerForms;
 
             reserver.Browser.Proxy = Proxies.OrderBy(prx => prx.Value).FirstOrDefault().Key;
 
@@ -225,6 +228,7 @@ namespace PassportMeetReservator
             reserver.Browser.OnIterationFailure += Browser_OnIterationFailure;
             reserver.Browser.OnIterationLogRequired += Browser_OnIterationLogRequired;
 
+            reserver.ConfigurationChanged += Reserver_ConfigurationChanged;
             reserver.AutoChanged += Browser_AutoChanged;
 
             int locationX = Reservers.Count == 0 ? ReserversPanel.Location.X :
@@ -249,6 +253,93 @@ namespace PassportMeetReservator
 
             Reservers.Add(reserver);
             ReserversPanel.Controls.Add(reserver);
+        }
+
+        private void CloseBlockerForm(DateChecker checker)
+        {
+            Form form = BlockerForms[checker];
+            BlockerForms.Remove(checker);
+            form.Close();
+        }
+
+        private void BlockerForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            PassportMeetBlocker.MainForm form = sender as PassportMeetBlocker.MainForm;
+            DateChecker checker = BlockerForms.FirstOrDefault(blockerForm => blockerForm.Value == sender).Key;
+
+            if (checker == null)
+                return;
+
+            form.Blocker.FollowersCount--;
+
+            if (form.Paused)
+                form.Blocker.PausedFollowersCount--;
+
+            if (checker.FollowersCount == 0 || checker.FollowersCount == checker.PausedFollowersCount)
+                BlockerForms.Remove(checker);
+            else
+                e.Cancel = true;
+        }
+
+        private void Reserver_ConfigurationChanged(object sender, EventArgs e)
+        {
+            ReserverView reserver = sender as ReserverView;
+            DateChecker checker = reserver.Browser.Checker;
+
+            if (checker == null)
+                return;
+
+            if (!reserver.Browser.IsUsingBakedReservations)
+            {
+                if (BlockerForms.ContainsKey(checker))
+                    CloseBlockerForm(checker);
+
+                return;
+            }
+
+            List<KeyValuePair<DateChecker, PassportMeetBlocker.MainForm>> inactiveCheckers = BlockerForms.Where(
+                kvp => kvp.Key.FollowersCount == 0 || kvp.Key.FollowersCount == kvp.Key.PausedFollowersCount
+            ).ToList();
+
+            if(inactiveCheckers.Count != 0)
+            {
+                foreach (KeyValuePair<DateChecker, PassportMeetBlocker.MainForm> inactiveChecker in inactiveCheckers)
+                    CloseBlockerForm(inactiveChecker.Key);
+            }
+
+            if (!BlockerForms.ContainsKey(checker))
+            {
+                PassportMeetBlocker.MainForm blockerForm = new PassportMeetBlocker.MainForm(DelayInfo, checker);
+
+                BlockerForms.Add(checker, blockerForm);
+
+                blockerForm.OnSlotBlocked += BlockerForm_OnSlotBlocked;
+                blockerForm.FormClosing += BlockerForm_FormClosing;
+                blockerForm.Paused = reserver.Browser.Paused;
+                blockerForm.Show();
+            }
+
+            reserver.Browser.OnPausedChanged += (ctx, arg) =>
+            {
+                ReserverWebView browser = ctx as ReserverWebView;
+
+                if(browser?.Checker != null && BlockerForms.ContainsKey(browser.Checker))
+                    BlockerForms[browser.Checker].Paused = arg.Paused;
+            };
+        }
+
+        private void BlockerForm_OnSlotBlocked(object sender, SlotBlockedEventArgs e)
+        {
+            PassportMeetBlocker.MainForm form = sender as PassportMeetBlocker.MainForm;
+            DateChecker checker = BlockerForms.FirstOrDefault(kvp => kvp.Value == form).Key;
+
+            ReserverView readyReserver = Reservers.FirstOrDefault(reserver => 
+                //reserver.Browser.Order != null &&
+                reserver.Browser.IsUsingBakedReservations &&
+                string.IsNullOrEmpty(reserver.Browser.BakedReservationToken)
+            );
+
+            readyReserver.Browser.BakedReservationToken = e.Block.Token;
         }
 
         private void ReserversCount_ValueChanged(object sender, EventArgs e)
@@ -563,6 +654,12 @@ namespace PassportMeetReservator
                 reserver.Browser.Paused = false;
             }
 
+            foreach(PassportMeetBlocker.MainForm form in BlockerForms.Values)
+            {
+                form.Schedule = Schedule;
+                form.Paused = false;
+            }
+
             DateCheckers.ApplyToDateCheckers(checker => checker.Schedule = Schedule);
 
             Log("All browsers started scheduled", null);
@@ -572,6 +669,9 @@ namespace PassportMeetReservator
         {
             foreach (ReserverView reserver in Reservers)
                 reserver.Browser.Schedule = null;
+
+            foreach (PassportMeetBlocker.MainForm form in BlockerForms.Values)
+                form.Schedule = null;
 
             DateCheckers.ApplyToDateCheckers(checker => checker.Schedule = null);
 
