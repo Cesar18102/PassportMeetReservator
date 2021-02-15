@@ -25,6 +25,7 @@ using Common.Extensions;
 using Common.Services;
 using Common.Strategies.DateCheckerNotifyStrategies;
 using Common.Forms;
+using PassportMeetBlocker;
 
 namespace PassportMeetReservator
 {
@@ -270,13 +271,15 @@ namespace PassportMeetReservator
             if (checker == null)
                 return;
 
-            form.Blocker.FollowersCount--;
+            if (checker.FollowersCount == 0)
+            {
+                form.Blocker.FollowersCount--;
 
-            if (form.Paused)
-                form.Blocker.PausedFollowersCount--;
+                if (form.Paused)
+                    form.Blocker.PausedFollowersCount--;
 
-            if (checker.FollowersCount == 0 || checker.FollowersCount == checker.PausedFollowersCount)
                 BlockerForms.Remove(checker);
+            }
             else
                 e.Cancel = true;
         }
@@ -298,7 +301,7 @@ namespace PassportMeetReservator
             }
 
             List<KeyValuePair<DateChecker, PassportMeetBlocker.MainForm>> inactiveCheckers = BlockerForms.Where(
-                kvp => kvp.Key.FollowersCount == 0 || kvp.Key.FollowersCount == kvp.Key.PausedFollowersCount
+                kvp => kvp.Key.FollowersCount == 0 && kvp.Key != checker
             ).ToList();
 
             if(inactiveCheckers.Count != 0)
@@ -339,7 +342,34 @@ namespace PassportMeetReservator
                 string.IsNullOrEmpty(reserver.Browser.BakedReservationToken)
             );
 
+            form.Blocker.BlockedFollowersCount++;
+
+            readyReserver.Browser.OnIterationFailure += Browser_OnBakedIterationFailure;
+            readyReserver.Browser.OnReservedManually += Browser_OnBakedReservedManually;
+            readyReserver.Browser.OnReserved += Browser_OnBakedReserved;
+
             readyReserver.Browser.BakedReservationToken = e.Block.Token;
+        }
+
+        private void Browser_OnBakedIterationFailure(object sender, LogEventArgs e)
+        {
+            ReserverWebView browser = sender as ReserverWebView;
+            this.GetBlockerByBrowser(browser).BlockedFollowersCount--;
+            browser.OnIterationFailure -= Browser_OnBakedIterationFailure;
+        }
+
+        private void Browser_OnBakedReservedManually(object sender, ReservedEventArgs e)
+        {
+            ReserverWebView browser = sender as ReserverWebView;
+            this.GetBlockerByBrowser(browser).BlockedFollowersCount--;
+            browser.OnReservedManually -= Browser_OnBakedReservedManually;
+        }
+
+        private void Browser_OnBakedReserved(object sender, ReservedEventArgs e)
+        {
+            ReserverWebView browser = sender as ReserverWebView;
+            this.GetBlockerByBrowser(browser).BlockedFollowersCount--;
+            browser.OnReserved -= Browser_OnBakedReserved;
         }
 
         private void ReserversCount_ValueChanged(object sender, EventArgs e)
@@ -392,6 +422,11 @@ namespace PassportMeetReservator
             LogRealTime(failureLog, e.BrowserNumber);
             Logger.LogMain(failureLog, e.BrowserNumber);
             Logger.LogIteration(failureLog, e.BrowserNumber);
+        }
+
+        private DateBlocker GetBlockerByBrowser(ReserverWebView browser)
+        {
+            return this.BlockerForms[browser.Checker].Blocker;
         }
 
         private void Browser_OnIterationSkipped(object sender, LogEventArgs e)

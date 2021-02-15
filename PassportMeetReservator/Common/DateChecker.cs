@@ -38,6 +38,7 @@ namespace Common
 
         public int FollowersCount { get; set; }
         public int PausedFollowersCount { get; set; }
+        public int BlockedFollowersCount { get; set; }
 
         private DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
@@ -112,7 +113,7 @@ namespace Common
                 if (FollowersCount == 0)
                     continue;
 
-                if (PausedFollowersCount == FollowersCount)
+                if (PausedFollowersCount + BlockedFollowersCount == FollowersCount)
                     continue;
 
                 if (Schedule != null && !Schedule.IsInside(DateTime.Now.TimeOfDay))
