@@ -164,7 +164,9 @@ namespace PassportMeetReservator
 
         private void LoadProxiesList()
         {
-            List<string> proxies = FileService.LoadData<List<string>>(PROXIES_FILE_PATH);
+            List<string> proxies = FileService.LoadData<List<string>>(PROXIES_FILE_PATH)
+                .Where(proxy => !string.IsNullOrEmpty(proxy))
+                .ToList();
 
             foreach (string proxy in proxies)
                 ProxyProvider.Proxies.Add(proxy);
@@ -347,9 +349,9 @@ namespace PassportMeetReservator
         private void Browser_OnPausedChangedBlockerHandler(object sender, BrowserPausedChangedEventArgs e)
         {
             ReserverWebView browser = sender as ReserverWebView;
-            ReserverView reserver = Reservers.First(res => res.Browser == browser);
+            ReserverView reserver = Reservers.FirstOrDefault(res => res.Browser == browser);
 
-            if (browser?.Checker != null && BlockerForms.ContainsKey(browser.Checker) && reserver.UsesBackedReservations)
+            if (browser?.Checker != null && BlockerForms.ContainsKey(browser.Checker) && reserver != null && reserver.UsesBackedReservations)
                 BlockerForms[browser.Checker].Blocker.PausedFollowersCount += e.Paused ? 1 : -1;
         }
 
@@ -411,6 +413,15 @@ namespace PassportMeetReservator
                 for (int i = 0; i < diff; ++i)
                 {
                     ReserverView reserver = Reservers.Last();
+                    DateChecker checker = reserver.Browser.Checker;
+
+                    if (BlockerForms.ContainsKey(checker))
+                    {
+                        if (BlockerForms[checker].Blocker.FollowersCount == 1)
+                            CloseBlockerForm(checker);
+                        else
+                            BlockerForms[checker].Blocker.RemoveFollower(reserver.Browser.Paused);
+                    }
 
                     reserver.ZoomOut();
                     Reservers.RemoveAt(Reservers.Count - 1);

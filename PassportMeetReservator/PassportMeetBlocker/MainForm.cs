@@ -90,6 +90,10 @@ namespace PassportMeetBlocker
                     blocker.OnDatesFound -= Checker_OnDatesFound;
                     blocker.OnSlotBlocked -= Blocker_OnSlotBlocked;
                     blocker.OnProxyChanged -= Blocker_OnProxyChanged;
+                    blocker.FollowersCountChanged -= Blocker_FollowersChanged;
+                    blocker.PausedFollowersCountChanged -= Blocker_FollowersChanged;
+                    blocker.BlockedFollowersCountCountChanged -= Blocker_FollowersChanged;
+
                 }
 
                 blocker = value;
@@ -99,6 +103,9 @@ namespace PassportMeetBlocker
                     blocker.OnDatesFound += Checker_OnDatesFound;
                     blocker.OnSlotBlocked += Blocker_OnSlotBlocked;
                     blocker.OnProxyChanged += Blocker_OnProxyChanged;
+                    blocker.FollowersCountChanged += Blocker_FollowersChanged;
+                    blocker.PausedFollowersCountChanged += Blocker_FollowersChanged;
+                    blocker.BlockedFollowersCountCountChanged += Blocker_FollowersChanged;
                 }
             }
         }
@@ -155,6 +162,11 @@ namespace PassportMeetBlocker
                 checker.OnBlockRequestError += Checker_OnBlockRequestError;
                 checker.FlowStrategy = new NotifyIfDatesAndTimesFoundFlowStrategy();
             });
+        }
+
+        private void Blocker_FollowersChanged(object sender, EventArgs e)
+        {
+            this.Text = $"Total followers = {blocker.FollowersCount}; Paused = {blocker.PausedFollowersCount}; Blocked = {blocker.BlockedFollowersCount}";
         }
 
         private void Checker_OnBlockRequestError(object sender, DateCheckerErrorEventArgs e)

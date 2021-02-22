@@ -38,9 +38,43 @@ namespace Common
         public CityPlatformInfo CityInfo { get; private set; }
         public OperationInfo OperationInfo { get; private set; }
 
-        public int FollowersCount { get; set; }
-        public int PausedFollowersCount { get; set; }
-        public int BlockedFollowersCount { get; set; }
+        public event EventHandler<EventArgs> FollowersCountChanged;
+        public event EventHandler<EventArgs> PausedFollowersCountChanged;
+        public event EventHandler<EventArgs> BlockedFollowersCountCountChanged;
+
+        private int followersCount = 0;
+        private int pausedFollowersCount = 0;
+        private int blockedFollowersCount = 0;
+
+        public int FollowersCount
+        {
+            get => followersCount;
+            set
+            {
+                followersCount = value;
+                FollowersCountChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        public int PausedFollowersCount
+        {
+            get => pausedFollowersCount;
+            set
+            {
+                pausedFollowersCount = value;
+                PausedFollowersCountChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        public int BlockedFollowersCount
+        {
+            get => blockedFollowersCount;
+            set
+            {
+                blockedFollowersCount = value;
+                BlockedFollowersCountCountChanged?.Invoke(this, new EventArgs());
+            }
+        }
 
         private DelayInfo DelayInfo { get; set; }
         public BootSchedule Schedule { get; set; }
