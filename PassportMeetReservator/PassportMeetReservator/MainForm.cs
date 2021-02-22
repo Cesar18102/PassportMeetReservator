@@ -70,6 +70,10 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "browser_settings.json"
         );
 
+        private static string PROXIES_FILE_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "proxies.json"
+        );
+
         #endregion
 
         private static Dictionary<string, int> Proxies = new Dictionary<string, int>()
@@ -86,6 +90,7 @@ namespace PassportMeetReservator
 
         private static ReservatorLogger Logger = ReservatorDependencyHolder.ServiceDependencies.Resolve<ReservatorLogger>();
         private static FileService FileService = CommonDependencyHolder.ServiceDependencies.Resolve<FileService>();
+        private static ProxyProvider ProxyProvider = CommonDependencyHolder.ServiceDependencies.Resolve<ProxyProvider>();
 
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {
@@ -118,6 +123,7 @@ namespace PassportMeetReservator
 
             KeyPreview = true;
 
+            LoadProxiesList();
             DelayInfo = FileService.LoadData<DelayInfo>(DELAY_SETTINGS_FILE_PATH);
 
             BlockerForms = new Dictionary<DateChecker, PassportMeetBlocker.MainForm>();
@@ -154,6 +160,14 @@ namespace PassportMeetReservator
             UpdateDateCheckersFlowStrategy();
 
             //TryLogIn();
+        }
+
+        private void LoadProxiesList()
+        {
+            List<string> proxies = FileService.LoadData<List<string>>(PROXIES_FILE_PATH);
+
+            foreach (string proxy in proxies)
+                ProxyProvider.Proxies.Add(proxy);
         }
 
         private void ApplyCommonSettings(CommonSettings settings)
@@ -821,6 +835,14 @@ namespace PassportMeetReservator
                 DateCheckers.ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_FOUND_DATE_CHECKER_FLOW_STRATEGY);
             else if (NotifyIfDatesAndTimesFoundStrategyChecker.Checked)
                 DateCheckers.ApplyToDateCheckers(checker => checker.FlowStrategy = NOTIFY_IF_DATES_AND_TIMES_FOUND_DATE_CHECKER_STRATEGY);
+        }
+
+        private void ProxyListButton_Click(object sender, EventArgs e)
+        {
+            ProxyListForm proxyListForm = new ProxyListForm();
+            proxyListForm.ShowDialog();
+
+            FileService.SaveData(PROXIES_FILE_PATH, ProxyProvider.Proxies);
         }
     }
 }

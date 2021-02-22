@@ -53,9 +53,10 @@
             this.ReserversCount = new System.Windows.Forms.NumericUpDown();
             this.ReserversCountLabel = new System.Windows.Forms.Label();
             this.DateCheckerFlowStrategyInfo = new System.Windows.Forms.GroupBox();
+            this.NotifyAlwaysStrategyChecker = new System.Windows.Forms.RadioButton();
             this.NotifyIfDatesAndTimesFoundStrategyChecker = new System.Windows.Forms.RadioButton();
             this.NotifyIfDatesFoundStrategyChecker = new System.Windows.Forms.RadioButton();
-            this.NotifyAlwaysStrategyChecker = new System.Windows.Forms.RadioButton();
+            this.ProxyListButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.BotNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ReserversCount)).BeginInit();
             this.DateCheckerFlowStrategyInfo.SuspendLayout();
@@ -153,7 +154,7 @@
             // BotNumberLabel
             // 
             this.BotNumberLabel.AutoSize = true;
-            this.BotNumberLabel.Location = new System.Drawing.Point(642, 649);
+            this.BotNumberLabel.Location = new System.Drawing.Point(676, 649);
             this.BotNumberLabel.Name = "BotNumberLabel";
             this.BotNumberLabel.Size = new System.Drawing.Size(66, 13);
             this.BotNumberLabel.TabIndex = 20;
@@ -161,7 +162,7 @@
             // 
             // BotNumber
             // 
-            this.BotNumber.Location = new System.Drawing.Point(732, 647);
+            this.BotNumber.Location = new System.Drawing.Point(766, 647);
             this.BotNumber.Name = "BotNumber";
             this.BotNumber.Size = new System.Drawing.Size(120, 20);
             this.BotNumber.TabIndex = 21;
@@ -199,7 +200,7 @@
             // LogChatIdLabel
             // 
             this.LogChatIdLabel.AutoSize = true;
-            this.LogChatIdLabel.Location = new System.Drawing.Point(642, 678);
+            this.LogChatIdLabel.Location = new System.Drawing.Point(676, 678);
             this.LogChatIdLabel.Name = "LogChatIdLabel";
             this.LogChatIdLabel.Size = new System.Drawing.Size(65, 13);
             this.LogChatIdLabel.TabIndex = 28;
@@ -207,7 +208,7 @@
             // 
             // LogChatId
             // 
-            this.LogChatId.Location = new System.Drawing.Point(732, 673);
+            this.LogChatId.Location = new System.Drawing.Point(766, 673);
             this.LogChatId.Name = "LogChatId";
             this.LogChatId.Size = new System.Drawing.Size(120, 20);
             this.LogChatId.TabIndex = 29;
@@ -259,7 +260,7 @@
             // 
             // UnzoomAllBrowsers
             // 
-            this.UnzoomAllBrowsers.Location = new System.Drawing.Point(645, 724);
+            this.UnzoomAllBrowsers.Location = new System.Drawing.Point(679, 724);
             this.UnzoomAllBrowsers.Margin = new System.Windows.Forms.Padding(2);
             this.UnzoomAllBrowsers.Name = "UnzoomAllBrowsers";
             this.UnzoomAllBrowsers.Size = new System.Drawing.Size(207, 34);
@@ -290,7 +291,7 @@
             // 
             // ReserversCount
             // 
-            this.ReserversCount.Location = new System.Drawing.Point(732, 700);
+            this.ReserversCount.Location = new System.Drawing.Point(766, 700);
             this.ReserversCount.Name = "ReserversCount";
             this.ReserversCount.Size = new System.Drawing.Size(120, 20);
             this.ReserversCount.TabIndex = 38;
@@ -304,7 +305,7 @@
             // ReserversCountLabel
             // 
             this.ReserversCountLabel.AutoSize = true;
-            this.ReserversCountLabel.Location = new System.Drawing.Point(642, 702);
+            this.ReserversCountLabel.Location = new System.Drawing.Point(676, 702);
             this.ReserversCountLabel.Name = "ReserversCountLabel";
             this.ReserversCountLabel.Size = new System.Drawing.Size(89, 13);
             this.ReserversCountLabel.TabIndex = 37;
@@ -321,6 +322,17 @@
             this.DateCheckerFlowStrategyInfo.TabIndex = 39;
             this.DateCheckerFlowStrategyInfo.TabStop = false;
             this.DateCheckerFlowStrategyInfo.Text = "Date Checker Flow Strategy";
+            // 
+            // NotifyAlwaysStrategyChecker
+            // 
+            this.NotifyAlwaysStrategyChecker.AutoSize = true;
+            this.NotifyAlwaysStrategyChecker.Location = new System.Drawing.Point(6, 19);
+            this.NotifyAlwaysStrategyChecker.Name = "NotifyAlwaysStrategyChecker";
+            this.NotifyAlwaysStrategyChecker.Size = new System.Drawing.Size(87, 17);
+            this.NotifyAlwaysStrategyChecker.TabIndex = 37;
+            this.NotifyAlwaysStrategyChecker.Text = "Notify always";
+            this.NotifyAlwaysStrategyChecker.UseVisualStyleBackColor = true;
+            this.NotifyAlwaysStrategyChecker.CheckedChanged += new System.EventHandler(this.NotifyStrategy_CheckedChanged);
             // 
             // NotifyIfDatesAndTimesFoundStrategyChecker
             // 
@@ -346,22 +358,22 @@
             this.NotifyIfDatesFoundStrategyChecker.UseVisualStyleBackColor = true;
             this.NotifyIfDatesFoundStrategyChecker.CheckedChanged += new System.EventHandler(this.NotifyStrategy_CheckedChanged);
             // 
-            // NotifyAlwaysStrategyChecker
+            // ProxyListButton
             // 
-            this.NotifyAlwaysStrategyChecker.AutoSize = true;
-            this.NotifyAlwaysStrategyChecker.Location = new System.Drawing.Point(6, 19);
-            this.NotifyAlwaysStrategyChecker.Name = "NotifyAlwaysStrategyChecker";
-            this.NotifyAlwaysStrategyChecker.Size = new System.Drawing.Size(87, 17);
-            this.NotifyAlwaysStrategyChecker.TabIndex = 37;
-            this.NotifyAlwaysStrategyChecker.Text = "Notify always";
-            this.NotifyAlwaysStrategyChecker.UseVisualStyleBackColor = true;
-            this.NotifyAlwaysStrategyChecker.CheckedChanged += new System.EventHandler(this.NotifyStrategy_CheckedChanged);
+            this.ProxyListButton.Location = new System.Drawing.Point(571, 684);
+            this.ProxyListButton.Name = "ProxyListButton";
+            this.ProxyListButton.Size = new System.Drawing.Size(88, 34);
+            this.ProxyListButton.TabIndex = 40;
+            this.ProxyListButton.Text = "Proxy List";
+            this.ProxyListButton.UseVisualStyleBackColor = true;
+            this.ProxyListButton.Click += new System.EventHandler(this.ProxyListButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1828, 904);
+            this.Controls.Add(this.ProxyListButton);
             this.Controls.Add(this.DateCheckerFlowStrategyInfo);
             this.Controls.Add(this.ReserversCount);
             this.Controls.Add(this.ReserversCountLabel);
@@ -433,6 +445,7 @@
         private System.Windows.Forms.RadioButton NotifyIfDatesAndTimesFoundStrategyChecker;
         private System.Windows.Forms.RadioButton NotifyIfDatesFoundStrategyChecker;
         private System.Windows.Forms.RadioButton NotifyAlwaysStrategyChecker;
+        private System.Windows.Forms.Button ProxyListButton;
     }
 }
 
