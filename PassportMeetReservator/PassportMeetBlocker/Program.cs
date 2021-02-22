@@ -5,13 +5,14 @@ using System.Windows.Forms;
 using Autofac;
 
 using Common;
-using Common.Services;
+
+using PassportMeetBlocker.Services;
 
 namespace PassportMeetBlocker
 {
     static class Program
     {
-        private static Logger Logger = CommonDependencyHolder.ServiceDependencies.Resolve<Logger>();
+        private static BlockerLogger Logger = BlockerDependencyHolder.ServiceDependencies.Resolve<BlockerLogger>();
 
         /// <summary>
         /// The main entry point for the application.

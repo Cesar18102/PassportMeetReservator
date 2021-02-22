@@ -217,11 +217,7 @@ namespace PassportMeetReservator.Controls
 
                 if (checker != null)
                 {
-                    checker.FollowersCount--;
-
-                    if (Paused)
-                        checker.PausedFollowersCount--;
-
+                    checker.RemoveFollower(Paused);
                     checker.OnDatesFound -= Checker_OnDatesFound;
                 }
 
@@ -229,11 +225,7 @@ namespace PassportMeetReservator.Controls
 
                 if (checker != null)
                 {
-                    checker.FollowersCount++;
-
-                    if (Paused)
-                        checker.PausedFollowersCount++;
-
+                    checker.AddFollower(Paused);
                     checker.OnDatesFound += Checker_OnDatesFound;
                 }
 

@@ -7,14 +7,17 @@ using System.Windows.Forms;
 
 using Autofac;
 
-using Common;
 using Common.Data;
 using Common.Data.CustomEventArgs;
 using Common.Data.Platforms;
-using Common.Extensions;
+
+using Common;
 using Common.Forms;
 using Common.Services;
+using Common.Extensions;
 using Common.Strategies.DateCheckerNotifyStrategies;
+
+using PassportMeetBlocker.Services;
 
 namespace PassportMeetBlocker
 {
@@ -24,8 +27,8 @@ namespace PassportMeetBlocker
             Environment.CurrentDirectory, "Data", "delay_settings.json"
         );
 
+        private static BlockerLogger Logger = BlockerDependencyHolder.ServiceDependencies.Resolve<BlockerLogger>();
         private static FileService FileService = CommonDependencyHolder.ServiceDependencies.Resolve<FileService>();
-        private static Logger Logger = CommonDependencyHolder.ServiceDependencies.Resolve<Logger>();
 
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {
@@ -33,6 +36,7 @@ namespace PassportMeetBlocker
             new BezkolejkiPlatformInfo()
         };
 
+        public event EventHandler<SlotBlockedEventArgs> OnSlotBlocked;
 
         private BootSchedule schedule;
         public BootSchedule Schedule
@@ -83,31 +87,21 @@ namespace PassportMeetBlocker
 
                 if (blocker != null)
                 {
-                    blocker.FollowersCount--;
-
-                    if (Paused)
-                        blocker.PausedFollowersCount--;
-
                     blocker.OnDatesFound -= Checker_OnDatesFound;
                     blocker.OnSlotBlocked -= Blocker_OnSlotBlocked;
+                    blocker.OnProxyChanged -= Blocker_OnProxyChanged;
                 }
 
                 blocker = value;
 
                 if (blocker != null)
                 {
-                    blocker.FollowersCount++;
-
-                    if (Paused)
-                        blocker.PausedFollowersCount++;
-
                     blocker.OnDatesFound += Checker_OnDatesFound;
                     blocker.OnSlotBlocked += Blocker_OnSlotBlocked;
+                    blocker.OnProxyChanged += Blocker_OnProxyChanged;
                 }
             }
         }
-
-        public event EventHandler<SlotBlockedEventArgs> OnSlotBlocked;
 
         public MainForm()
         {
@@ -125,7 +119,9 @@ namespace PassportMeetBlocker
         public MainForm(DelayInfo delayInfo, DateChecker checker)
         {
             InitializeComponent();
-            Logger.CreateCommonLogFile($"{checker.PlatformInfo.Name}_{checker.CityInfo.Name}_{checker.OperationInfo.Number}");
+
+            Logger.Modifier = $"{checker.PlatformInfo.Name}_{checker.CityInfo.Name}_{checker.OperationInfo.Number}";
+            Logger.CreateCommonLogFile();
 
             PlatformSelector.Items.AddRange(Platforms);
             PlatformSelector.SelectedIndex = 0;
@@ -179,11 +175,17 @@ namespace PassportMeetBlocker
             Log($"Date check ok at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Content: {e.Content}");
         }
 
+        private void Blocker_OnProxyChanged(object sender, ProxyChangedEventArgs e)
+        {
+            DateChecker checker = sender as DateChecker;
+            Log($"Proxy changed at checker {checker.CityInfo.Name} : {checker.OperationInfo}; Proxy: {e.NewProxy}");
+        }
+
         private void Log(string text)
         {
-            Logger.LogMain(text, null);
+            Logger.LogMain(text);
 
-            string log = Logger.GetLogWithMeta(text, null);
+            string log = Logger.GetLogWithMeta(text);
             LogWindow.Invoke((MethodInvoker)delegate {
                 LogWindow.AppendText(log);
             });

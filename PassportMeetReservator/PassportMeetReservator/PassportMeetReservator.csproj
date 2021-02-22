@@ -119,7 +119,7 @@
     <Compile Include="Data\CustomEventArgs\ReservedEventArgs.cs" />
     <Compile Include="Data\ReservedInfo.cs" />
     <Compile Include="Data\CustomEventArgs\UrlChangedEventArgs.cs" />
-    <Compile Include="DependencyHolder.cs" />
+    <Compile Include="ReservatorDependencyHolder.cs" />
     <Compile Include="Extensions\WebViewExtensions.cs" />
     <Compile Include="Forms\AddOrderForm.cs">
       <SubType>Form</SubType>
@@ -159,6 +159,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ReservatorLogger.cs" />
     <Compile Include="Strategies\TimeSelectStrategies\TimeSelectByBrowserNumberStrategy.cs" />
     <Compile Include="Strategies\TimeSelectStrategies\TimeSelectByTimePeriodStrategy.cs" />
     <Compile Include="Strategies\TimeSelectStrategies\TimeSelectStrategyBase.cs" />

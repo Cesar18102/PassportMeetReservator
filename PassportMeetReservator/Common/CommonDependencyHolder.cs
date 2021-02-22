@@ -7,7 +7,7 @@ using Common.Services;
 
 namespace Common
 {
-    public class CommonDependencyHolder
+    public sealed class CommonDependencyHolder
     {
         private static IContainer serviceDependencies = null;
         public static IContainer ServiceDependencies
@@ -15,14 +15,12 @@ namespace Common
             get
             {
                 if (serviceDependencies == null)
-                    serviceDependencies = new CommonDependencyHolder().BuildDependencies();
+                    serviceDependencies = BuildDependencies();
                 return serviceDependencies;
             }
         }
 
-        protected CommonDependencyHolder() { }
-
-        protected virtual IContainer BuildDependencies()
+        private static IContainer BuildDependencies()
         {
             ContainerBuilder builder = new ContainerBuilder();
 
@@ -37,7 +35,7 @@ namespace Common
             builder.RegisterType<SaltService>().AsSelf().SingleInstance();
             builder.RegisterType<AuthService>().AsSelf().SingleInstance();
             builder.RegisterType<FileService>().AsSelf().SingleInstance();
-            builder.RegisterType<Logger>().AsSelf().SingleInstance();
+            builder.RegisterType<ProxyProvider>().AsSelf().SingleInstance();
 
             return builder.Build();
         }

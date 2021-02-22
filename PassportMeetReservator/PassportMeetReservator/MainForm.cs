@@ -8,23 +8,25 @@ using System.Collections.Generic;
 using Autofac;
 
 using PassportMeetReservator.Data;
+using PassportMeetReservator.Data.CustomEventArgs;
+
 using PassportMeetReservator.Forms;
 using PassportMeetReservator.Controls;
 using PassportMeetReservator.Telegram;
-using PassportMeetReservator.Data.CustomEventArgs;
+using PassportMeetReservator.Services;
 using PassportMeetReservator.Extensions;
 
-using Common;
 using Common.Data;
 using Common.Data.Forms;
 using Common.Data.Platforms;
 using Common.Data.CustomEventArgs;
 
-using Common.Extensions;
-
-using Common.Services;
-using Common.Strategies.DateCheckerNotifyStrategies;
+using Common;
 using Common.Forms;
+using Common.Services;
+using Common.Extensions;
+using Common.Strategies.DateCheckerNotifyStrategies;
+
 using PassportMeetBlocker;
 
 namespace PassportMeetReservator
@@ -82,8 +84,8 @@ namespace PassportMeetReservator
             //{ "62.133.130.206:3128", 0 }
         };
 
-        private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
-        private static FileService FileService = DependencyHolder.ServiceDependencies.Resolve<FileService>();
+        private static ReservatorLogger Logger = ReservatorDependencyHolder.ServiceDependencies.Resolve<ReservatorLogger>();
+        private static FileService FileService = CommonDependencyHolder.ServiceDependencies.Resolve<FileService>();
 
         private static PlatformApiInfo[] Platforms = new PlatformApiInfo[]
         {
@@ -190,7 +192,7 @@ namespace PassportMeetReservator
         private async void TryLogIn()
         {
             LogInForm logInForm = new LogInForm() { Login = Profile.Login, Password = Profile.Password };
-            bool success = await DependencyHolder.ServiceDependencies.Resolve<AuthService>().LogIn(logInForm);
+            bool success = await CommonDependencyHolder.ServiceDependencies.Resolve<AuthService>().LogIn(logInForm);
 
             if (!success)
                 this.Close();
@@ -220,6 +222,7 @@ namespace PassportMeetReservator
                 Proxies[reserver.Browser.Proxy]++;
 
             reserver.Browser.OnPausedChanged += Browser_OnPausedChanged;
+            reserver.Browser.OnPausedChanged += Browser_OnPausedChangedBlockerHandler;
             reserver.Browser.OnReservedManually += Browser_OnReservedManually;
             reserver.Browser.OnReserved += Browser_OnReserved;
             reserver.Browser.OnDateTimeSelected += MainForm_OnDateTimeSelected;
@@ -273,10 +276,8 @@ namespace PassportMeetReservator
 
             if (checker.FollowersCount == 0)
             {
-                form.Blocker.FollowersCount--;
-
-                if (form.Paused)
-                    form.Blocker.PausedFollowersCount--;
+                form.Blocker.FollowersCount = 0;
+                form.Blocker.PausedFollowersCount = 0;
 
                 BlockerForms.Remove(checker);
             }
@@ -295,7 +296,12 @@ namespace PassportMeetReservator
             if (!reserver.Browser.IsUsingBakedReservations)
             {
                 if (BlockerForms.ContainsKey(checker))
-                    CloseBlockerForm(checker);
+                {
+                    if(BlockerForms[checker].Blocker.FollowersCount == 1)
+                        CloseBlockerForm(checker);
+                    else
+                        BlockerForms[checker].Blocker.RemoveFollower(reserver.Browser.Paused);
+                }
 
                 return;
             }
@@ -318,17 +324,19 @@ namespace PassportMeetReservator
 
                 blockerForm.OnSlotBlocked += BlockerForm_OnSlotBlocked;
                 blockerForm.FormClosing += BlockerForm_FormClosing;
-                blockerForm.Paused = reserver.Browser.Paused;
                 blockerForm.Show();
             }
 
-            reserver.Browser.OnPausedChanged += (ctx, arg) =>
-            {
-                ReserverWebView browser = ctx as ReserverWebView;
+            BlockerForms[checker].Blocker.AddFollower(reserver.Browser.Paused);
+        }
 
-                if(browser?.Checker != null && BlockerForms.ContainsKey(browser.Checker))
-                    BlockerForms[browser.Checker].Paused = arg.Paused;
-            };
+        private void Browser_OnPausedChangedBlockerHandler(object sender, BrowserPausedChangedEventArgs e)
+        {
+            ReserverWebView browser = sender as ReserverWebView;
+            ReserverView reserver = Reservers.First(res => res.Browser == browser);
+
+            if (browser?.Checker != null && BlockerForms.ContainsKey(browser.Checker) && reserver.UsesBackedReservations)
+                BlockerForms[browser.Checker].Blocker.PausedFollowersCount += e.Paused ? 1 : -1;
         }
 
         private void BlockerForm_OnSlotBlocked(object sender, SlotBlockedEventArgs e)
@@ -692,7 +700,8 @@ namespace PassportMeetReservator
             foreach(PassportMeetBlocker.MainForm form in BlockerForms.Values)
             {
                 form.Schedule = Schedule;
-                form.Paused = false;
+                form.Blocker.FollowersCount = Reservers.Count;
+                form.Blocker.PausedFollowersCount = 0;
             }
 
             DateCheckers.ApplyToDateCheckers(checker => checker.Schedule = Schedule);

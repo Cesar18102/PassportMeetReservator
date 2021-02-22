@@ -7,13 +7,13 @@ using Autofac;
 using CefSharp;
 using CefSharp.WinForms;
 
-using Common.Services;
+using PassportMeetReservator.Services;
 
 namespace PassportMeetReservator
 {
     public static class Program
     {
-        private static Logger Logger = DependencyHolder.ServiceDependencies.Resolve<Logger>();
+        private static ReservatorLogger Logger = ReservatorDependencyHolder.ServiceDependencies.Resolve<ReservatorLogger>();
 
         /// <summary>
         /// The main entry point for the application.

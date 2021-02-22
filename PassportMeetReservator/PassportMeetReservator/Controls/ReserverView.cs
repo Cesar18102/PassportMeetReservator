@@ -28,6 +28,7 @@ namespace PassportMeetReservator.Controls
         public ZoomedBrowserForm ZoomedBrowserForm { get; private set; }
         public ReserverWebView Browser { get; private set; }
         public Panel BrowserWrapper => BrowserPanel;
+        public bool UsesBackedReservations => UseBakedReservationsCheckBox.Checked;
 
         private int realBrowserNumber;
         public int RealBrowserNumber

@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
-
 using RestSharp;
+using Autofac;
 
 using Common.Data;
 using Common.Data.Dto;
 using Common.Data.Platforms;
 using Common.Data.CustomEventArgs;
 
+using Common.Services;
 using Common.Extensions;
-
 using Common.Strategies.DateCheckerNotifyStrategies;
 
 namespace Common
@@ -23,10 +23,12 @@ namespace Common
     {
         public event EventHandler<DateCheckerErrorEventArgs> OnRequestError;
         public event EventHandler<DateCheckerOkEventArgs> OnRequestOK;
+        public event EventHandler<ProxyChangedEventArgs> OnProxyChanged;
         public event EventHandler<EventArgs> OnDatesFound;
 
         public DateCheckerFlowStrategyBase FlowStrategy { get; set; }
 
+        protected ProxyProvider ProxyProvider = CommonDependencyHolder.ServiceDependencies.Resolve<ProxyProvider>();
         protected RestClient ApiClient { get; set; }
 
         public TimeCheckDto[] TimeCheckDtos { get; private set; }
@@ -102,6 +104,22 @@ namespace Common
             }
 
             return checkers;
+        }
+
+        public void AddFollower(bool paused)
+        {
+            FollowersCount++;
+
+            if (paused)
+                PausedFollowersCount++;
+        }
+
+        public void RemoveFollower(bool paused)
+        {
+            FollowersCount--;
+
+            if (paused)
+                PausedFollowersCount--;
         }
 
         public async void Init()
@@ -199,6 +217,8 @@ namespace Common
 
         protected void ConfigureRequest(RestRequest request)
         {
+            UpdateProxy();
+
             request.Method = Method.GET;
             request.Timeout = DelayInfo.RequestTimeout;
 
@@ -211,6 +231,17 @@ namespace Common
             request.AddHeader("sec-fetch-dest", "empty");
             request.AddHeader("referer", CityInfo.Referer);
             request.AddHeader("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+        }
+
+        private void UpdateProxy()
+        {
+            string proxy = ProxyProvider.GetNextProxy();
+
+            if (proxy != null)
+            {
+                ApiClient.Proxy = new WebProxy(proxy);
+                OnProxyChanged?.Invoke(this, new ProxyChangedEventArgs(proxy));
+            }
         }
     }
 }
