@@ -1,22 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
+
+using Common.Data;
 
 namespace Common.Services
 {
     public class ProxyProvider
     {
-        private int currentIndex = 0;
+        public List<Proxy> Proxies { get; private set; } = new List<Proxy>();
 
-        public List<string> Proxies { get; private set; } = new List<string>();
-
-        public string GetNextProxy()
+        public Proxy GetNextProxy()
         {
-            if (Proxies == null || Proxies.Count == 0)
+            return this.GetNextProxy(null);
+        }
+
+        public Proxy GetNextProxy(Proxy oldProxy)
+        {
+            if (Proxies == null)
                 return null;
 
-            string proxy = Proxies[currentIndex];
-            currentIndex = (currentIndex + 1) % Proxies.Count;
+            Proxy newProxy = Proxies.FirstOrDefault(p => !p.IsInUse && !p.IsBlocked);
 
-            return proxy;
+            if (newProxy == null)
+                return null;
+
+            if (oldProxy != null)
+                oldProxy.IsInUse = false;
+
+            newProxy.IsInUse = true;
+
+            return newProxy;
         }
     }
 }

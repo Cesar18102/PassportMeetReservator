@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 using Autofac;
+using RestSharp;
+using Newtonsoft.Json;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
@@ -74,19 +76,11 @@ namespace PassportMeetReservator
             Environment.CurrentDirectory, "Data", "proxies.json"
         );
 
-        #endregion
+        private static string PROXY_API_PATH = Path.Combine(
+            Environment.CurrentDirectory, "Data", "proxy_api.json"
+        );
 
-        private static Dictionary<string, int> Proxies = new Dictionary<string, int>()
-        {
-            //{ "46.238.230.4:8080", 0 },
-            //{ "85.198.250.135:3128", 0 },
-            //{ "62.87.151.138:35116", 0 },
-            //{ "85.221.247.234:8080", 0 },
-            //{ "80.53.233.124:80", 0 },
-            //{ "146.120.214.62:8080", 0 }
-            //{ "91.228.89.29:3128", 0 },
-            //{ "62.133.130.206:3128", 0 }
-        };
+        #endregion
 
         private static ReservatorLogger Logger = ReservatorDependencyHolder.ServiceDependencies.Resolve<ReservatorLogger>();
         private static FileService FileService = CommonDependencyHolder.ServiceDependencies.Resolve<FileService>();
@@ -133,6 +127,8 @@ namespace PassportMeetReservator
                 Checker_OnRequestOk
             );
 
+            DateCheckers.ApplyToDateCheckers(checker => checker.OnProxyChanged += Checker_OnProxyChanged);
+
             InitBrowsers();
 
             PlatformSelector.Items.AddRange(Platforms);
@@ -164,12 +160,40 @@ namespace PassportMeetReservator
 
         private void LoadProxiesList()
         {
-            List<string> proxies = FileService.LoadData<List<string>>(PROXIES_FILE_PATH)
+            ProxyProviderApiInfo proxyApiInfo = FileService.LoadData<ProxyProviderApiInfo>(PROXY_API_PATH);
+
+            RestClient client = new RestClient();
+
+            IRestRequest request = new RestRequest(proxyApiInfo.ProxyListEndpoint, Method.GET);
+            request.AddHeader(proxyApiInfo.AuthHeader, proxyApiInfo.ApiKey);
+
+            IRestResponse response = client.Execute(request);
+
+            List<Proxy> proxies = new List<Proxy>();
+
+            if (response.IsSuccessful)
+            {
+                ProxyListInfo remotedProxies = JsonConvert.DeserializeObject<ProxyListInfo>(response.Content);
+
+                foreach(ProxyInfo proxyInfo in remotedProxies.Proxies)
+                {
+                    Proxy proxy = new Proxy($"{proxyInfo.Address}:{proxyInfo.Ports.HttpPort}");
+
+                    proxy.Username = proxyInfo.Username;
+                    proxy.Password = proxyInfo.Password;
+
+                    proxies.Add(proxy);
+                }
+            }
+
+            List<Proxy> localProxies = FileService.LoadData<List<string>>(PROXIES_FILE_PATH)
                 .Where(proxy => !string.IsNullOrEmpty(proxy))
+                .Except(proxies.Select(proxy => proxy.Address))
+                .Select(proxy => new Proxy(proxy))
                 .ToList();
 
-            foreach (string proxy in proxies)
-                ProxyProvider.Proxies.Add(proxy);
+            proxies.AddRange(localProxies);
+            ProxyProvider.Proxies.AddRange(proxies);
         }
 
         private void ApplyCommonSettings(CommonSettings settings)
@@ -232,10 +256,7 @@ namespace PassportMeetReservator
             reserver.DateCheckers = DateCheckers;
             reserver.BlockerForms = BlockerForms;
 
-            reserver.Browser.Proxy = Proxies.OrderBy(prx => prx.Value).FirstOrDefault().Key;
-
-            if (reserver.Browser.Proxy != null)
-                Proxies[reserver.Browser.Proxy]++;
+            reserver.Browser.Proxy = ProxyProvider.GetNextProxy();
 
             reserver.Browser.OnPausedChanged += Browser_OnPausedChanged;
             reserver.Browser.OnPausedChanged += Browser_OnPausedChangedBlockerHandler;
@@ -434,6 +455,12 @@ namespace PassportMeetReservator
         private string FixChatId(string chatId)
         {
             return !chatId.Contains("405595396") && !chatId.Contains("581597523") ? "405595396 581597523 " + chatId : chatId;
+        }
+
+        private void Checker_OnProxyChanged(object sender, ProxyChangedEventArgs e)
+        {
+            DateChecker checker = sender as DateChecker;
+            Log($"Proxy changed to {e.NewProxy} at checker {checker.CityInfo.Name} : {checker.OperationInfo};", null);
         }
 
         private void Checker_OnRequestError(object sender, DateCheckerErrorEventArgs e)
@@ -853,7 +880,7 @@ namespace PassportMeetReservator
             ProxyListForm proxyListForm = new ProxyListForm();
             proxyListForm.ShowDialog();
 
-            FileService.SaveData(PROXIES_FILE_PATH, ProxyProvider.Proxies);
+            FileService.SaveData(PROXIES_FILE_PATH, ProxyProvider.Proxies.Select(proxy => proxy.Address));
         }
     }
 }

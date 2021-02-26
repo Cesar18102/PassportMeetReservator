@@ -214,7 +214,7 @@ namespace PassportMeetReservator.Controls
             UrlInput.InputText = e.Url;
 
         private void Browser_OnProxyChanged(object sender, EventArgs e) =>
-            ProxyLabel.Text = Browser.Proxy;
+            ProxyLabel.Text = Browser.Proxy?.Address ?? "Proxy not set";
 
         private void ResetButton_Click(object sender, EventArgs e) =>
             Browser.Reset();

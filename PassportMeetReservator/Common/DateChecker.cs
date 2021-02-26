@@ -30,6 +30,7 @@ namespace Common
 
         protected ProxyProvider ProxyProvider = CommonDependencyHolder.ServiceDependencies.Resolve<ProxyProvider>();
         protected RestClient ApiClient { get; set; }
+        protected Proxy LastUsedProxy { get; set; }
 
         public TimeCheckDto[] TimeCheckDtos { get; private set; }
         public Dictionary<DateTime, DateTime[]> Slots { get; private set; } = new Dictionary<DateTime, DateTime[]>();
@@ -163,7 +164,15 @@ namespace Common
                 await Task.Delay(DelayInfo.DateCheckDelay);
 
                 if (FollowersCount == 0)
+                {
+                    if (LastUsedProxy != null)
+                    {
+                        LastUsedProxy.IsInUse = false;
+                        LastUsedProxy = null;
+                    }
+
                     continue;
+                }
 
                 if (PausedFollowersCount + BlockedFollowersCount == FollowersCount)
                     continue;
@@ -269,12 +278,17 @@ namespace Common
 
         private void UpdateProxy()
         {
-            string proxy = ProxyProvider.GetNextProxy();
+            LastUsedProxy = ProxyProvider.GetNextProxy(LastUsedProxy);
 
-            if (proxy != null)
+            if (LastUsedProxy != null)
             {
-                ApiClient.Proxy = new WebProxy(proxy);
-                OnProxyChanged?.Invoke(this, new ProxyChangedEventArgs(proxy));
+                WebProxy proxy = new WebProxy(LastUsedProxy.Address);
+
+                if (!string.IsNullOrEmpty(LastUsedProxy.Username) && !string.IsNullOrEmpty(LastUsedProxy.Password))
+                    proxy.Credentials = new NetworkCredential(LastUsedProxy.Username, LastUsedProxy.Password);
+
+                ApiClient.Proxy = proxy;
+                OnProxyChanged?.Invoke(this, new ProxyChangedEventArgs(LastUsedProxy.Address));
             }
         }
     }

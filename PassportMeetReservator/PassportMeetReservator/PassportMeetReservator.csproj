@@ -105,6 +105,10 @@
     <Compile Include="Data\Exceptions\BakedReservationFailedException.cs" />
     <Compile Include="Data\Exceptions\GlobalErrorException.cs" />
     <Compile Include="Data\Exceptions\PromiseFailedException.cs" />
+    <Compile Include="Data\PortsInfo.cs" />
+    <Compile Include="Data\ProxyInfo.cs" />
+    <Compile Include="Data\ProxyListInfo.cs" />
+    <Compile Include="Data\ProxyProviderApiInfo.cs" />
     <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Data\BrowserSettings.cs" />

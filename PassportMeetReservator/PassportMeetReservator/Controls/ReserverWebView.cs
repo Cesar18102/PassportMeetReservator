@@ -18,6 +18,8 @@ using PassportMeetReservator.Data.CustomEventArgs;
 using PassportMeetReservator.Extensions;
 using PassportMeetReservator.Strategies.TimeSelectStrategies;
 using PassportMeetReservator.Data.Exceptions;
+using System.Security.Cryptography.X509Certificates;
+using CefSharp.Handler;
 
 namespace PassportMeetReservator.Controls
 {
@@ -112,8 +114,8 @@ namespace PassportMeetReservator.Controls
             }
         }
 
-        private string proxy;
-        public string Proxy
+        private Proxy proxy;
+        public Proxy Proxy
         {
             get => proxy;
             set
@@ -273,6 +275,12 @@ namespace PassportMeetReservator.Controls
             CancelTask();
             Checker = null;
 
+            if (Proxy != null)
+            {
+                Proxy.IsInUse = false;
+                Proxy = null;
+            }
+
             base.Dispose();
         }
 
@@ -332,6 +340,24 @@ namespace PassportMeetReservator.Controls
             await SetProxy();
         }
 
+        private class ProxyRequestHandler : RequestHandler
+        {
+            private Proxy Proxy { get; set; }
+
+            public ProxyRequestHandler(Proxy proxy)
+            {
+                Proxy = proxy;
+            }
+
+            protected override bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
+            {
+                if(isProxy && Proxy != null && !string.IsNullOrEmpty(Proxy.Username) && !string.IsNullOrEmpty(Proxy.Password))
+                    callback.Continue(Proxy.Username, Proxy.Password);
+
+                return isProxy;
+            }
+        }
+
         private async Task SetProxy()
         {
             if (Proxy == null)
@@ -339,10 +365,12 @@ namespace PassportMeetReservator.Controls
 
             await Cef.UIThreadTaskFactory.StartNew(() =>
             {
+                this.RequestHandler = new ProxyRequestHandler(Proxy);
+
                 Dictionary<string, object> pref = new Dictionary<string, object>()
                 {
                     { "mode", "fixed_servers" },
-                    { "server", Proxy }
+                    { "server", Proxy.Address }
                 };
                 bool success = GetBrowser().GetHost().RequestContext.SetPreference("proxy", pref, out string error);
                 object p = GetBrowser().GetHost().RequestContext.GetPreference("proxy");
@@ -387,6 +415,8 @@ namespace PassportMeetReservator.Controls
             {
                 IsBusy = true;
 
+                UpdateBrowser();
+
                 RaiseIterationLog($"Baked reservation started for token {this.BakedReservationToken}");
 
                 if (!await WaitForLoading(TimeSpan.FromSeconds(1)))
@@ -407,8 +437,10 @@ namespace PassportMeetReservator.Controls
             }
             catch(BakedReservationFailedException ex)
             {
-                RaiseIteraionFailure(ex.Reason);
-                this.BakedReservationToken = null;
+                CompleteBakedReservation();
+
+                //RaiseIteraionFailure(ex.Reason);
+                //this.BakedReservationToken = null;
             }
             finally
             {
