@@ -106,7 +106,10 @@
     <Compile Include="Data\Exceptions\GlobalErrorException.cs" />
     <Compile Include="Data\Exceptions\PromiseFailedException.cs" />
     <Compile Include="Data\PortsInfo.cs" />
-    <Compile Include="Data\ProxyInfo.cs" />
+    <Compile Include="Data\ProxyInfos\ProxyInfo.cs" />
+    <Compile Include="Data\ProxyInfos\ProxyLineProxyInfo.cs" />
+    <Compile Include="Data\ProxyInfos\WebShareProxyInfo.cs" />
+    <Compile Include="Data\IProxyListInfo.cs" />
     <Compile Include="Data\ProxyListInfo.cs" />
     <Compile Include="Data\ProxyProviderApiInfo.cs" />
     <Compile Include="Extensions\ImageExtensions.cs" />

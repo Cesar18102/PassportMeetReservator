@@ -610,7 +610,7 @@ namespace PassportMeetReservator.Controls
             await WaitForSlotSelection();
             await BlockSlot();
 
-            DateTime? taken = await WaitForSlotBlock();
+            DateTime? taken = await WaitForSlotBlock(date);
             if (!taken.HasValue)
             {
                 RaiseIteraionFailure("Wait reserve iteration fail");
@@ -686,7 +686,7 @@ namespace PassportMeetReservator.Controls
             }
         }
 
-        private async Task<DateTime?> WaitForSlotBlock()
+        private async Task<DateTime?> WaitForSlotBlock(DateTime selectedDateTime)
         {
             for (; ; )
             {
@@ -720,7 +720,15 @@ namespace PassportMeetReservator.Controls
                     {
                         RaiseIteraionFailure("Already reserved error");
 
-                        JavascriptResponse alreadyReservedHandlerResult = await this.GetMainFrame().EvaluateScriptAsync(
+                        UpdateBrowser();
+                        await Task.Delay(DelayInfo.ActionResultDelay);
+
+                        if (await Iteration(selectedDateTime))
+                            return selectedDateTime;
+
+                        return null;
+
+                        /*JavascriptResponse alreadyReservedHandlerResult = await this.GetMainFrame().EvaluateScriptAsync(
                             "{" +
                                 "let VUE = document.getElementsByClassName('container-fluid')[0].childNodes[0].__vue__;" +
                                 $"VUE.selectedSlot = VUE.availableSlots[Math.min({VirtualBrowserNumber}, VUE.availableSlots.length - 1)];" +
@@ -730,6 +738,7 @@ namespace PassportMeetReservator.Controls
                         if (alreadyReservedHandlerResult.Success)
                         {
                             await BlockSlot();
+                            await Task.Delay(DelayInfo.ActionResultDelay);
 
                             DateTime? selectedDateTime = await WaitForSlotBlock();
                             if (!selectedDateTime.HasValue)
@@ -745,7 +754,7 @@ namespace PassportMeetReservator.Controls
                         {
                             RaiseIteraionFailure("Already reserved handler failed: no more slots available");
                             return null;
-                        }
+                        }*/
                     }
                 }
 

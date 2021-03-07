@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.ProxyList = new System.Windows.Forms.TextBox();
+            this.ProxyStatusList = new System.Windows.Forms.TextBox();
             this.SaveButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -38,8 +39,18 @@
             this.ProxyList.Multiline = true;
             this.ProxyList.Name = "ProxyList";
             this.ProxyList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ProxyList.Size = new System.Drawing.Size(313, 193);
+            this.ProxyList.Size = new System.Drawing.Size(213, 193);
             this.ProxyList.TabIndex = 0;
+            // 
+            // ProxyStatusList
+            // 
+            this.ProxyStatusList.Location = new System.Drawing.Point(226, 13);
+            this.ProxyStatusList.Multiline = true;
+            this.ProxyStatusList.ReadOnly = true;
+            this.ProxyStatusList.Name = "ProxyStatusList";
+            this.ProxyStatusList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.ProxyStatusList.Size = new System.Drawing.Size(100, 193);
+            this.ProxyStatusList.TabIndex = 0;
             // 
             // SaveButton
             // 
@@ -53,12 +64,14 @@
             // 
             // ProxyListForm
             // 
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProxyListForm_FormClosing);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(338, 245);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.ProxyList);
+            this.Controls.Add(this.ProxyStatusList);
             this.Name = "ProxyListForm";
             this.Text = "ProxyListForm";
             this.ResumeLayout(false);
@@ -69,6 +82,7 @@
         #endregion
 
         private System.Windows.Forms.TextBox ProxyList;
+        private System.Windows.Forms.TextBox ProxyStatusList;
         private System.Windows.Forms.Button SaveButton;
     }
 }

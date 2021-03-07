@@ -30,6 +30,7 @@ using Common.Extensions;
 using Common.Strategies.DateCheckerNotifyStrategies;
 
 using PassportMeetBlocker;
+using PassportMeetReservator.Data.ProxyInfos;
 
 namespace PassportMeetReservator
 {
@@ -77,7 +78,7 @@ namespace PassportMeetReservator
         );
 
         private static string PROXY_API_PATH = Path.Combine(
-            Environment.CurrentDirectory, "Data", "proxy_api.json"
+            Environment.CurrentDirectory, "Data", "proxy_api_PROXYLINE.json"//"proxy_api_WEBSHARE.json"
         );
 
         #endregion
@@ -165,7 +166,9 @@ namespace PassportMeetReservator
             RestClient client = new RestClient();
 
             IRestRequest request = new RestRequest(proxyApiInfo.ProxyListEndpoint, Method.GET);
-            request.AddHeader(proxyApiInfo.AuthHeader, proxyApiInfo.ApiKey);
+
+            if (!string.IsNullOrEmpty(proxyApiInfo.AuthHeader))
+                request.AddHeader(proxyApiInfo.AuthHeader, proxyApiInfo.ApiKey);
 
             IRestResponse response = client.Execute(request);
 
@@ -173,11 +176,16 @@ namespace PassportMeetReservator
 
             if (response.IsSuccessful)
             {
-                ProxyListInfo remotedProxies = JsonConvert.DeserializeObject<ProxyListInfo>(response.Content);
+                IEnumerable<ProxyInfo> remotedProxies = new List<ProxyInfo>();
 
-                foreach(ProxyInfo proxyInfo in remotedProxies.Proxies)
+                /*if (false)
+                    remotedProxies = JsonConvert.DeserializeObject<ProxyListInfo<WebShareProxyInfo>>(response.Content).Proxies;
+                else
+                    remotedProxies = JsonConvert.DeserializeObject<ProxyListInfo<ProxyLineProxyInfo>>(response.Content).Proxies;*/
+
+                foreach(ProxyInfo proxyInfo in remotedProxies)
                 {
-                    Proxy proxy = new Proxy($"{proxyInfo.Address}:{proxyInfo.Ports.HttpPort}");
+                    Proxy proxy = new Proxy($"{proxyInfo.Address}:{proxyInfo.Port}");
 
                     proxy.Username = proxyInfo.Username;
                     proxy.Password = proxyInfo.Password;
@@ -436,7 +444,7 @@ namespace PassportMeetReservator
                     ReserverView reserver = Reservers.Last();
                     DateChecker checker = reserver.Browser.Checker;
 
-                    if (BlockerForms.ContainsKey(checker))
+                    if (checker != null && BlockerForms.ContainsKey(checker))
                     {
                         if (BlockerForms[checker].Blocker.FollowersCount == 1)
                             CloseBlockerForm(checker);

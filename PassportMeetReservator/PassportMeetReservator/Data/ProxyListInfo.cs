@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
+using PassportMeetReservator.Data.ProxyInfos;
 
 namespace PassportMeetReservator.Data
 {
-    public class ProxyListInfo
+    public class ProxyListInfo<TProxyInfo> : IProxyListInfo<TProxyInfo> where TProxyInfo : ProxyInfo
     {
         [JsonProperty("results")]
-        public ProxyInfo[] Proxies { get; set; }
+        public TProxyInfo[] Proxies { get; set; }
     }
 }

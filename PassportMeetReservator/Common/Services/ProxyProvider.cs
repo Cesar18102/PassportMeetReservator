@@ -19,7 +19,10 @@ namespace Common.Services
             if (Proxies == null)
                 return null;
 
-            Proxy newProxy = Proxies.FirstOrDefault(p => !p.IsInUse && !p.IsBlocked);
+            List<Proxy> unusedProxies = Proxies.Where(p => !p.IsInUse && !p.IsBlocked).ToList();
+            Proxy neverUsedProxy = unusedProxies.FirstOrDefault(p => !p.LastUsed.HasValue);
+
+            Proxy newProxy = neverUsedProxy ?? unusedProxies.OrderBy(p => p.LastUsed).FirstOrDefault();
 
             if (newProxy == null)
                 return null;

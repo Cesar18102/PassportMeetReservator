@@ -18,7 +18,15 @@ namespace PassportMeetReservator
         {
             InitializeComponent();
 
+            ProxyProvider.Proxies.ForEach(p => p.IsInUseChanged += Proxy_IsInUseChanged);
+
             ProxyList.Text = ProxyProvider.Proxies == null ? "" : string.Join("\r\n", ProxyProvider.Proxies.Select(proxy => proxy.Address));
+            UpdateProxiesStatus();
+        }
+
+        private void ProxyListForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ProxyProvider.Proxies.ForEach(p => p.IsInUseChanged -= Proxy_IsInUseChanged);
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -29,12 +37,29 @@ namespace PassportMeetReservator
             string[] addedProxies = proxies.Except(ProxyProvider.Proxies.Select(proxy => proxy.Address)).ToArray();
 
             foreach (Proxy removed in removedProxies)
+            {
                 ProxyProvider.Proxies.Remove(removed);
+                removed.IsInUseChanged -= Proxy_IsInUseChanged;
+            }
 
             foreach (string added in addedProxies)
-                ProxyProvider.Proxies.Add(new Proxy(added));
+            {
+                Proxy newProxy = new Proxy(added);
+                ProxyProvider.Proxies.Add(newProxy);
+                newProxy.IsInUseChanged += Proxy_IsInUseChanged;
+            }
 
             this.Close();
+        }
+
+        private void UpdateProxiesStatus()
+        {
+            ProxyStatusList.Text = ProxyProvider.Proxies == null ? "" : string.Join("\r\n", ProxyProvider.Proxies.Select(proxy => proxy.IsInUse));
+        }
+
+        private void Proxy_IsInUseChanged(object sender, EventArgs e)
+        {
+            UpdateProxiesStatus();
         }
     }
 }
