@@ -29,6 +29,8 @@ namespace Common.Data
                     IsInUseChanged?.Invoke(this, new EventArgs());
             }
         }
+
+        public bool IsInUseByBrowser { get; set; }
         public bool IsBlocked { get; set; }
 
         public DateTime? LastUsed { get; set; }

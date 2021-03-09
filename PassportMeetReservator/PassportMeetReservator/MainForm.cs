@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 using Autofac;
 using RestSharp;
-using Newtonsoft.Json;
 
 using PassportMeetReservator.Data;
 using PassportMeetReservator.Data.CustomEventArgs;
@@ -264,7 +263,7 @@ namespace PassportMeetReservator
             reserver.DateCheckers = DateCheckers;
             reserver.BlockerForms = BlockerForms;
 
-            reserver.Browser.Proxy = ProxyProvider.GetNextProxy();
+            reserver.Browser.Proxy = ProxyProvider.GetNextProxy(true);
 
             reserver.Browser.OnPausedChanged += Browser_OnPausedChanged;
             reserver.Browser.OnPausedChanged += Browser_OnPausedChangedBlockerHandler;
